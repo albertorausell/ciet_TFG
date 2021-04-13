@@ -6,7 +6,11 @@ from CiET.variables import Variables
 
 def capabilities(request):
 
-    return render(request, 'home.html', {'nombre': 'rausell'})
+    dictionary = {
+        'nombre': 'alberto rausell',
+        'organizacion': 'Universitat Politècnica de València'
+    }
+    return render(request, 'home.html', dictionary)
 
 
 def evaluations(request):
