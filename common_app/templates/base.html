@@ -19,41 +19,39 @@
 
 <body>
 
-    <h1 class="site-heading text-center text-white d-none d-lg-block">
-      
-        <span class="site-heading-lower">Gestión de Pedidos</span>
-      </h1>
-
-
- <!-- Navbar -->
- <nav class="navbar navbar-expand-lg navbar-dark py-lg-4" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="home.html">Gestión de Pedidos</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav mx-auto">
-          <li class="nav-item active px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" >Inicio</a>
-          </li>
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" >Servicios</a>
-          </li>
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" >Tienda</a>
-          </li>
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" >Contacto</a>
-          </li>
-          <li class="nav-item px-lg-4">
-            <a class="nav-link text-uppercase text-expanded" >Blog</a>
-          </li>
-         
-        </ul>
-      </div>
+  <div class="row header">
+    <div class="col-2">
+      <h1 class="logo">CiET</h1>
     </div>
-  </nav>
+    <div class="col">
+      <ul class="nav nav-tabs nav-pagination" id="myTab" role="tablist">
+        <li class="nav-item ">
+          <a class="nav-link active itemnav" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="capabilities" aria-selected="true">Capabilities</a>
+        </li>
+        <li class="nav-item ">
+          <a class="nav-link itemnav" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="evaluations" aria-selected="false">Evaluations</a>
+        </li>
+        <li class="nav-item ">
+          <a class="nav-link itemnav" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="ranking" aria-selected="false">Ranking</a>
+        </li>
+        <li class="nav-item ">
+          <a class="nav-link itemnav" id="profile-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="container row" style="margin-top: 5;">
+        <label class="profile-info col" style="padding-top: 15;"> {{nombre}}<br><i>{{organizacion}}</i></label>
+        <img class="profile-img" src="{% static 'common_app/img/unknown_profile.png' %}" width="75" height="75" >
+      </div>
+      
+    </div>
+
+    
+    
+
+
+  </div>
 
 
   <!-- Contenido cambiante-->
