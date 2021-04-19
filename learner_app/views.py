@@ -7,17 +7,28 @@ from CiET.variables import Variables
 def capabilities(request):
 
     dictionary = {
+        'isTrainer': False,
         'nombre': 'alberto rausell',
         'organizacion': 'Universitat Politècnica de València'
     }
-    return render(request, 'home.html', dictionary)
+    return render(request, 'learner_app/templates/capabilities.html', dictionary)
 
 
 def evaluations(request):
 
-    return HttpResponse('Evaluations')
+    dictionary = {
+        'isTrainer': False,
+        'nombre': 'alberto rausell',
+        'organizacion': 'Universitat Politècnica de València'
+    }
+    return render(request, 'evaluations.html', dictionary)
 
 
 def ranking(request):
 
-    return HttpResponse('Ranking')
+    dictionary = {
+        'isTrainer': False,
+        'nombre': 'alberto rausell',
+        'organizacion': 'Universitat Politècnica de València'
+    }
+    return render(request, 'ranking.html', dictionary)
