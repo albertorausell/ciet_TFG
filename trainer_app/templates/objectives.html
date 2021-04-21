@@ -3,7 +3,12 @@
 {% load static %}
 
 
-
 {% block content %}
-<h1>hola</h1>
+
+<ul>
+    {% for objective in objectives %}
+        <li>{{ objective }}</li>
+    {% endfor %}
+    </ul>
+
 {% endblock %}

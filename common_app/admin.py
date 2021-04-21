@@ -1,7 +1,10 @@
 from django.contrib import admin
-from common_app.models import exercise, organization, capability, objective, dimension, phase, activity, content, training_technique, evaluation, question, answer, capability_objective, capability_learner
+from common_app.models import trainer_profile, learner_profile, learner, exercise, organization, capability, objective, dimension, phase, activity, content, training_technique, evaluation, question, answer, capability_objective, capability_learner
 # Register your models here.
 
+admin.site.register(trainer_profile)
+admin.site.register(learner_profile)
+admin.site.register(learner)
 admin.site.register(organization)
 admin.site.register(capability)
 admin.site.register(objective)

@@ -1,14 +1,50 @@
 from django.db import models
 from django.contrib.auth.models import User
-from learner_app.models import learner, learner_profile
-from trainer_app.models import trainer_profile
 
 # Create your models here.
 
 
+class trainer_profile (User):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    rol = models.CharField(max_length=20)
+    imagen = models.ImageField(upload_to='img/users')
+    organizations = models.ManyToManyField('organization')
+
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        verbose_name = 'trainer_profile'
+        verbose_name_plural = 'trainer_profiles'
+
+
+class learner_profile (User):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    rol = models.CharField(max_length=20)
+    imagen = models.ImageField(upload_to='img/users')
+    organization = models.ForeignKey('organization', on_delete=models.CASCADE)
+    points = models.IntegerField()
+    learner = models.ForeignKey('learner', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        verbose_name = 'learner_profile'
+        verbose_name_plural = 'learner_profiles'
+
+
+class learner (models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
 class organization (models.Model):
     name = models.CharField(max_length=50, default="null")
-    users = models.ManyToManyField(User)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
 
@@ -20,9 +56,9 @@ class capability (models.Model):
     name = models.CharField(max_length=50)
     aproximatedHours = models.FloatField()
     active = models.BooleanField()
-    learners = models.ManyToManyField(learner)
+    learners = models.ManyToManyField('learner')
     trainer = models.ForeignKey(
-        trainer_profile, on_delete=models.CASCADE, default=0)
+        'trainer_profile', on_delete=models.CASCADE, default=0)
     organization = models.ForeignKey(
         'organization', on_delete=models.CASCADE)
 
@@ -36,6 +72,7 @@ class capability (models.Model):
 
 class objective (models.Model):
     name = models.CharField(max_length=30)
+    activity = models.ManyToManyField('activity')
 
     def __str__(self):
         return self.name
@@ -57,8 +94,6 @@ class phase (models.Model):
 
 class activity (models.Model):
     name = models.CharField(max_length=50)
-    objective = models.ForeignKey(
-        'objective', on_delete=models.CASCADE, blank=True, null=True)
     dimension = models.ForeignKey('dimension', on_delete=models.CASCADE)
     phase = models.ForeignKey('phase', on_delete=models.CASCADE)
 
@@ -105,7 +140,7 @@ class evaluation (models.Model):
     mark = models.FloatField()
     exercise = models.ForeignKey('exercise', on_delete=models.CASCADE)
     learner_profile = models.ForeignKey(
-        learner_profile, on_delete=models.CASCADE)
+        'learner_profile', on_delete=models.CASCADE)
 
 
 class exercise (models.Model):
@@ -161,7 +196,7 @@ class capability_learner (models.Model):
         'content', on_delete=models.CASCADE)
     capability = models.ForeignKey('capability', on_delete=models.CASCADE)
     learner_profile = models.ForeignKey(
-        learner_profile, on_delete=models.CASCADE)
+        'learner_profile', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'capability_learner'

@@ -1,5 +1,23 @@
 [
     {
+      "model": "auth.user",
+      "pk": 1,
+      "fields": {
+        "password": "pbkdf2_sha256$216000$SyQors9UD36T$8QKyNFhNsBX5sglD1M9kX4d2jvWd9alxCVFVqoJs+1c=",
+        "last_login": "2021-04-20T16:11:20.708Z",
+        "is_superuser": true,
+        "username": "ciet_superuser",
+        "first_name": "",
+        "last_name": "",
+        "email": "ciet.help@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2021-04-20T16:11:18.278Z",
+        "groups": [],
+        "user_permissions": []
+      }
+    },
+    {
       "model": "common_app.phase",
       "pk": 1,
       "fields": {
@@ -59,7 +77,7 @@
         "pk": 2,
         "fields": {
           "name": "Types of Emergencies",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 1
         }
@@ -69,7 +87,7 @@
         "pk": 3,
         "fields": {
           "name": "Emergency plan",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 1
         }
@@ -79,7 +97,7 @@
         "pk": 4,
         "fields": {
           "name": "Crisis detection",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 1
         }
@@ -89,7 +107,7 @@
         "pk": 5,
         "fields": {
           "name": "Crisis alert",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 1
         }
@@ -99,7 +117,7 @@
         "pk": 6,
         "fields": {
           "name": "Evacuation routes",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 3
         }
@@ -109,7 +127,7 @@
         "pk": 7,
         "fields": {
           "name": "Signs",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 3
         }
@@ -119,7 +137,7 @@
         "pk": 8,
         "fields": {
           "name": "First aid",
-          "objective": null,
+          
           "dimension": 1,
           "phase": 3
         }
@@ -129,7 +147,7 @@
         "pk": 9,
         "fields": {
           "name": "Psychological support for victims",
-          "objective": null,
+          
           "dimension": 2,
           "phase": 2
         }
@@ -139,7 +157,7 @@
         "pk": 10,
         "fields": {
           "name": "Resilience",
-          "objective": null,
+          
           "dimension": 2,
           "phase": 2
         }
@@ -149,7 +167,7 @@
         "pk": 11,
         "fields": {
           "name": "Means of Protection",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 1
         }
@@ -159,7 +177,7 @@
         "pk": 12,
         "fields": {
           "name": "Building Structures",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 1
         }
@@ -169,7 +187,7 @@
         "pk": 13,
         "fields": {
           "name": "Risk analysis",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 1
         }
@@ -179,7 +197,7 @@
         "pk": 14,
         "fields": {
           "name": "Fire extinguishers",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 3
         }
@@ -189,7 +207,7 @@
         "pk": 15,
         "fields": {
           "name": "Communication equipment",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 3
         }
@@ -199,7 +217,7 @@
         "pk": 16,
         "fields": {
           "name": "Rescue Operations",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 3
         }
@@ -209,7 +227,7 @@
         "pk": 17,
         "fields": {
           "name": "Identification of Risks",
-          "objective": null,
+          
           "dimension": 3,
           "phase": 2
         }
@@ -219,7 +237,7 @@
         "pk": 18,
         "fields": {
           "name": "Current Legal Regulations",
-          "objective": null,
+          
           "dimension": 4,
           "phase": 1
         }
@@ -229,7 +247,7 @@
         "pk": 19,
         "fields": {
           "name": "Analysis of damage costs",
-          "objective": null,
+          
           "dimension": 5,
           "phase": 2
         }
@@ -239,7 +257,7 @@
         "pk": 20,
         "fields": {
           "name": "Probability of investmentin prevention",
-          "objective": null,
+          
           "dimension": 5,
           "phase": 2
         }

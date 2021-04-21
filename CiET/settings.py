@@ -115,6 +115,10 @@ AUTHENTICATION_BACKENDS = (
     ('django.contrib.auth.backends.ModelBackend'),
 )
 
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, 'CiET/fixtures'),
+)
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
