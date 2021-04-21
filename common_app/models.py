@@ -72,7 +72,7 @@ class capability (models.Model):
 
 class objective (models.Model):
     name = models.CharField(max_length=30)
-    activity = models.ManyToManyField('activity')
+    activities = models.ManyToManyField('activity')
 
     def __str__(self):
         return self.name

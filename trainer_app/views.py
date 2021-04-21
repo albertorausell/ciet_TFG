@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from common_app.models import objective
+from .forms import ObjectiveForm
 
 # Create your views here.
 
@@ -27,16 +28,26 @@ def capabilities(request):
 
 
 def objectives(request):
-    objectives = []
+    objectivesRows = []
+
+    objective_form = ObjectiveForm()
+
+    if request.method == 'POST':
+        objective_to_save = ObjectiveForm(request.POST)
+        objective_to_save.save()
 
     for obj in objective.objects.raw("""
         select *
         from common_app_objective cao 
         """):
-        objectives.append(obj.name)
+        objectivesRows.append([obj.name, 'Edit'])
 
     dictionary = {
-        'objectives': objectives,
+        'table': {
+            'columns': ['Name', 'Actions'],
+            'rows': objectivesRows
+        },
+        'objectivesForm': objective_form,
         'nombre': 'alberto rausell',
         'organizacion': 'Universitat Politècnica de València'
     }
