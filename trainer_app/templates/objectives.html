@@ -1,0 +1,14 @@
+
+{% extends "trainer_app/templates/base_trainer.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<ul>
+    {% for objective in objectives %}
+        <li>{{ objective }}</li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

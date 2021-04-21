@@ -18,40 +18,9 @@
 </head>
 
 <body>
-
-  <div class="row header">
-    <div class="col-2">
-      <h1 class="logo">CiET</h1>
-    </div>
-    <div class="col">
-      <ul class="nav nav-tabs nav-pagination" id="myTab" role="tablist">
-        <li class="nav-item ">
-          <a class="nav-link active itemnav" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="capabilities" aria-selected="true">Capabilities</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link itemnav" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="evaluations" aria-selected="false">Evaluations</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link itemnav" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="ranking" aria-selected="false">Ranking</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link itemnav" id="profile-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-        </li>
-      </ul>
-    </div>
-    <div class="col">
-      <div class="container row" style="margin-top: 5;">
-        <label class="profile-info col" style="padding-top: 15;"> {{nombre}}<br><i>{{organizacion}}</i></label>
-        <img class="profile-img" src="{% static 'common_app/img/unknown_profile.png' %}" width="75" height="75" >
-      </div>
-      
-    </div>
-
-    
-    
-
-
-  </div>
+  {% block sidebar %}
+  
+  {% endblock %}
 
 
   <!-- Contenido cambiante-->
