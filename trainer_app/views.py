@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from common_app.models import objective
+from common_app.models import objective, capability
 from .forms import ObjectiveForm
 
 # Create your views here.
@@ -18,7 +18,12 @@ from .forms import ObjectiveForm
 
 
 def capabilities(request):
+    capabilitiesRows = capability.objects.all()
     dictionary = {
+        'table': {
+            'columns': ['Name', 'Objectives', 'Learners', 'Active', 'Actions'],
+            'rows': capabilitiesRows
+        },
         'isTrainer': False,
         'nombre': 'alberto rausell',
         'organizacion': 'Universitat Politècnica de València'
@@ -28,7 +33,7 @@ def capabilities(request):
 
 
 def objectives(request):
-    objectivesRows = []
+    objectivesRows = objective.objects.all()
 
     objective_form = ObjectiveForm()
 
@@ -36,11 +41,9 @@ def objectives(request):
         objective_to_save = ObjectiveForm(request.POST)
         objective_to_save.save()
 
-    for obj in objective.objects.raw("""
-        select *
-        from common_app_objective cao 
-        """):
-        objectivesRows.append([obj.name, 'Edit'])
+    objectives_forms = []
+    for data_objective in objectivesRows:
+        objectives_forms.append(ObjectiveForm(instance=data_objective))
 
     dictionary = {
         'table': {
@@ -63,3 +66,13 @@ def statistics(request):
         'organizacion': 'Universitat Politècnica de València'
     }
     return render(request, 'statistics.html', dictionary)
+
+
+def objective_edit(request, id):
+    objective = objective.objects.get(pk=id)
+    objective_to_edit = ObjectiveForm(objective)
+
+    if request.method == 'POST':
+        form = ObjectiveForm(request.POST, instance=objective)
+
+    return
