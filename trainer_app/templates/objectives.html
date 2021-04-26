@@ -36,7 +36,7 @@
                                 {{row.name}}
                             </td>
                             <td style="text-align: center;">
-                                <a href="{% url 'objective_edit' id=row.id %}" data-toggle="modal" data-target="#addObjective">Edit</a>
+                                <a href="{% url 'objective_edit' id=row.id %}" ><span class="fa fa-pencil"></span></a>
                             </td>
                         </tr>
                       {% endfor %}
@@ -48,6 +48,8 @@
         <div class="col-2"></div>
     </div>
 </div>
+
+
 
 <!-- The Add Modal -->
 {% include 'objectives/new_objective.html' %}

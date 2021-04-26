@@ -8,5 +8,5 @@ urlpatterns = [
     path('objectives/', views.objectives, name='objectives_trainer'),
     path('statistics/', views.statistics, name='statistics_trainer'),
 
-    path('objectives/<int:id>/edit/', views.objective_edit, name='objective_edit')
+    path('objectives/edit/<int:id>/', views.objective_edit, name='objective_edit')
 ]

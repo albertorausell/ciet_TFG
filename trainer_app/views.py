@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from common_app.models import objective, capability
 from .forms import ObjectiveForm
 
@@ -33,17 +33,17 @@ def capabilities(request):
 
 
 def objectives(request):
-    objectivesRows = objective.objects.all()
+    objectivesRows = objective.objects.all().order_by('name')
 
     objective_form = ObjectiveForm()
-
-    if request.method == 'POST':
-        objective_to_save = ObjectiveForm(request.POST)
-        objective_to_save.save()
 
     objectives_forms = []
     for data_objective in objectivesRows:
         objectives_forms.append(ObjectiveForm(instance=data_objective))
+
+    if request.method == 'POST':
+        objective_to_save = ObjectiveForm(request.POST)
+        objective_to_save.save()
 
     dictionary = {
         'table': {
@@ -69,10 +69,21 @@ def statistics(request):
 
 
 def objective_edit(request, id):
-    objective = objective.objects.get(pk=id)
-    objective_to_edit = ObjectiveForm(objective)
+    objective_to_edit = objective.objects.get(pk=id)
+    objective_form = ObjectiveForm(instance=objective_to_edit)
+
+    dictionary = {
+        'objetive_to_edit': objective_form,
+        'nombre': 'alberto rausell',
+        'organizacion': 'Universitat Politècnica de València'}
 
     if request.method == 'POST':
-        form = ObjectiveForm(request.POST, instance=objective)
+        form = ObjectiveForm(request.POST, instance=objective_to_edit)
+        if form.is_valid():
+            acts = form.cleaned_data.get("activities")
+            obj = form.save(commit=False)
+            obj.activities.set(acts)
+            obj.save()
+        return redirect('objectives_trainer')
 
-    return
+    return render(request, 'objectives/edit_objective.html', dictionary)
