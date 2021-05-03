@@ -16,6 +16,55 @@
         <div class="col">
         </div>
     </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col">
+            <div style="border-style: solid;border-color: darkgrey; border-width: thin; position: relative; height: 400px; overflow: auto; display: block;">
+                <table id="tableObj" class="table table-striped mb-0">
+                  <thead>
+                    <tr>
+                    {% for column in table.columns %}
+                      <th scope="col" style="background:white;text-align: center;">{{column}}</th>
+                    {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for row in table.rows %}
+                        <tr>
+                            <td style="text-align: center;">
+                                {{row.0}}
+                            </td>
+                            <td style="text-align: center;">
+                                {{row.1}}
+                            </td>
+                            <td style="text-align: center;">
+                                {{row.2}}
+                            </td>
+                            <td style="text-align: center;">
+                                {% if row.3 == True %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                                    <label class="form-check-label" for="flexCheckChecked"></label>
+                                  </div>
+                                {% else %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault"></label>
+                                  </div>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">
+                                <a href=# ><span class="fa fa-pencil"></span></a>
+                            </td>
+                        </tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-2"></div>
+    </div>
 </div>
 
 {% endblock %}

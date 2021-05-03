@@ -1,5 +1,5 @@
 from django.forms import ModelForm, CharField, ModelMultipleChoiceField, CheckboxSelectMultiple
-from common_app.models import objective, activity
+from common_app.models import objective, activity, capability
 
 
 class ObjectiveForm(ModelForm):

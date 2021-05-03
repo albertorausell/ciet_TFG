@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from common_app.models import objective, capability
+from common_app.models import objective, capability, capability_objective
 from .forms import ObjectiveForm
 
 # Create your views here.
@@ -18,64 +18,80 @@ from .forms import ObjectiveForm
 
 
 def capabilities(request):
-    capabilitiesRows = capability.objects.all()
-    dictionary = {
+    dictionary = create_base_dictionary()
+
+    cap = capability.objects.all().order_by('name')
+
+    cap_name = []
+    cap_obj = []
+    cap_stk = []
+    cap_act = []
+
+    for i in cap:
+        #
+        cap_name.append(i.name)
+        #
+        objectives_chain = ''
+        objectives = capability_objective.objects.filter(capability=i.pk)
+        for j in objectives:
+            the_objective = objective.objects.filter(
+                pk=j.objective.pk)[0]
+            objectives_chain += the_objective.name + ', '
+        cap_obj.append(objectives_chain[:-2])
+        #
+        stakeholders = i.stakeholders.all()
+        stakeholders_chain = ''
+        for j in stakeholders:
+            stakeholders_chain += j.name + ', '
+        cap_stk.append(stakeholders_chain[:-2])
+        #
+        cap_act.append(i.active)
+
+    rows = zip(cap_name, cap_obj, cap_stk, cap_act)
+
+    dictionary.update({
         'table': {
             'columns': ['Name', 'Objectives', 'Learners', 'Active', 'Actions'],
-            'rows': capabilitiesRows
-        },
-        'isTrainer': False,
-        'nombre': 'alberto rausell',
-        'organizacion': 'Universitat Politècnica de València'
-    }
+            'rows': rows
+        }
+    })
 
     return render(request, 'trainer_app/templates/capabilities.html', dictionary)
 
 
 def objectives(request):
+    dictionary = create_base_dictionary()
+
     objectivesRows = objective.objects.all().order_by('name')
+    dictionary.update({
+        'table': {
+            'columns': ['Objective', 'Actions'],
+            'rows': objectivesRows
+        }
+    })
 
     objective_form = ObjectiveForm()
-
-    objectives_forms = []
-    for data_objective in objectivesRows:
-        objectives_forms.append(ObjectiveForm(instance=data_objective))
+    dictionary.update({'objectivesForm': objective_form})
 
     if request.method == 'POST':
-        objective_to_save = ObjectiveForm(request.POST)
-        objective_to_save.save()
-
-    dictionary = {
-        'table': {
-            'columns': ['Name', 'Actions'],
-            'rows': objectivesRows
-        },
-        'objectivesForm': objective_form,
-        'nombre': 'alberto rausell',
-        'organizacion': 'Universitat Politècnica de València'
-    }
+        form = ObjectiveForm(request.POST)
+        if form.is_valid():
+            form.save()
 
     return render(request, 'objectives.html', dictionary)
 
 
 def statistics(request):
-
-    dictionary = {
-        'isTrainer': False,
-        'nombre': 'alberto rausell',
-        'organizacion': 'Universitat Politècnica de València'
-    }
+    dictionary = create_base_dictionary()
     return render(request, 'statistics.html', dictionary)
 
 
 def objective_edit(request, id):
+    dictionary = create_base_dictionary()
+
     objective_to_edit = objective.objects.get(pk=id)
     objective_form = ObjectiveForm(instance=objective_to_edit)
-
-    dictionary = {
-        'objetive_to_edit': objective_form,
-        'nombre': 'alberto rausell',
-        'organizacion': 'Universitat Politècnica de València'}
+    dictionary.update({'objetive_to_edit': objective_form})
 
     if request.method == 'POST':
         form = ObjectiveForm(request.POST, instance=objective_to_edit)
@@ -87,3 +103,11 @@ def objective_edit(request, id):
         return redirect('objectives_trainer')
 
     return render(request, 'objectives/edit_objective.html', dictionary)
+
+
+def create_base_dictionary():
+    dictionary = {
+        'nombre': 'alberto rausell',
+        'organizacion': 'Universitat Politècnica de València'
+    }
+    return dictionary

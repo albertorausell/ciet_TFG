@@ -6,21 +6,20 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
-class trainer_profile (User):
-
-    created = models.DateTimeField(auto_now_add=True)
-
-    updated = models.DateTimeField(auto_now_add=True)
+class user (User):
 
     rol = models.ForeignKey('stakeholders', on_delete=models.CASCADE)
 
     imagen = models.ImageField(upload_to='img/users')
 
-    organizations = models.ManyToManyField('organization')
 
-    def __str__(self):
+class trainer_profile (models.Model):
 
-        return self.username
+    created = models.DateTimeField(auto_now_add=True)
+
+    updated = models.DateTimeField(auto_now_add=True)
+
+    user = models.OneToOneField('user', on_delete=models.CASCADE)
 
     class Meta:
 
@@ -29,15 +28,13 @@ class trainer_profile (User):
         verbose_name_plural = 'trainer_profiles'
 
 
-class learner_profile (User):
+class learner_profile (models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
 
     updated = models.DateTimeField(auto_now_add=True)
 
-    rol = models.ForeignKey('stakeholders', on_delete=models.CASCADE)
-
-    imagen = models.ImageField(upload_to='img/users')
+    user = models.OneToOneField('user', on_delete=models.CASCADE)
 
     organization = models.ForeignKey('organization', on_delete=models.CASCADE)
 
@@ -45,7 +42,7 @@ class learner_profile (User):
 
     def __str__(self):
 
-        return self.username
+        return self.user
 
     class Meta:
 
@@ -57,7 +54,9 @@ class learner_profile (User):
 class stakeholders (models.Model):
 
     name = models.CharField(max_length=50)
+
     isTrainer = models.BooleanField()
+
     isLearner = models.BooleanField()
 
     def __str__(self):
@@ -96,7 +95,10 @@ class capability (models.Model):
 
     image = models.ImageField()
 
-    learners = models.ManyToManyField('stakeholders')
+    stakeholders = models.ManyToManyField('stakeholders')
+
+    objectives = models.ManyToManyField(
+        'objective', through='capability_objective')
 
     trainer = models.ForeignKey(
 
