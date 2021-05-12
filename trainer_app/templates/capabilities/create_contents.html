@@ -1,0 +1,162 @@
+
+{% extends "trainer_app/templates/base_trainer.html" %}
+{% load static %}
+
+
+{% block content %}
+
+
+<div class="container">
+    <form action="#" method="POST" >
+        {% csrf_token %}
+        <div class="row" style="margin-top: 30;">
+            <div class="col-2" style="text-align: left;">
+                <div class="col-1">
+                    <a class="btn btn-primary" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
+                        🡠
+                    </a>
+                </div>
+                <label id="label"></label>
+                <hr>
+                <div>
+                    <i><u>Capability plan:</u></i>
+                </div>
+                <div style="margin-left: 10;">
+                    <i>{{cap_name}}</i>
+                </div>
+                <br>
+                <br>
+                <div>
+                    <i><u>Objectives:</u></i>
+                </div>
+                <div class="list-group" style="height: 200; overflow: auto; margin-top: 10;" id="list-tab" role="tablist">
+                    {% for objective in cap_obj %}
+                        <a class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
+                            {{objective.name}}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col">
+                <div class="container" style="height: 450; text-align: center;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
+                    <div class="row">
+                        <div class="col-2 border-right">
+                            <br>
+                            <a href="#" type="button" class="link" data-toggle="modal" data-target="#addContent">
+                                <span class="fa-stack fa-lg">
+                                  <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
+                                  <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                            <br>
+                            <br>
+                            <div style="border-radius: 5px;position: relative; height: 300px; overflow: auto; display: block;">
+                                <div class="list-group" id="contents_list">
+    
+                                </div>
+                            </div>
+                            <ul id="contents_ul" hidden>
+                                {% for objective in obj_cont %}
+                                    {% for content in objective.contents %}
+                                        <li >
+                                            {{objective.cap_obj_pk}}:{{content.pk}}%{{content.name}}
+                                        </li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col">
+                            <ul id="components_ul" hidden>
+                                {% for content in cont_tech %}
+                                    {% for component in content.media_comps %}
+                                    <li >
+                                        {{content.cont.pk}}:{{content.cont.name}}
+                                    </li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            <div class="container" style="position: relative; height: 300px; overflow: auto; display: block;">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <a class="btn btn-secondary" style="margin-top: 25; color: white;" data-toggle="modal" data-target="#addComponent">Add</a>
+                                    </div>
+                                    <div class="col">
+                                        <h1 id="content_name"></h1>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" id="comp_list">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!-- The Add Modal -->
+{% include 'capabilities/new_content.html' %}
+{% include 'capabilities/new_component.html' %}
+
+<script>
+    function pressObjective(id) {
+        let string_id = id + "";
+
+        //FOR POST:
+        document.getElementById("_c").value = id + "_c";
+        //-----------------------
+        let list = document.getElementById("list-tab").getElementsByTagName("a");
+        let index = 0, click, par, idO;
+        for (let i = 0; i < list.length; i++) {
+            const element = list[i];
+            click = element.onclick.toString();
+            par = click.indexOf("('");
+            idO = click.substring(par + 2, click.indexOf("'", par + 2));
+            if (idO == string_id) {
+                document.getElementById("objMant").value = i;
+            }
+        }
+        //-----------------------
+        let contents_li = document.getElementById("contents_ul").getElementsByTagName("li");
+        let contents_list = document.getElementById("contents_list");
+        contents_list.innerHTML = '';
+        for (let i = 0; i < contents_li.length; i++) {
+            const element = contents_li[i].innerText;
+            const obj_pk = element.substring(0, element.indexOf(':')).trim();
+            const cont_pk = element.substring(element.indexOf(':') + 1, element.indexOf('%'));
+            if (id == obj_pk) {
+                contents_list.innerHTML += `
+                <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" onclick="pressContent(${cont_pk})" data-toggle="list" href="#" role="tab">${element.substring(element.indexOf('%') + 1)}</a> 
+                
+                `;    
+            //document.getElementById('label').innerText += '--' + element.substring(element.indexOf(':') + 1);
+            }        
+        }  
+    }
+
+    function pressContent(id) {
+        let string_id = id + "";
+        //----------------------------------
+        document.getElementById('label').innerText = id;
+        let components_li = document.getElementById("components_ul").getElementsByClassName("li");
+        let container = document.getElementById("comp_list");
+
+    }
+
+</script>
+<script>
+    let list = document.getElementById("list-tab");
+    list.getElementsByTagName("a")['{{obj_pos}}'].className += " active";
+    let click = list.getElementsByTagName("a")['{{obj_pos}}'].onclick.toString();
+    //click=function onclick(event) {pressObjective('2')}
+    let par = click.indexOf("('");
+    let id = click.substring(par + 2, click.indexOf("'", par + 2));
+    pressObjective(id);
+</script>
+
+{% endblock %}

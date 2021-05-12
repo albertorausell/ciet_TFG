@@ -27,6 +27,7 @@ SECRET_KEY = 'kc1s+($@7^u1t$3+12%6**#4+@x*#yywon=3n58!o4^moo4sm!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 

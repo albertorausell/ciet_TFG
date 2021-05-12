@@ -1,0 +1,44 @@
+{% block content %}
+
+<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+    {% csrf_token %}
+        <div class="modal fade" id="addContent" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add new content</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-3">
+                            Name:
+                        </div>
+                        <div class="col">
+                            {{contentsForm.name}}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-3">
+                            Dimensions:
+                        </div>
+                        <div class="col">
+                            {{contentsForm.dimension}}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input id="_c" name="action" value="" hidden>
+                <input id="objMant" name="objMant" value="0" hidden>
+                <input id="inputContent" class="btn btn-primary" type="submit" value="Add"/>
+                </div>
+            </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

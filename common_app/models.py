@@ -85,28 +85,30 @@ class organization (models.Model):
 
 class capability (models.Model):
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, default="", blank=True, null=True)
 
-    aproximatedHours = models.FloatField()
+    aproximatedHours = models.FloatField(default=None, blank=True, null=True)
 
-    active = models.BooleanField()
+    active = models.BooleanField(default=False, blank=True, null=True)
 
-    description = models.TextField()
+    description = models.TextField(default="", blank=True, null=True)
 
-    image = models.ImageField()
+    image = models.ImageField(
+        default=None, blank=True, null=True, upload_to='trainer_app/img/capabilities')
 
-    stakeholders = models.ManyToManyField('stakeholders')
+    stakeholders = models.ManyToManyField(
+        'stakeholders', default=None)
 
     objectives = models.ManyToManyField(
-        'objective', through='capability_objective')
+        'objective', through='capability_objective', default=None)
 
     trainer = models.ForeignKey(
 
-        'trainer_profile', on_delete=models.CASCADE, default=0)
+        'trainer_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     organization = models.ForeignKey(
 
-        'organization', on_delete=models.CASCADE)
+        'organization', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 
@@ -169,15 +171,16 @@ class activity (models.Model):
 
 class content (models.Model):
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, default=None, blank=True, null=True)
 
-    order = models.IntegerField()
+    order = models.IntegerField(default=None, blank=True, null=True)
 
     capability_objective = models.ForeignKey(
 
-        'capability_objective', on_delete=models.CASCADE)
+        'capability_objective', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
-    dimension = models.ForeignKey('dimension', on_delete=models.CASCADE)
+    dimension = models.ForeignKey(
+        'dimension', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 

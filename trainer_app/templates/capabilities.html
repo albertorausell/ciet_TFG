@@ -9,9 +9,9 @@
 <div class="container" style="height: 500;">
     <div class="row" style="height: 100;">
         <div class="col-3">
-            <button type="button" style="margin-top: 30;" class="btn btn-primary btn-block" data-toggle="modal" data-target="#">
+            <a type="button" href="{% url 'capability_name' id_str='-1' %}" style="margin-top: 30;" class="btn btn-primary btn-block">
                 Add
-            </button>
+            </a>
         </div>
         <div class="col">
         </div>
@@ -54,7 +54,7 @@
                                 {% endif %}
                             </td>
                             <td style="text-align: center;">
-                                <a href=# ><span class="fa fa-pencil"></span></a>
+                                <a href="{% url 'capability_name' id_str=row.4 %}" ><span class="fa fa-pencil"></span></a>
                             </td>
                         </tr>
                       {% endfor %}
