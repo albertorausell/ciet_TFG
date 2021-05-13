@@ -29,7 +29,7 @@
                 <div>
                     <i><u>Objectives:</u></i>
                 </div>
-                <div class="list-group" style="height: 200; overflow: auto; margin-top: 10;" id="list-tab" role="tablist">
+                <div class="list-group" style="height: 200; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
                     {% for objective in cap_obj %}
                         <a class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
                             {{objective.name}}
@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col-2 border-right">
                             <br>
-                            <a href="#" type="button" class="link" data-toggle="modal" data-target="#addContent">
+                            <a href="#" type="button" data-toggle="modal" data-target="#addContent">
                                 <span class="fa-stack fa-lg">
                                   <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
                                   <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
@@ -50,10 +50,8 @@
                             </a>
                             <br>
                             <br>
-                            <div style="border-radius: 5px;position: relative; height: 300px; overflow: auto; display: block;">
-                                <div class="list-group" id="contents_list">
-    
-                                </div>
+                            <div class="list-group" id="contents_list" role="tablist" style="border-radius: 5px;position: relative; height: 300px; overflow: auto; display: block;">
+                                
                             </div>
                             <ul id="contents_ul" hidden>
                                 {% for objective in obj_cont %}
@@ -78,15 +76,29 @@
                             <div class="container" style="position: relative; height: 300px; overflow: auto; display: block;">
                                 <div class="row">
                                     <div class="col-2">
-                                        <a class="btn btn-secondary" style="margin-top: 25; color: white;" data-toggle="modal" data-target="#addComponent">Add</a>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" style="margin-top: 25;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Add
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addText">Text</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addImage">Image</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addVideo">Video</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addDocument">Document</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addLink">Link</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addGame">Game</a>
+                                              </div>
+                                        </div>
                                     </div>
                                     <div class="col">
-                                        <h1 id="content_name"></h1>
+                                        <h1 class="display-4" style="margin-top: 10;" id="content_name"></h1>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" id="comp_list">
+                                        <div id="comp_list" class="container">
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -104,24 +116,52 @@
 {% include 'capabilities/new_component.html' %}
 
 <script>
+    function quitActive(string) {
+        let index = string.indexOf(' active');
+        if (index > 0) {
+            return string.substring(0, index) + string.substring(index + 7);
+        } else {
+            return string;
+        }
+    }
+
+    function getIdByOnClick(element){
+        let click = element.onclick.toString();
+        let par = click.indexOf("('");
+        //click="function onclick(event) {pressObjective('2')}"
+        let idO = click.substring(par + 2, click.indexOf("'", par + 2));
+        return idO;
+    }
+
+    function pressIndexOfList(index, listId) {
+        let list = document.getElementById(listId);
+        if (list.getElementsByTagName("a").length > 0) {
+            let id = getIdByOnClick(list.getElementsByTagName("a")[index]);
+            if (listId == 'obj_list') {
+                pressObjective(id);
+            } else {
+                pressContent(id);
+            }
+        }
+    }
+
     function pressObjective(id) {
         let string_id = id + "";
 
         //FOR POST:
         document.getElementById("_c").value = id + "_c";
         //-----------------------
-        let list = document.getElementById("list-tab").getElementsByTagName("a");
-        let index = 0, click, par, idO;
+        let list = document.getElementById("obj_list").getElementsByTagName("a");
         for (let i = 0; i < list.length; i++) {
             const element = list[i];
-            click = element.onclick.toString();
-            par = click.indexOf("('");
-            idO = click.substring(par + 2, click.indexOf("'", par + 2));
+            element.className = quitActive(element.className);
+            idO = getIdByOnClick(element);
             if (idO == string_id) {
                 document.getElementById("objMant").value = i;
+                element.className += " active";
             }
         }
-        //-----------------------
+        //----------PLACE CONTENTS-------------
         let contents_li = document.getElementById("contents_ul").getElementsByTagName("li");
         let contents_list = document.getElementById("contents_list");
         contents_list.innerHTML = '';
@@ -131,32 +171,64 @@
             const cont_pk = element.substring(element.indexOf(':') + 1, element.indexOf('%'));
             if (id == obj_pk) {
                 contents_list.innerHTML += `
-                <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" onclick="pressContent(${cont_pk})" data-toggle="list" href="#" role="tab">${element.substring(element.indexOf('%') + 1)}</a> 
+                <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" onclick="pressContent('${cont_pk}')" data-toggle="list" href="#" role="tab">${element.substring(element.indexOf('%') + 1)}</a> 
                 
                 `;    
             //document.getElementById('label').innerText += '--' + element.substring(element.indexOf(':') + 1);
-            }        
+            }
         }  
+        pressIndexOfList(0, 'contents_list');
     }
 
     function pressContent(id) {
         let string_id = id + "";
-        //----------------------------------
-        document.getElementById('label').innerText = id;
-        let components_li = document.getElementById("components_ul").getElementsByClassName("li");
-        let container = document.getElementById("comp_list");
 
+        //FOR POST:
+        document.getElementById("textin").value = id + "&txt";
+        document.getElementById("imagein").value = id + "&img";
+        document.getElementById("videoin").value = id + "&vid";
+        document.getElementById("documentin").value = id + "&doc";
+        document.getElementById("linkin").value = id + "&lnk";
+        document.getElementById("gamein").value = id + "&gme";
+        //----------------------------------
+        let list = document.getElementById("contents_list").getElementsByTagName("a");
+        for (let i = 0; i < list.length; i++) {
+            const element = list[i];
+            element.className = quitActive(element.className);
+            idO = getIdByOnClick(element);
+            if (idO == string_id) {
+                document.getElementById("contManttext").value = i;
+                document.getElementById("contMantimage").value = i;
+                document.getElementById("contMantvideo").value = i;
+                document.getElementById("contMantdocument").value = i;
+                document.getElementById("contMantlink").value = i;
+                document.getElementById("contMantgame").value = i;
+                element.className += " active";
+                //-----
+                document.getElementById("content_name").textContent = element.textContent;
+            }
+        }
+        //----------PLACE COMPONENTS-------------
+        let components_list = document.getElementById("comp_list");
+        document.getElementById('label').innerText = '{{cont_tech.0.media_comps.0.types}}'
+
+
+
+
+
+
+
+
+
+
+
+       
     }
 
 </script>
 <script>
-    let list = document.getElementById("list-tab");
-    list.getElementsByTagName("a")['{{obj_pos}}'].className += " active";
-    let click = list.getElementsByTagName("a")['{{obj_pos}}'].onclick.toString();
-    //click=function onclick(event) {pressObjective('2')}
-    let par = click.indexOf("('");
-    let id = click.substring(par + 2, click.indexOf("'", par + 2));
-    pressObjective(id);
+    pressIndexOfList('{{obj_pos}}', 'obj_list');
+    pressIndexOfList('{{cont_pos}}', 'contents_list');
 </script>
 
 {% endblock %}

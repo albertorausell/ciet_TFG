@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from common_app.models import training_technique, objective, capability, capability_objective, content
-from .forms import Component, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
+from .forms import Text, Image, Video, Document, Link, Game, Component, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
 # Create your views here.
@@ -191,8 +191,9 @@ def cap_contents(request, id, obj_pos, cont_pos):
     cap = capability.objects.get(pk=id)
 
     if request.method == 'POST':
-        if '_c' in request.POST['action']:
-            idObj = request.POST['action'][:-2]
+        value = request.POST['action']
+        if '_c' in value:
+            idObj = value[:-2]
             form = Contents(request.POST)
             if form.is_valid():
                 objective = capability_objective.objects.filter(
@@ -203,6 +204,77 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 cont.capability_objective = objective[0]
                 cont.save()
                 return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=cont_pos)
+        if '&txt' in value:
+            idCon = value[:-4]
+            form = Text(request.POST)
+            if form.is_valid():
+                txt = form.save()
+                tt = training_technique()
+                tt.types = 'txt'
+                tt.content = content.objects.get(pk=idCon)
+                tt.reference = txt.pk
+                tt.save()
+                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+
+        if '&img' in value:
+            idCon = value[:-4]
+            form = Image(request.POST, request.FILES)
+            if form.is_valid():
+                img = form.save()
+                tt = training_technique()
+                tt.types = 'img'
+                tt.content = content.objects.get(pk=idCon)
+                tt.reference = img.pk
+                tt.save()
+                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+
+        if '&vid' in value:
+            idCon = value[:-4]
+            form = Video(request.POST, request.FILES)
+            if form.is_valid():
+                vid = form.save()
+                tt = training_technique()
+                tt.types = 'vid'
+                tt.content = content.objects.get(pk=idCon)
+                tt.reference = vid.pk
+                tt.save()
+                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+
+        if '&doc' in value:
+            idCon = value[:-4]
+            form = Document(request.POST, request.FILES)
+            if form.is_valid():
+                vid = form.save()
+                tt = training_technique()
+                tt.types = 'doc'
+                tt.content = content.objects.get(pk=idCon)
+                tt.reference = vid.pk
+                tt.save()
+                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+
+        if '&lnk' in value:
+            idCon = value[:-4]
+            form = Link(request.POST)
+            if form.is_valid():
+                lnk = form.save()
+                tt = training_technique()
+                tt.types = 'lnk'
+                tt.content = content.objects.get(pk=idCon)
+                tt.reference = lnk.pk
+                tt.save()
+                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+
+        if '&gme' in value:
+            idCon = value[:-4]
+            form = Game(request.POST)
+            if form.is_valid():
+                gme = form.save()
+                tt = training_technique()
+                tt.types = 'gme'
+                tt.content = content.objects.get(pk=idCon)
+                tt.reference = gme.pk
+                tt.save()
+                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
     else:
         objs = cap.objectives.all()
@@ -213,7 +285,14 @@ def cap_contents(request, id, obj_pos, cont_pos):
             'cap_id': cap.pk,
             'cap_obj': objs,
             'contentsForm': Contents(),
-            'componentsForm': Component(),
+            'componentsForms': {
+                'text': Text(),
+                'image': Image(),
+                'video': Video(),
+                'document': Document(),
+                'link': Link(),
+                'game': Game(),
+            },
         })
 
         obj_cont = []

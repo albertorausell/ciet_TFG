@@ -1,5 +1,6 @@
-from django.forms import ChoiceField, CheckboxInput, CheckboxSelectMultiple, TextInput, Form, ImageField, Textarea, ModelForm, CharField, ModelMultipleChoiceField, CheckboxSelectMultiple
-from common_app.models import training_technique, objective, activity, capability, stakeholders, content, dimension
+from django.db.models.base import Model
+from django.forms import FileInput, ChoiceField, CheckboxInput, CheckboxSelectMultiple, TextInput, Form, ImageField, Textarea, ModelForm, CharField, ModelMultipleChoiceField, CheckboxSelectMultiple
+from common_app.models import text_component, image_component, video_component, document_component, link_component, game_component, training_technique, objective, activity, capability, stakeholders, content, dimension
 
 
 class ObjectiveForm(ModelForm):
@@ -65,3 +66,69 @@ class Component(ModelForm):
     class Meta:
         model = training_technique
         fields = ['types', 'reference']
+
+
+class Text(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['value'].required = True
+        self.fields['value'].widget = Textarea(attrs={
+            'style': 'width: 100%; height: 300; padding: 10'
+        })
+
+    class Meta:
+        model = text_component
+        fields = ['value']
+
+
+class Image(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['value'].required = True
+
+    class Meta:
+        model = image_component
+        fields = ['value']
+
+
+class Video(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['value'].required = True
+        self.fields['value'].widget = FileInput(attrs={'accept': '.mp4'})
+
+    class Meta:
+        model = video_component
+        fields = ['value']
+
+
+class Document(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['value'].required = True
+
+    class Meta:
+        model = document_component
+        fields = ['value']
+
+
+class Link(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['value'].required = True
+        self.fields['value'].widget = TextInput(attrs={'style': 'width: 100%'})
+
+    class Meta:
+        model = link_component
+        fields = ['value']
+
+
+class Game(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['value'].required = True
+        self.fields['value'].widget = TextInput(attrs={'style': 'width: 100%'})
+
+    class Meta:
+        model = game_component
+        fields = ['value']

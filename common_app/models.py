@@ -171,7 +171,7 @@ class activity (models.Model):
 
 class content (models.Model):
 
-    name = models.CharField(max_length=50, default=None, blank=True, null=True)
+    name = models.CharField(max_length=20, default=None, blank=True, null=True)
 
     order = models.IntegerField(default=None, blank=True, null=True)
 
@@ -197,28 +197,34 @@ class training_technique (models.Model):
 
     DOCUMENT = 'doc'
 
-    GAME = 'game'
+    LINK = 'lnk'
+
+    GAME = 'gme'
 
     TRAINING_TYPES = (
 
-        (TEXT, 'text'),
+        (TEXT, 'Text'),
 
-        (IMAGE, 'image'),
+        (IMAGE, 'Image'),
 
-        (VIDEO, 'video'),
+        (VIDEO, 'Video'),
 
-        (DOCUMENT, 'document'),
+        (DOCUMENT, 'Document'),
 
-        (GAME, 'game'),
+        (LINK, 'Link'),
+
+        (GAME, 'Game'),
     )
 
-    order = models.IntegerField()
+    order = models.IntegerField(default=None, blank=True, null=True)
 
-    types = models.CharField(max_length=4, choices=TRAINING_TYPES)
+    types = models.CharField(
+        max_length=4, choices=TRAINING_TYPES, default=None, blank=True, null=True)
 
-    reference = models.TextField()
+    reference = models.IntegerField(default=None, blank=True, null=True)
 
-    content = models.ForeignKey('content', on_delete=models.CASCADE)
+    content = models.ForeignKey(
+        'content', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
 
 class evaluation (models.Model):
@@ -326,3 +332,33 @@ class capability_learner (models.Model):
         verbose_name = 'capability_learner'
 
         verbose_name_plural = 'capability_learner'
+
+
+class text_component (models.Model):
+
+    value = models.TextField(default="", blank=True, null=True)
+
+
+class image_component (models.Model):
+
+    value = models.ImageField(default="", blank=True, null=True)
+
+
+class video_component (models.Model):
+
+    value = models.FileField(default="", blank=True, null=True)
+
+
+class document_component (models.Model):
+
+    value = models.FileField(default="", blank=True, null=True)
+
+
+class link_component (models.Model):
+
+    value = models.TextField(default="", blank=True, null=True)
+
+
+class game_component (models.Model):
+
+    value = models.TextField(default="", blank=True, null=True)
