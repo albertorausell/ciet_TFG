@@ -57,17 +57,6 @@ class Contents(ModelForm):
         fields = ['name', 'dimension']
 
 
-class Component(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['types'].required = True
-        self.fields['reference'].required = True
-
-    class Meta:
-        model = training_technique
-        fields = ['types', 'reference']
-
-
 class Text(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

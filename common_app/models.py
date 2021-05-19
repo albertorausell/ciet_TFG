@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+from model_utils.managers import InheritanceManager
 
 
 # Create your models here.
@@ -215,16 +216,15 @@ class training_technique (models.Model):
 
         (GAME, 'Game'),
     )
+    type = models.CharField(
+        max_length=4, choices=TRAINING_TYPES, default=None, blank=True, null=True)
 
     order = models.IntegerField(default=None, blank=True, null=True)
 
-    types = models.CharField(
-        max_length=4, choices=TRAINING_TYPES, default=None, blank=True, null=True)
-
-    reference = models.IntegerField(default=None, blank=True, null=True)
-
     content = models.ForeignKey(
         'content', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    objects = InheritanceManager()
 
 
 class evaluation (models.Model):
@@ -334,31 +334,31 @@ class capability_learner (models.Model):
         verbose_name_plural = 'capability_learner'
 
 
-class text_component (models.Model):
+class text_component (training_technique):
 
     value = models.TextField(default="", blank=True, null=True)
 
 
-class image_component (models.Model):
+class image_component (training_technique):
 
     value = models.ImageField(default="", blank=True, null=True)
 
 
-class video_component (models.Model):
+class video_component (training_technique):
 
     value = models.FileField(default="", blank=True, null=True)
 
 
-class document_component (models.Model):
+class document_component (training_technique):
 
     value = models.FileField(default="", blank=True, null=True)
 
 
-class link_component (models.Model):
+class link_component (training_technique):
 
     value = models.TextField(default="", blank=True, null=True)
 
 
-class game_component (models.Model):
+class game_component (training_technique):
 
     value = models.TextField(default="", blank=True, null=True)

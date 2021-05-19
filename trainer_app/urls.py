@@ -24,4 +24,7 @@ urlpatterns = [
 
     path('capabilities/contents/<int:id>/<int:obj_pos>/<int:cont_pos>/',
          views.cap_contents, name='contents'),
+
+    path('capabilities/contents/delete_component/',
+         views.deleteComponentReq, name='deleteComponent'),
 ]

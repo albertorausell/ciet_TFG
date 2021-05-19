@@ -6,41 +6,47 @@
 {% block content %}
 
 
-<div class="container">
-    <form action="#" method="POST" >
-        {% csrf_token %}
+<div style="margin: 5%;">
         <div class="row" style="margin-top: 30;">
             <div class="col-2" style="text-align: left;">
-                <div class="col-1">
-                    <a class="btn btn-primary" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
-                        🡠
-                    </a>
-                </div>
-                <label id="label"></label>
-                <hr>
-                <div>
-                    <i><u>Capability plan:</u></i>
-                </div>
-                <div style="margin-left: 10;">
-                    <i>{{cap_name}}</i>
-                </div>
-                <br>
-                <br>
-                <div>
-                    <i><u>Objectives:</u></i>
-                </div>
-                <div class="list-group" style="height: 200; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
-                    {% for objective in cap_obj %}
-                        <a class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
-                            {{objective.name}}
+                <div class="row">
+                    <div class="col">
+                        <a class="btn btn-primary" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
+                            🡠
                         </a>
-                    {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label id="label"></label>
+                        <hr>
+                        <div>
+                            <i><u>Capability plan:</u></i>
+                        </div>
+                        <div style="margin-left: 10;">
+                            <i>{{cap_name}}</i>
+                        </div>
+                        <br>
+                        <br>
+                        <div>
+                            <i><u>Objectives:</u></i>
+                        </div>
+                        <div class="list-group" style="height: 80%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
+                            {% for objective in cap_obj %}
+                                <a class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
+                                    {{objective.name}}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="container" style="height: 450; text-align: center;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
-                    <div class="row">
-                        <div class="col-2 border-right">
+            <input id="currentObjective" value="" hidden>
+            <input id="currentContent" value="" hidden>
+            <div class="col" style="height: 80%; width: 50%;">
+                <div style="height: 80%; text-align: center;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
+                    <div class="row" style="height: 100%;">
+                        <div class="col-3 border-right" style="padding-right: 5%;padding-left: 5%;">
                             <br>
                             <a href="#" type="button" data-toggle="modal" data-target="#addContent">
                                 <span class="fa-stack fa-lg">
@@ -50,7 +56,7 @@
                             </a>
                             <br>
                             <br>
-                            <div class="list-group" id="contents_list" role="tablist" style="border-radius: 5px;position: relative; height: 300px; overflow: auto; display: block;">
+                            <div class="list-group" id="contents_list" role="tablist" style="border-radius: 5px;position: relative; height: 75%; overflow: auto; display: block;">
                                 
                             </div>
                             <ul id="contents_ul" hidden>
@@ -63,7 +69,7 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        <div class="col">
+                        <div class="col" style="height: 100%; width: 50%;">
                             <ul id="components_ul" hidden>
                                 {% for content in cont_tech %}
                                     {% for component in content.media_comps %}
@@ -73,9 +79,9 @@
                                     {% endfor %}
                                 {% endfor %}
                             </ul>
-                            <div class="container" style="position: relative; height: 300px; overflow: auto; display: block;">
+                            <div style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
                                 <div class="row">
-                                    <div class="col-2">
+                                    <div class="col-1">
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" style="margin-top: 25;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Add
@@ -86,17 +92,18 @@
                                                 <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addVideo">Video</a>
                                                 <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addDocument">Document</a>
                                                 <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addLink">Link</a>
-                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addGame">Game</a>
-                                              </div>
+                                                    <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addGame">Game</a>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <h1 class="display-4" style="margin-top: 10;" id="content_name"></h1>
+                                    <div class="col-11">
+                                        <h1 class="display-4 border-bottom" style="height: 100%; margin-top: 5; position: relative; left: -40;" id="content_name"></h1>
+                                        
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col" id="comp_list">
-                                        <div id="comp_list" class="container">
+                                    <div class="col" style="height: 600;">
+                                        <div id="comp_list" style="margin-top: 5; position: relative; height: 90%; overflow: auto; display: block;overflow-x: hidden;">
 
                                         </div>
                                     </div>
@@ -107,7 +114,6 @@
                 </div>
             </div>
         </div>
-    </form>
 </div>
 
 
@@ -115,11 +121,28 @@
 {% include 'capabilities/new_content.html' %}
 {% include 'capabilities/new_component.html' %}
 
-<script>
+<script type="text/javascript">
     function quitActive(string) {
         let index = string.indexOf(' active');
         if (index > 0) {
             return string.substring(0, index) + string.substring(index + 7);
+        } else {
+            return string;
+        }
+    }
+    
+    function quitDisabled(string) {
+        let index = string.indexOf(' disabled');
+        if (index > 0) {
+            return string.substring(0, index) + string.substring(index + 9);
+        } else {
+            return string;
+        }
+    }
+
+    function addDisabled(string) {
+        if (string.indexOf(' disabled') < 0) {
+            return string + ' disabled';
         } else {
             return string;
         }
@@ -158,10 +181,13 @@
             idO = getIdByOnClick(element);
             if (idO == string_id) {
                 document.getElementById("objMant").value = i;
+                document.getElementById("currentObjective").value = i;
                 element.className += " active";
             }
         }
         //----------PLACE CONTENTS-------------
+        document.getElementById("comp_list").innerHTML = '<br>';
+        document.getElementById("dropdownMenuButton").className = addDisabled(document.getElementById("dropdownMenuButton").className);
         let contents_li = document.getElementById("contents_ul").getElementsByTagName("li");
         let contents_list = document.getElementById("contents_list");
         contents_list.innerHTML = '';
@@ -180,6 +206,18 @@
         pressIndexOfList(0, 'contents_list');
     }
 
+    function print(string){
+        document.getElementById('label').innerText = string;
+    }
+
+    function getCurrentContent() {
+        return document.getElementById("currentContent").value;
+    }
+
+    function getCurrentObjective() {
+        return document.getElementById("currentObjective").value;
+    }
+
     function pressContent(id) {
         let string_id = id + "";
 
@@ -191,6 +229,8 @@
         document.getElementById("linkin").value = id + "&lnk";
         document.getElementById("gamein").value = id + "&gme";
         //----------------------------------
+        let add = document.getElementById("dropdownMenuButton");
+        add.className = quitDisabled(add.className);
         let list = document.getElementById("contents_list").getElementsByTagName("a");
         for (let i = 0; i < list.length; i++) {
             const element = list[i];
@@ -203,6 +243,7 @@
                 document.getElementById("contMantdocument").value = i;
                 document.getElementById("contMantlink").value = i;
                 document.getElementById("contMantgame").value = i;
+                document.getElementById("currentContent").value = i;
                 element.className += " active";
                 //-----
                 document.getElementById("content_name").textContent = element.textContent;
@@ -210,18 +251,176 @@
         }
         //----------PLACE COMPONENTS-------------
         let components_list = document.getElementById("comp_list");
-        document.getElementById('label').innerText = '{{cont_tech.0.media_comps.0.types}}'
+        components_list.innerHTML = '<br>';
+        let length = '{{cont_tech|length}}', contId;
+        let comps = [];
+        {% for cont in cont_tech %}
+            contId = '{{cont.cont.pk}}'
+            if (contId == id) {
+                {% for comp in cont.media_comps %}
+                    if ('{{comp.type}}' == 'img' ||
+                        '{{comp.type}}' == 'vid' ||
+                        '{{comp.type}}' == 'doc') {
+                        comps.push(['{{comp.type}}', '{{comp.value.url}}', '{{comp.pk}}']);
+                    } else {
+                        comps.push(['{{comp.type}}', '{{comp.value}}', '{{comp.pk}}']);
+                    }
+                {% endfor %}
+            }
+        {% endfor %}
 
-
-
-
-
-
-
-
-
-
-
+        for (let i = 0; i < comps.length; i++) {
+            const element = comps[i];
+            switch (element[0]) {
+                case 'txt':
+                    components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: justify; width: 50%; word-wrap: break-word">
+                                        ${element[1]}
+                                    </div>
+                                    <div class="col-1" style="margin-right:30;">
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr>
+                    `
+                    break;
+            
+                case 'img':
+                    components_list.innerHTML += `
+                    
+                    <form action="{% url 'deleteComponent' %}" method="POST">
+                        {% csrf_token %}
+                        <div style="position:relative; left:10%">
+                            <p class="row">
+                                <img style="border-radius: 20px;" class="img-fluid" src="${element[1]}" width="75%" height="75%">
+                                <span>
+                                    <input name="contPos" value="${getCurrentContent()}" hidden>
+                                    <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                    <input name="idCap" value="{{cap_id}}" hidden>
+                                    <input name="compId" value="${element[2]}" hidden>
+                                    <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    <a style="text-decoration:none;cursor: pointer; color: blue; display:block; margin-left:5" href="${element[1]}" target="_blank" class="fa fa-eye fa-2x"></a>
+                                </span>
+                            </p>
+                        </div>
+                    </form>
+                    <hr>
+                    `;
+                    break;
+            
+                case 'vid':
+                    components_list.innerHTML += `
+                    <form action="{% url 'deleteComponent' %}" method="POST">
+                        {% csrf_token %}
+                        <div style="position:relative; left:10%">
+                            <p class="row">
+                                <video style="border-radius: 20px;" width="70%" height="70%" controls>
+                                    <source src="${element[1]}" type="video/mp4">
+                                </video>
+                                <input name="contPos" value="${getCurrentContent()}" hidden>
+                                <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                <input name="idCap" value="{{cap_id}}" hidden>
+                                <input name="compId" value="${element[2]}" hidden>
+                                <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                            </p>
+                        </div>
+                    </form>
+                    <hr>
+                    `
+                    break;
+        
+                case 'doc':
+                    let string = element[1];
+                    let fileName = string.substring(string.indexOf('/media/') + 7);
+                    components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: left;width: 50%; word-wrap: break-word">
+                                        <a href="${element[1]}" target="_blank">
+                                            <i class="fa fa-file fa-2x" aria-hidden="true"></i>
+                                            ${fileName}
+                                        </a>
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr>
+                    `;
+                    break;
+            
+                case 'lnk':
+                    components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                            {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: left;width: 50%; word-wrap: break-word">
+                                        <a href="${element[1]}" target="_blank">
+                                            <i class="fa fa-link fa-2x" aria-hidden="true"></i>
+                                            <p style="display:inline">
+                                                ${element[1]}
+                                            </p>
+                                        </a>
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr>
+                    `
+                    break;
+        
+                case 'gme':
+                components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: left;width: 50%; word-wrap: break-word">
+                                        <a href="${element[1]}" target="_blank">
+                                            <i class="fa fa-gamepad fa-2x" aria-hidden="true"></i>
+                                            <p style="display:inline">
+                                                ${element[1]}
+                                            </p>
+                                        </a>
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr>
+                    `
+                    break;
+            
+                default:
+                    break;
+            }
+        }
        
     }
 
@@ -230,5 +429,7 @@
     pressIndexOfList('{{obj_pos}}', 'obj_list');
     pressIndexOfList('{{cont_pos}}', 'contents_list');
 </script>
+
+
 
 {% endblock %}

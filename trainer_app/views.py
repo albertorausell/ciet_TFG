@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from common_app.models import training_technique, objective, capability, capability_objective, content
-from .forms import Text, Image, Video, Document, Link, Game, Component, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
+from .forms import Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
 # Create your views here.
@@ -208,72 +208,66 @@ def cap_contents(request, id, obj_pos, cont_pos):
             idCon = value[:-4]
             form = Text(request.POST)
             if form.is_valid():
-                txt = form.save()
-                tt = training_technique()
-                tt.types = 'txt'
-                tt.content = content.objects.get(pk=idCon)
-                tt.reference = txt.pk
-                tt.save()
+                txt = form.save(commit=False)
+                txt.order = getOrder(idCon)
+                txt.type = 'txt'
+                txt.content = content.objects.get(pk=idCon)
+                txt.save()
                 return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
         if '&img' in value:
             idCon = value[:-4]
             form = Image(request.POST, request.FILES)
             if form.is_valid():
-                img = form.save()
-                tt = training_technique()
-                tt.types = 'img'
-                tt.content = content.objects.get(pk=idCon)
-                tt.reference = img.pk
-                tt.save()
+                img = form.save(commit=False)
+                img.order = getOrder(idCon)
+                img.type = 'img'
+                img.content = content.objects.get(pk=idCon)
+                img.save()
                 return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
         if '&vid' in value:
             idCon = value[:-4]
             form = Video(request.POST, request.FILES)
             if form.is_valid():
-                vid = form.save()
-                tt = training_technique()
-                tt.types = 'vid'
-                tt.content = content.objects.get(pk=idCon)
-                tt.reference = vid.pk
-                tt.save()
+                vid = form.save(commit=False)
+                vid.order = getOrder(idCon)
+                vid.type = 'vid'
+                vid.content = content.objects.get(pk=idCon)
+                vid.save()
                 return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
         if '&doc' in value:
             idCon = value[:-4]
             form = Document(request.POST, request.FILES)
             if form.is_valid():
-                vid = form.save()
-                tt = training_technique()
-                tt.types = 'doc'
-                tt.content = content.objects.get(pk=idCon)
-                tt.reference = vid.pk
-                tt.save()
+                doc = form.save(commit=False)
+                doc.order = getOrder(idCon)
+                doc.type = 'doc'
+                doc.content = content.objects.get(pk=idCon)
+                doc.save()
                 return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
         if '&lnk' in value:
             idCon = value[:-4]
             form = Link(request.POST)
             if form.is_valid():
-                lnk = form.save()
-                tt = training_technique()
-                tt.types = 'lnk'
-                tt.content = content.objects.get(pk=idCon)
-                tt.reference = lnk.pk
-                tt.save()
+                lnk = form.save(commit=False)
+                lnk.order = getOrder(idCon)
+                lnk.type = 'lnk'
+                lnk.content = content.objects.get(pk=idCon)
+                lnk.save()
                 return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
         if '&gme' in value:
             idCon = value[:-4]
             form = Game(request.POST)
             if form.is_valid():
-                gme = form.save()
-                tt = training_technique()
-                tt.types = 'gme'
-                tt.content = content.objects.get(pk=idCon)
-                tt.reference = gme.pk
-                tt.save()
+                gme = form.save(commit=False)
+                gme.order = getOrder(idCon)
+                gme.type = 'gme'
+                gme.content = content.objects.get(pk=idCon)
+                gme.save()
                 return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
 
     else:
@@ -309,10 +303,10 @@ def cap_contents(request, id, obj_pos, cont_pos):
             for cont in contents:
                 media_comps = training_technique.objects.filter(
                     content=cont.pk
-                )
+                ).select_subclasses()
                 cont_tech.append({
                     'cont': cont,
-                    'media_comps': media_comps,
+                    'media_comps': orderComps(media_comps),
                 })
         dictionary.update({
             'obj_cont': obj_cont,
@@ -322,6 +316,31 @@ def cap_contents(request, id, obj_pos, cont_pos):
         return render(request, 'capabilities/create_contents.html', dictionary)
 
     return HttpResponse(status=204)
+
+
+def getOrder(idCon):
+    components = training_technique.objects.filter(
+        content=idCon
+    ).select_subclasses()
+    max = 0
+    for comp in components:
+        if comp.order > max:
+            max = comp.order
+
+    return max + 1
+
+
+def deleteComponentReq(request):
+    deleteComponent(request.POST['compId'])
+    return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objPos'], cont_pos=request.POST['contPos'])
+
+
+def deleteComponent(id):
+    tt_to_delete = training_technique.objects.filter(pk=id)
+    comp_to_delete = tt_to_delete.select_subclasses()[0]
+    tt_to_delete = tt_to_delete[0]
+    tt_to_delete.delete()
+    comp_to_delete.delete()
 
 
 def objectives(request):
@@ -368,6 +387,25 @@ def objective_edit(request, id):
         return redirect('objectives_trainer')
 
     return render(request, 'objectives/edit_objective.html', dictionary)
+
+
+def orderComps(comps):
+    res = []
+    for comp in comps:
+        if len(res) == 0:
+            res.append(comp)
+        else:
+            i = 0
+            inserted = False
+            for element in res:
+                if (not inserted and comp.order < element.order):
+                    res.insert(i, comp)
+                    inserted = True
+                i = i + 1
+            if (not inserted):
+                res.append(comp)
+
+    return res
 
 
 def create_base_dictionary():
