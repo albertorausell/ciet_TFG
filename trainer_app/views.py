@@ -203,7 +203,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 cont.dimension = form.cleaned_data.get("dimension")
                 cont.capability_objective = objective[0]
                 cont.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=cont_pos)
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
         if '&txt' in value:
             idCon = value[:-4]
             form = Text(request.POST)
@@ -213,7 +213,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 txt.type = 'txt'
                 txt.content = content.objects.get(pk=idCon)
                 txt.save()
-                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
         if '&img' in value:
             idCon = value[:-4]
@@ -224,7 +224,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 img.type = 'img'
                 img.content = content.objects.get(pk=idCon)
                 img.save()
-                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
         if '&vid' in value:
             idCon = value[:-4]
@@ -235,7 +235,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 vid.type = 'vid'
                 vid.content = content.objects.get(pk=idCon)
                 vid.save()
-                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
         if '&doc' in value:
             idCon = value[:-4]
@@ -246,7 +246,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 doc.type = 'doc'
                 doc.content = content.objects.get(pk=idCon)
                 doc.save()
-                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
         if '&lnk' in value:
             idCon = value[:-4]
@@ -257,7 +257,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 lnk.type = 'lnk'
                 lnk.content = content.objects.get(pk=idCon)
                 lnk.save()
-                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
         if '&gme' in value:
             idCon = value[:-4]
@@ -268,7 +268,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 gme.type = 'gme'
                 gme.content = content.objects.get(pk=idCon)
                 gme.save()
-                return redirect('contents', id=id, obj_pos=obj_pos, cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
     else:
         objs = cap.objectives.all()
@@ -328,6 +328,19 @@ def getOrder(idCon):
             max = comp.order
 
     return max + 1
+
+
+def deleteContentReq(request):
+    deleteContent(request.POST['idCont'])
+    return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objMant'], cont_pos=request.POST['contMant'])
+
+
+def deleteContent(id):
+    cont_to_delete = content.objects.get(pk=id)
+    comps_to_delete = training_technique.objects.filter(content=id)
+    for comp in comps_to_delete:
+        deleteComponent(comp.pk)
+    cont_to_delete.delete()
 
 
 def deleteComponentReq(request):

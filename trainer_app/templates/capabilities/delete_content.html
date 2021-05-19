@@ -1,0 +1,37 @@
+
+{% extends "trainer_app/templates/base_trainer.html" %}
+{% load static %}
+
+
+{% block content %}
+
+
+<form action="{% url 'deleteContent' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="deleteContent" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Remove content</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove this content?
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <input id="textin" name="action" value="text" hidden>
+            <input id="contMantdel" name="contMant" value="0" hidden>
+            <input id="objMantdel" name="objMant" value="0" hidden>
+            <input name="idCap" value="{{cap_id}}" hidden>
+            <input id="idContdel" name="idCont" value="0" hidden>
+            <input class="btn btn-danger" type="submit" value="Remove"/>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

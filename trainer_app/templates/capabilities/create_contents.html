@@ -33,7 +33,7 @@
                         </div>
                         <div class="list-group" style="height: 80%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
                             {% for objective in cap_obj %}
-                                <a class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
+                                <a style="word-wrap: break-word;" class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
                                     {{objective.name}}
                                 </a>
                             {% endfor %}
@@ -46,7 +46,7 @@
             <div class="col" style="height: 80%; width: 50%;">
                 <div style="height: 80%; text-align: center;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
                     <div class="row" style="height: 100%;">
-                        <div class="col-3 border-right" style="padding-right: 5%;padding-left: 5%;">
+                        <div class="col-3 border-right" style="padding-left: 3%;">
                             <br>
                             <a href="#" type="button" data-toggle="modal" data-target="#addContent">
                                 <span class="fa-stack fa-lg">
@@ -56,7 +56,7 @@
                             </a>
                             <br>
                             <br>
-                            <div class="list-group" id="contents_list" role="tablist" style="border-radius: 5px;position: relative; height: 75%; overflow: auto; display: block;">
+                            <div class="list-group" id="contents_list" role="tablist" style="border-radius: 5px;height: 75%; overflow: auto; display: block;">
                                 
                             </div>
                             <ul id="contents_ul" hidden>
@@ -81,9 +81,9 @@
                             </ul>
                             <div style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
                                 <div class="row">
-                                    <div class="col-1">
-                                        <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" style="margin-top: 25;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="col-2" style="padding-right: 0%;">
+                                        <div class="dropdown" style="display: inline;">
+                                            <button class="btn btn-secondary dropdown-toggle" style="margin-top: 25; width: 100%;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Add
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -96,14 +96,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-11">
-                                        <h1 class="display-4 border-bottom" style="height: 100%; margin-top: 5; position: relative; left: -40;" id="content_name"></h1>
+                                    <div class="col-2" style="padding-left: 0%;">
+                                        <a class="btn btn-danger" style="margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#deleteContent">
+                                            Delete
+                                        </a>
+                                    </div>
+                                    <div class="col" style=" text-align: left;">
+                                        <h1 style="font-family: Raleway; padding-right: 20%; height: 100%; margin-top: 20;" id="content_name"></h1>
                                         
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" style="height: 600;">
-                                        <div id="comp_list" style="margin-top: 5; position: relative; height: 90%; overflow: auto; display: block;overflow-x: hidden;">
+                                        <div id="comp_list" style="position: relative; height: 90%; overflow: auto; display: block;overflow-x: hidden;">
 
                                         </div>
                                     </div>
@@ -120,6 +125,7 @@
 <!-- The Add Modal -->
 {% include 'capabilities/new_content.html' %}
 {% include 'capabilities/new_component.html' %}
+{% include 'capabilities/delete_content.html' %}
 
 <script type="text/javascript">
     function quitActive(string) {
@@ -180,6 +186,14 @@
             element.className = quitActive(element.className);
             idO = getIdByOnClick(element);
             if (idO == string_id) {
+                document.getElementById("objManttext").value = i;
+                document.getElementById("objMantimage").value = i;
+                document.getElementById("objMantvideo").value = i;
+                document.getElementById("objMantdocument").value = i;
+                document.getElementById("objMantlink").value = i;
+                document.getElementById("objMantgame").value = i;
+                document.getElementById("currentContent").value = i;
+                document.getElementById("objMantdel").value = i;
                 document.getElementById("objMant").value = i;
                 document.getElementById("currentObjective").value = i;
                 element.className += " active";
@@ -197,7 +211,10 @@
             const cont_pk = element.substring(element.indexOf(':') + 1, element.indexOf('%'));
             if (id == obj_pk) {
                 contents_list.innerHTML += `
-                <a href="#" class="list-group-item list-group-item-action list-group-item-secondary" onclick="pressContent('${cont_pk}')" data-toggle="list" href="#" role="tab">${element.substring(element.indexOf('%') + 1)}</a> 
+                    <a href="#" style="word-wrap: break-word;" class="list-group-item list-group-item-action list-group-item-secondary" onclick="pressContent('${cont_pk}')" data-toggle="list" href="#" role="tab">
+                        ${element.substring(element.indexOf('%') + 1)}
+                        
+                    </a>
                 
                 `;    
             //document.getElementById('label').innerText += '--' + element.substring(element.indexOf(':') + 1);
@@ -228,6 +245,8 @@
         document.getElementById("documentin").value = id + "&doc";
         document.getElementById("linkin").value = id + "&lnk";
         document.getElementById("gamein").value = id + "&gme";
+
+        document.getElementById("idContdel").value = string_id;
         //----------------------------------
         let add = document.getElementById("dropdownMenuButton");
         add.className = quitDisabled(add.className);
@@ -243,6 +262,8 @@
                 document.getElementById("contMantdocument").value = i;
                 document.getElementById("contMantlink").value = i;
                 document.getElementById("contMantgame").value = i;
+                document.getElementById("contMantdel").value = i;
+                document.getElementById("contMant").value = i;
                 document.getElementById("currentContent").value = i;
                 element.className += " active";
                 //-----
@@ -286,7 +307,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                             </form>
@@ -308,8 +329,9 @@
                                     <input name="objPos" value="${getCurrentObjective()}" hidden>
                                     <input name="idCap" value="{{cap_id}}" hidden>
                                     <input name="compId" value="${element[2]}" hidden>
-                                    <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
-                                    <a style="text-decoration:none;cursor: pointer; color: blue; display:block; margin-left:5" href="${element[1]}" target="_blank" class="fa fa-eye fa-2x"></a>
+                                    <a class="fa fa-eye fa-2x" style="text-decoration:none;cursor: pointer; color: blue; display:block; margin-left:5" href="${element[1]}" target="_blank"></a>
+                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    
                                 </span>
                             </p>
                         </div>
@@ -327,11 +349,13 @@
                                 <video style="border-radius: 20px;" width="70%" height="70%" controls>
                                     <source src="${element[1]}" type="video/mp4">
                                 </video>
-                                <input name="contPos" value="${getCurrentContent()}" hidden>
-                                <input name="objPos" value="${getCurrentObjective()}" hidden>
-                                <input name="idCap" value="{{cap_id}}" hidden>
-                                <input name="compId" value="${element[2]}" hidden>
-                                <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                <span>
+                                    <input name="contPos" value="${getCurrentContent()}" hidden>
+                                    <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                    <input name="idCap" value="{{cap_id}}" hidden>
+                                    <input name="compId" value="${element[2]}" hidden>
+                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                </span>
                             </p>
                         </div>
                     </form>
@@ -356,7 +380,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                             </form>
@@ -382,7 +406,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                             </form>
@@ -408,7 +432,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                             </form>

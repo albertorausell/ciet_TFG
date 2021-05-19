@@ -27,4 +27,7 @@ urlpatterns = [
 
     path('capabilities/contents/delete_component/',
          views.deleteComponentReq, name='deleteComponent'),
+
+    path('capabilities/contents/delete_content/',
+         views.deleteContentReq, name='deleteContent'),
 ]
