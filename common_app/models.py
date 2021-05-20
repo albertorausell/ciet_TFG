@@ -342,23 +342,28 @@ class text_component (training_technique):
 class image_component (training_technique):
 
     value = models.ImageField(default="", blank=True, null=True)
+    description = models.TextField(default="", blank=True, null=True)
 
 
 class video_component (training_technique):
 
     value = models.FileField(default="", blank=True, null=True)
+    description = models.TextField(default="", blank=True, null=True)
 
 
 class document_component (training_technique):
 
     value = models.FileField(default="", blank=True, null=True)
+    description = models.TextField(default="", blank=True, null=True)
 
 
 class link_component (training_technique):
 
     value = models.TextField(default="", blank=True, null=True)
+    description = models.TextField(default="", blank=True, null=True)
 
 
 class game_component (training_technique):
 
     value = models.TextField(default="", blank=True, null=True)
+    description = models.TextField(default="", blank=True, null=True)

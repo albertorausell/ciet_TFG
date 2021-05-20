@@ -46,7 +46,7 @@
             <div class="col" style="height: 80%; width: 50%;">
                 <div style="height: 80%; text-align: center;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
                     <div class="row" style="height: 100%;">
-                        <div class="col-3 border-right" style="padding-left: 3%;">
+                        <div class="col-2 border-right" style="padding-left: 30;">
                             <br>
                             <a href="#" type="button" data-toggle="modal" data-target="#addContent">
                                 <span class="fa-stack fa-lg">
@@ -282,9 +282,9 @@
                     if ('{{comp.type}}' == 'img' ||
                         '{{comp.type}}' == 'vid' ||
                         '{{comp.type}}' == 'doc') {
-                        comps.push(['{{comp.type}}', '{{comp.value.url}}', '{{comp.pk}}']);
+                        comps.push(['{{comp.type}}', '{{comp.value.url}}', '{{comp.pk}}', '{{comp.description}}']);
                     } else {
-                        comps.push(['{{comp.type}}', '{{comp.value}}', '{{comp.pk}}']);
+                        comps.push(['{{comp.type}}', '{{comp.value}}', '{{comp.pk}}', '{{comp.description}}']);
                     }
                 {% endfor %}
             }
@@ -302,7 +302,7 @@
                                     <div class="col" style="text-align: justify; width: 50%; word-wrap: break-word">
                                         ${element[1]}
                                     </div>
-                                    <div class="col-1" style="margin-right:30;">
+                                    <div class="col-1" >
                                         <input name="contPos" value="${getCurrentContent()}" hidden>
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
@@ -312,7 +312,7 @@
                                 </div>
                             </form>
                         </p>
-                        <hr>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
                     `
                     break;
             
@@ -335,8 +335,17 @@
                                 </span>
                             </p>
                         </div>
+                        <div class="row">
+                            <div class="col-1">
+                            </div>
+                            <div class="col" style="text-align: justify;word-wrap: break-word">
+                                <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                    <i>${element[3]}</i>
+                                </p>
+                            </div>
+                        </div>
                     </form>
-                    <hr>
+                    <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
                     `;
                     break;
             
@@ -344,22 +353,30 @@
                     components_list.innerHTML += `
                     <form action="{% url 'deleteComponent' %}" method="POST">
                         {% csrf_token %}
-                        <div style="position:relative; left:10%">
-                            <p class="row">
-                                <video style="border-radius: 20px;" width="70%" height="70%" controls>
-                                    <source src="${element[1]}" type="video/mp4">
-                                </video>
-                                <span>
-                                    <input name="contPos" value="${getCurrentContent()}" hidden>
-                                    <input name="objPos" value="${getCurrentObjective()}" hidden>
-                                    <input name="idCap" value="{{cap_id}}" hidden>
-                                    <input name="compId" value="${element[2]}" hidden>
-                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
-                                </span>
-                            </p>
+                        <div style="text-align:center">
+                            <video width="70%" height="70%" controls>
+                                <source src="${element[1]}" type="video/mp4">
+                            </video>
+                            <span>
+                                <input name="contPos" value="${getCurrentContent()}" hidden>
+                                <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                <input name="idCap" value="{{cap_id}}" hidden>
+                                <input name="compId" value="${element[2]}" hidden>
+                                <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                            </span>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-1">
+                            </div>
+                            <div class="col" style="text-align: justify;word-wrap: break-word">
+                                <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                    <i>${element[3]}</i>
+                                </p>
+                            </div>
                         </div>
                     </form>
-                    <hr>
+                    <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
                     `
                     break;
         
@@ -383,9 +400,18 @@
                                         <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                    </div>
+                                    <div class="col" style="text-align: justify;word-wrap: break-word">
+                                        <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                            <i>${element[3]}</i>
+                                        </p>
+                                    </div>
+                                </div>
                             </form>
                         </p>
-                        <hr>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
                     `;
                     break;
             
@@ -409,9 +435,18 @@
                                         <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                    </div>
+                                    <div class="col" style="text-align: justify;word-wrap: break-word">
+                                        <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                            <i>${element[3]}</i>
+                                        </p>
+                                    </div>
+                                </div>
                             </form>
                         </p>
-                        <hr>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
                     `
                     break;
         
@@ -435,9 +470,18 @@
                                         <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                    </div>
+                                    <div class="col" style="text-align: justify;word-wrap: break-word">
+                                        <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                            <i>${element[3]}</i>
+                                        </p>
+                                    </div>
+                                </div>
                             </form>
                         </p>
-                        <hr>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
                     `
                     break;
             

@@ -62,7 +62,8 @@ class Text(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['value'].required = True
         self.fields['value'].widget = Textarea(attrs={
-            'style': 'width: 100%; height: 300; padding: 10'
+            'style': 'width: 100%; height: 300; padding: 10',
+            'placeholder': 'Here the text...'
         })
 
     class Meta:
@@ -74,10 +75,15 @@ class Image(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['value'].required = True
+        self.fields['description'].required = False
+        self.fields['description'].widget = Textarea(attrs={
+            'style': 'width: 100%; height: 100; padding: 10;border-color: darkgray;',
+            'placeholder': 'Add a comment...'
+        })
 
     class Meta:
         model = image_component
-        fields = ['value']
+        fields = ['value', 'description']
 
 
 class Video(ModelForm):
@@ -85,39 +91,65 @@ class Video(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['value'].required = True
         self.fields['value'].widget = FileInput(attrs={'accept': '.mp4'})
+        self.fields['description'].required = False
+        self.fields['description'].widget = Textarea(attrs={
+            'style': 'width: 100%; height: 100; padding: 10;border-color: darkgray;',
+            'placeholder': 'Add a comment...'
+        })
 
     class Meta:
         model = video_component
-        fields = ['value']
+        fields = ['value', 'description']
 
 
 class Document(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['value'].required = True
+        self.fields['description'].required = False
+        self.fields['description'].widget = Textarea(attrs={
+            'style': 'width: 100%; height: 100; padding: 10;border-color: darkgray;',
+            'placeholder': 'Add a comment...'
+        })
 
     class Meta:
         model = document_component
-        fields = ['value']
+        fields = ['value', 'description']
 
 
 class Link(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['value'].required = True
-        self.fields['value'].widget = TextInput(attrs={'style': 'width: 100%'})
+        self.fields['value'].widget = TextInput(attrs={
+            'style': 'width: 100%; padding-left:10',
+            'placeholder': 'Link to the page'
+        })
+        self.fields['description'].required = False
+        self.fields['description'].widget = Textarea(attrs={
+            'style': 'width: 100%; height: 100; padding: 10;border-color: darkgray;',
+            'placeholder': 'Add a comment...'
+        })
 
     class Meta:
         model = link_component
-        fields = ['value']
+        fields = ['value', 'description']
 
 
 class Game(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['value'].required = True
-        self.fields['value'].widget = TextInput(attrs={'style': 'width: 100%'})
+        self.fields['value'].widget = TextInput(attrs={
+            'style': 'width: 100%; padding-left:10',
+            'placeholder': 'Link to the game'
+        })
+        self.fields['description'].required = False
+        self.fields['description'].widget = Textarea(attrs={
+            'style': 'width: 100%; height: 100; padding: 10;border-color: darkgray;',
+            'placeholder': 'Add a comment...'
+        })
 
     class Meta:
         model = game_component
-        fields = ['value']
+        fields = ['value', 'description']
