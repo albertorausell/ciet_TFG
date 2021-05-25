@@ -297,7 +297,9 @@ def cap_contents(request, id, obj_pos, cont_pos):
             contents = content.objects.filter(
                 capability_objective=cap_obj[0].pk)
             obj_cont.append({
-                'cap_obj_pk': obj.pk,
+                'obj_pk': obj.pk,
+                'cap_obj_pk': cap_obj[0].pk,
+                'name': obj.name,
                 'contents': contents
             })
             for cont in contents:

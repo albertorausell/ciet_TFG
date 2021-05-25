@@ -4,72 +4,143 @@
 
 
 {% block content %}
+<style>
+    .button {
+      padding: 15px 25px;
+      font-size: 15px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      color: #fff;
+      background-color: #666;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+      padding: 10px;
+    }
+    
+    .button:hover {background-color: #666}
+    
+    .button:active {
+      background-color: #666;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
 
+    .actived {
+        color: darkslategray !important;
+        text-decoration: underline darkslategray !important;
+    }
+
+    .underline:hover {
+        color: darkslategray !important;
+    }
+
+
+</style>
 
 <div style="margin: 5%;">
-        <div class="row" style="margin-top: 30;">
+        <div class="row" style="margin-top: 30;" id="mainrow">
             <div class="col-2" style="text-align: left;">
-                <div class="row">
+                <div class="row ">
                     <div class="col">
-                        <a class="btn btn-primary" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
+                        <a class="btn btn-primary contenthide" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
                             🡠
                         </a>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <div id="buttonEval" class="button" onclick="manageEvaluations()" style="word-wrap: break-word;">Evaluations</div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <label id="label"></label>
-                        <hr>
-                        <div>
+                        <hr class="contenthide">
+                        <div class="contenthide">
                             <i><u>Capability plan:</u></i>
                         </div>
-                        <div style="margin-left: 10;">
+                        <div class="contenthide" style="margin-left: 10;">
                             <i>{{cap_name}}</i>
                         </div>
-                        <br>
-                        <br>
-                        <div>
+                        <br class="contenthide" >
+                        <br class="contenthide" >
+                        <div class="contenthide" >
                             <i><u>Objectives:</u></i>
                         </div>
-                        <div class="list-group" style="height: 80%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
+                        <div class="contenthide" style="border-radius: 5px; height: 30%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
                             {% for objective in cap_obj %}
-                                <a style="word-wrap: break-word;" class="list-group-item list-group-item-action list-group-item-primary" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
-                                    {{objective.name}}
-                                </a>
+                                <div>
+                                    <a class="underline" style="margin-left: 10; color: darkgray; text-decoration: none; word-wrap: break-word;" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
+                                        <i>{{objective.name}}</i>
+                                    </a>
+                                </div>
                             {% endfor %}
                         </div>
+                        <br class="contenthide">
+                        
                     </div>
                 </div>
             </div>
             <input id="currentObjective" value="" hidden>
             <input id="currentContent" value="" hidden>
             <div class="col" style="height: 80%; width: 50%;">
-                <div style="height: 80%; text-align: center;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
+                <div style="height: 80%;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
                     <div class="row" style="height: 100%;">
-                        <div class="col-2 border-right" style="padding-left: 30;">
-                            <br>
-                            <a href="#" type="button" data-toggle="modal" data-target="#addContent">
-                                <span class="fa-stack fa-lg">
-                                  <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
-                                  <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
-                            <br>
-                            <br>
-                            <div class="list-group" id="contents_list" role="tablist" style="border-radius: 5px;height: 75%; overflow: auto; display: block;">
-                                
-                            </div>
-                            <ul id="contents_ul" hidden>
-                                {% for objective in obj_cont %}
-                                    {% for content in objective.contents %}
-                                        <li >
-                                            {{objective.cap_obj_pk}}:{{content.pk}}%{{content.name}}
-                                        </li>
+                        <div id="indexCol" class="col-2 border-right">
+                            <!-----------------CONTENT PERSPECTIVE----------------->
+                            <div class="contenthide" style="padding-left: 30; text-align: center;">
+                                <br>
+                                <a href="#" type="button" data-toggle="modal" data-target="#addContent">
+                                    <span class="fa-stack fa-lg">
+                                      <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
+                                      <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                                <br>
+                                <br>
+                                <div id="contents_list" role="tablist" style="border-radius: 5px;height: 75%; overflow: auto; display: block;">
+                                    
+                                </div>
+                                <ul id="contents_ul" hidden>
+                                    {% for objective in obj_cont %}
+                                        {% for content in objective.contents %}
+                                            <li >
+                                                {{objective.obj_pk}}:{{content.pk}}%{{content.name}}
+                                            </li>
+                                        {% endfor %}
                                     {% endfor %}
+                                </ul>
+                            </div>
+                            <!-----------------EVALUATION PERSPECTIVE----------------->
+                            <div class="evalhide" id="contentEvList" role="tablist" style="height: 400; overflow: auto; display: block;margin-left: 10; margin-top:15; margin-bottom: 15; border-radius: 5px;">
+                                <div style="word-wrap: break-word">
+                                    <a class="underline" title="Plan" style="font-size:16;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateCapability('{{cap_id}}')" data-toggle="list" role="tab">
+                                        <i>{{cap_name}}</i>
+                                    </a>
+                                </div>
+                                <div class="border-left">
+                                    {% for objective in obj_cont %}
+                                    <div style="word-wrap: break-word">
+                                        <a class="underline" title="Objective" style="margin-left: 5; cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateObjective('{{objective.cap_obj_pk}}')" data-toggle="list" role="tab">
+                                            <i>{{objective.name}}</i>
+                                        </a>
+                                    </div>
+                                    <div class="border-left" style="margin-left: 10;">
+                                        {% for content in objective.contents %}
+                                            <div style="word-wrap: break-word">
+                                                <a class="underline" title="Content" style="margin-left: 5;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateContent('{{content.pk}}')" data-toggle="list" role="tab">
+                                                    <i>{{content.name}}</i>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <br>
                                 {% endfor %}
-                            </ul>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col" style="height: 100%; width: 50%;">
+                        <div id="mainCol" class="col-10" style="height: 100%; width: 50%;">
+                            <!-----------------CONTENT PERSPECTIVE----------------->
                             <ul id="components_ul" hidden>
                                 {% for content in cont_tech %}
                                     {% for component in content.media_comps %}
@@ -79,7 +150,7 @@
                                     {% endfor %}
                                 {% endfor %}
                             </ul>
-                            <div style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
+                            <div class="contenthide" style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
                                 <div class="row">
                                     <div class="col-2" style="padding-right: 0%;">
                                         <div class="dropdown" style="display: inline;">
@@ -97,12 +168,12 @@
                                         </div>
                                     </div>
                                     <div class="col-2" style="padding-left: 0%;">
-                                        <a class="btn btn-danger" style="margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#deleteContent">
+                                        <a class="btn btn-danger" style="margin-left: 10; margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#deleteContent">
                                             Delete
                                         </a>
                                     </div>
                                     <div class="col" style=" text-align: left;">
-                                        <h1 style="font-family: Raleway; padding-right: 20%; height: 100%; margin-top: 20;" id="content_name"></h1>
+                                        <h1 style="font-family: Raleway; padding-left: 10%; height: 100%; margin-top: 20;" id="content_name"></h1>
                                         
                                     </div>
                                 </div>
@@ -112,6 +183,28 @@
 
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <!-----------------EVALUATION PERSPECTIVE----------------->
+                            <div class="evalhide" style="padding-top: 10;padding-left: 10; padding-bottom: 10;margin:10; width: 95%; text-align: center;border-style: solid;border-radius: 5px;border-color: lightgray; border-width: thin;">
+                                
+                                <div style="width: 97%;">
+                                    <input class="form-control question" type="text" placeholder="Question...">
+                                </div>
+                                <br>
+                                <div style="width: 97%; margin-bottom: 5;">
+                                    <input class="form-control answer" type="text" placeholder="Answer...">
+                                </div>
+                                <div style="width: 97%; margin-bottom: 5;">
+                                    <input class="form-control answer" type="text" placeholder="Answer...">
+                                </div>
+                                <div>
+                                    <a href="#" type="button">
+                                        <span class="fa-stack fa-lg">
+                                          <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
+                                          <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -128,30 +221,102 @@
 {% include 'capabilities/delete_content.html' %}
 
 <script type="text/javascript">
-    function quitActive(string) {
-        let index = string.indexOf(' active');
-        if (index > 0) {
-            return string.substring(0, index) + string.substring(index + 7);
+
+
+    function manageEvaluations() {
+        let button = document.getElementById('buttonEval');
+        let nameButton = button.innerText.toLowerCase();
+        if (nameButton == 'evaluations') {
+            setContentsComponentsVisible(false);
+            setEvaluationComponentsVisible(true);
+            //----------------------------
+            button.innerText = 'Contents'
+            loadEvaluations();
+
         } else {
-            return string;
-        }
-    }
-    
-    function quitDisabled(string) {
-        let index = string.indexOf(' disabled');
-        if (index > 0) {
-            return string.substring(0, index) + string.substring(index + 9);
-        } else {
-            return string;
+            setEvaluationComponentsVisible(false);
+            setContentsComponentsVisible(true);
+            //----------------------------
+            button.innerText = 'Evaluations'
+            loadContents();
         }
     }
 
-    function addDisabled(string) {
-        if (string.indexOf(' disabled') < 0) {
-            return string + ' disabled';
-        } else {
-            return string;
+    function setEvaluationComponentsVisible(visible) {
+        let listEvaluations = document.getElementsByClassName('evalhide');
+        for (const element of listEvaluations) {
+            element.hidden = !visible;
         }
+    }
+
+    function setContentsComponentsVisible(visible) {
+        let listContents = document.getElementsByClassName('contenthide');
+        for (const element of listContents) {
+            element.hidden = !visible;
+        }
+    }
+
+    function loadEvaluations() {
+        let indexCol = document.getElementById('indexCol');
+        indexCol.classList.remove('col-2');
+        indexCol.classList.add('col-3');
+
+        let mainCol = document.getElementById('mainCol')
+        mainCol.classList.remove('col-10');
+        mainCol.classList.add('col-9');
+    }
+
+    function loadContents() {
+        let indexCol = document.getElementById('indexCol');
+        indexCol.classList.remove('col-3');
+        indexCol.classList.add('col-2')
+
+        let mainCol = document.getElementById('mainCol')
+        mainCol.classList.remove('col-9');
+        mainCol.classList.add('col-10')
+    }
+
+    function evaluate(id, scope) {
+        //print(id + " " + scope);
+    }
+
+    function evaluateCapability(id) {
+        let col = document.getElementById('indexCol');
+        let list = col.getElementsByClassName('underline');
+        for (const element of list) {
+            if (element.title == 'Plan' & getIdByOnClick(element) == id) {
+                element.classList.add('actived')
+            } else {
+                element.classList.remove('actived')
+            }
+        }
+        evaluate(id, 'capability');
+    }
+
+    function evaluateObjective(id) {
+        let col = document.getElementById('indexCol');
+        let list = col.getElementsByClassName('underline');
+        for (const element of list) {
+            if (element.title == 'Objective' & getIdByOnClick(element) == id) {
+                element.classList.add('actived')
+            } else {
+                element.classList.remove('actived')
+            }
+        }
+        evaluate(id, 'objective');
+    }
+
+    function evaluateContent(id) {
+        let col = document.getElementById('indexCol');
+        let list = col.getElementsByClassName('underline');
+        for (const element of list) {
+            if (element.title == 'Content' & getIdByOnClick(element) == id) {
+                element.classList.add('actived')
+            } else {
+                element.classList.remove('actived')
+            }
+        }
+        evaluate(id, 'content');
     }
 
     function getIdByOnClick(element){
@@ -183,7 +348,7 @@
         let list = document.getElementById("obj_list").getElementsByTagName("a");
         for (let i = 0; i < list.length; i++) {
             const element = list[i];
-            element.className = quitActive(element.className);
+            element.classList.remove('actived');
             idO = getIdByOnClick(element);
             if (idO == string_id) {
                 document.getElementById("objManttext").value = i;
@@ -196,12 +361,12 @@
                 document.getElementById("objMantdel").value = i;
                 document.getElementById("objMant").value = i;
                 document.getElementById("currentObjective").value = i;
-                element.className += " active";
+                element.classList.add('actived');
             }
         }
         //----------PLACE CONTENTS-------------
         document.getElementById("comp_list").innerHTML = '<br>';
-        document.getElementById("dropdownMenuButton").className = addDisabled(document.getElementById("dropdownMenuButton").className);
+        document.getElementById("dropdownMenuButton").classList.add('disabled');
         let contents_li = document.getElementById("contents_ul").getElementsByTagName("li");
         let contents_list = document.getElementById("contents_list");
         contents_list.innerHTML = '';
@@ -211,11 +376,12 @@
             const cont_pk = element.substring(element.indexOf(':') + 1, element.indexOf('%'));
             if (id == obj_pk) {
                 contents_list.innerHTML += `
-                    <a href="#" style="word-wrap: break-word;" class="list-group-item list-group-item-action list-group-item-secondary" onclick="pressContent('${cont_pk}')" data-toggle="list" href="#" role="tab">
-                        ${element.substring(element.indexOf('%') + 1)}
-                        
-                    </a>
-                
+                    <div>
+                        <a class="underline" href="#" style="color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="pressContent('${cont_pk}')" data-toggle="list" href="#" role="tab">
+                            <i>${element.substring(element.indexOf('%') + 1)}</i>
+                            
+                        </a>
+                    </div>
                 `;    
             //document.getElementById('label').innerText += '--' + element.substring(element.indexOf(':') + 1);
             }
@@ -249,11 +415,11 @@
         document.getElementById("idContdel").value = string_id;
         //----------------------------------
         let add = document.getElementById("dropdownMenuButton");
-        add.className = quitDisabled(add.className);
+        add.classList.remove('disabled');
         let list = document.getElementById("contents_list").getElementsByTagName("a");
         for (let i = 0; i < list.length; i++) {
             const element = list[i];
-            element.className = quitActive(element.className);
+            element.classList.remove('actived');
             idO = getIdByOnClick(element);
             if (idO == string_id) {
                 document.getElementById("contManttext").value = i;
@@ -265,7 +431,7 @@
                 document.getElementById("contMantdel").value = i;
                 document.getElementById("contMant").value = i;
                 document.getElementById("currentContent").value = i;
-                element.className += " active";
+                element.classList.add('actived')
                 //-----
                 document.getElementById("content_name").textContent = element.textContent;
             }
@@ -496,6 +662,7 @@
 <script>
     pressIndexOfList('{{obj_pos}}', 'obj_list');
     pressIndexOfList('{{cont_pos}}', 'contents_list');
+    setEvaluationComponentsVisible(false);
 </script>
 
 
