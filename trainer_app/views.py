@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from common_app.models import training_technique, objective, capability, capability_objective, content
+from common_app.models import exercise, question, answer, training_technique, objective, capability, capability_objective, content
 from .forms import Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
@@ -191,7 +191,8 @@ def cap_contents(request, id, obj_pos, cont_pos):
     cap = capability.objects.get(pk=id)
 
     if request.method == 'POST':
-        value = request.POST['action']
+        post = request.POST
+        value = post['action']
         if '_c' in value:
             idObj = value[:-2]
             form = Contents(request.POST)
@@ -270,7 +271,11 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 gme.save()
                 return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
 
+        if 'addQuestion' in value:
+            addQuestionFromPost(post, cap)
+
     else:
+        # CONTENTS
         objs = cap.objectives.all()
         dictionary.update({
             'obj_pos': obj_pos,
@@ -288,7 +293,6 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 'game': Game(),
             },
         })
-
         obj_cont = []
         cont_tech = []
         for obj in objs:
@@ -315,6 +319,26 @@ def cap_contents(request, id, obj_pos, cont_pos):
             'cont_tech': cont_tech,
         })
 
+        # EVALUATIONS
+        exs = []
+        exercises = exercise.objects.filter(capability=cap)
+        for ex in exercises:
+            qss = []
+            questions = question.objects.filter(exercise=ex)
+            for ques in questions:
+                answers = answer.objects.filter(question=ques)
+                qss.append({
+                    'question': ques,
+                    'answers': answers
+                })
+            exs.append({
+                'exercise': ex,
+                'questions': qss
+            })
+        dictionary.update({
+            'exercises': exs
+        })
+
         return render(request, 'capabilities/create_contents.html', dictionary)
 
     return HttpResponse(status=204)
@@ -330,6 +354,80 @@ def getOrder(idCon):
             max = comp.order
 
     return max + 1
+
+
+def editQuestionReq(request):
+    deleteQuestion(request.POST['idQuestion'])
+    cap = capability.objects.get(pk=request.POST['idCap'])
+    addQuestionFromPost(request.POST, cap)
+
+
+def addQuestionFromPost(post, cap):
+    ex_list = exercise.objects.filter(
+        capability=cap.pk, referenceId=post['idRefQues'], scope=post['typeRefQues'])
+    if len(ex_list) > 0:
+        quest = question()
+        quest.question = post['question']
+        quest.exercise = ex_list[0]
+        quest.save()
+        i = 0
+        length = int(post['length'])
+        while i < length:
+            name = 'answer' + str(i)
+            correct = 'correct' + str(i)
+            if len(post[name]) > 0:
+                ans = answer()
+                ans.answer = post[name]
+                if correct in post:
+                    if post[correct] == 'on':
+                        ans.isCorrect = True
+                    else:
+                        ans.isCorrect = False
+                else:
+                    ans.isCorrect = False
+                ans.question = quest
+                ans.save()
+            i += 1
+    else:
+        ex = exercise()
+        ex.scope = post['typeRefQues']
+        ex.referenceId = post['idRefQues']
+        ex.capability = cap
+        ex.save()
+        quest = question()
+        quest.question = post['question']
+        quest.exercise = ex
+        quest.save()
+        i = 0
+        length = int(post['length'])
+        while i < length:
+            name = 'answer' + str(i)
+            correct = 'correct' + str(i)
+            if len(post[name]) > 0:
+                ans = answer()
+                ans.answer = post[name]
+                if correct in post:
+                    if post[correct] == 'on':
+                        ans.isCorrect = True
+                    else:
+                        ans.isCorrect = False
+                else:
+                    ans.isCorrect = False
+                ans.question = quest
+                ans.save()
+            i += 1
+
+
+def deleteQuestionReq(request):
+    deleteQuestion(request.POST['idQuestion'])
+
+
+def deleteQuestion(id):
+    question_to_delete = question.objects.get(pk=id)
+    answers_to_delete = answer.objects.filter(question=id)
+    for ans in answers_to_delete:
+        ans.delete()
+    question_to_delete.delete()
 
 
 def deleteContentReq(request):

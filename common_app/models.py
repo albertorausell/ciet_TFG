@@ -86,13 +86,13 @@ class organization (models.Model):
 
 class capability (models.Model):
 
-    name = models.CharField(max_length=50, default="", blank=True, null=True)
+    name = models.CharField(max_length=50, default=None, blank=True, null=True)
 
     aproximatedHours = models.FloatField(default=None, blank=True, null=True)
 
     active = models.BooleanField(default=False, blank=True, null=True)
 
-    description = models.TextField(default="", blank=True, null=True)
+    description = models.TextField(default=None, blank=True, null=True)
 
     image = models.ImageField(
         default=None, blank=True, null=True, upload_to='trainer_app/img/capabilities')
@@ -246,7 +246,7 @@ class exercise (models.Model):
 
     OBJECTIVE = 'ob'
 
-    GLOBAL = 'gl'
+    CAPABILITY = 'ca'
 
     SCOPES = (
 
@@ -254,18 +254,20 @@ class exercise (models.Model):
 
         (OBJECTIVE, 'objective'),
 
-        (GLOBAL, 'global'),
+        (CAPABILITY, 'capability'),
     )
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, default=None, blank=True, null=True)
 
-    scope = models.CharField(max_length=2, choices=SCOPES)
+    scope = models.CharField(max_length=2, choices=SCOPES,
+                             default=None, blank=True, null=True)
 
-    referenceId = models.IntegerField()
+    referenceId = models.IntegerField(default=-1, blank=True, null=True)
 
-    leftPending = models.BooleanField()
+    leftPending = models.BooleanField(default=False, blank=True, null=True)
 
-    capability = models.ForeignKey('capability', on_delete=models.CASCADE)
+    capability = models.ForeignKey(
+        'capability', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 
@@ -274,11 +276,12 @@ class exercise (models.Model):
 
 class question (models.Model):
 
-    order = models.IntegerField()
+    order = models.IntegerField(default=None, blank=True, null=True)
 
-    question = models.TextField()
+    question = models.TextField(default=None, blank=True, null=True)
 
-    exercise = models.ForeignKey('exercise', on_delete=models.CASCADE)
+    exercise = models.ForeignKey(
+        'exercise', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 
@@ -287,11 +290,12 @@ class question (models.Model):
 
 class answer (models.Model):
 
-    answer = models.TextField()
+    answer = models.TextField(default=None, blank=True, null=True)
 
-    isCorrect = models.BooleanField()
+    isCorrect = models.BooleanField(default=False, blank=True, null=True)
 
-    question = models.ForeignKey('question', on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        'question', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 
@@ -336,34 +340,34 @@ class capability_learner (models.Model):
 
 class text_component (training_technique):
 
-    value = models.TextField(default="", blank=True, null=True)
+    value = models.TextField(default=None, blank=True, null=True)
 
 
 class image_component (training_technique):
 
-    value = models.ImageField(default="", blank=True, null=True)
-    description = models.TextField(default="", blank=True, null=True)
+    value = models.ImageField(default=None, blank=True, null=True)
+    description = models.TextField(default=None, blank=True, null=True)
 
 
 class video_component (training_technique):
 
-    value = models.FileField(default="", blank=True, null=True)
-    description = models.TextField(default="", blank=True, null=True)
+    value = models.FileField(default=None, blank=True, null=True)
+    description = models.TextField(default=None, blank=True, null=True)
 
 
 class document_component (training_technique):
 
-    value = models.FileField(default="", blank=True, null=True)
-    description = models.TextField(default="", blank=True, null=True)
+    value = models.FileField(default=None, blank=True, null=True)
+    description = models.TextField(default=None, blank=True, null=True)
 
 
 class link_component (training_technique):
 
-    value = models.TextField(default="", blank=True, null=True)
-    description = models.TextField(default="", blank=True, null=True)
+    value = models.TextField(default=None, blank=True, null=True)
+    description = models.TextField(default=None, blank=True, null=True)
 
 
 class game_component (training_technique):
 
-    value = models.TextField(default="", blank=True, null=True)
-    description = models.TextField(default="", blank=True, null=True)
+    value = models.TextField(default=None, blank=True, null=True)
+    description = models.TextField(default=None, blank=True, null=True)

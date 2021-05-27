@@ -30,4 +30,10 @@ urlpatterns = [
 
     path('capabilities/contents/delete_content/',
          views.deleteContentReq, name='deleteContent'),
+
+    path('capabilities/contents/delete_question/',
+         views.deleteQuestionReq, name='deleteQuestion'),
+
+    path('capabilities/contents/edit_question/',
+         views.editQuestionReq, name='editQuestion'),
 ]

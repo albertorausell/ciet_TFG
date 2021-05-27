@@ -1,0 +1,71 @@
+{% block content %}
+
+<form action="{% url 'editQuestion' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="editQuestion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 50%;width: auto !important;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Question</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div style="width: 97%;">
+                    <input id="questionEdit" class="form-control" name="question" type="text" placeholder="Question...">
+                </div>
+                <br>
+                <div id="answer_edit_content" style="height: 200; overflow: auto; display: block;padding-top: 10;padding-left: 10; padding-bottom: 10;margin:10; width: 95%; text-align: center;">
+                    
+                </div>
+                <div style="text-align: center;">
+                    <a href="#" onclick="addEditAnswer()" type="button" title="Add answer" >
+                        <span class="fa-stack fa-lg">
+                            <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input name="idQuestion" id="idQuestionToEdit" value="" hidden>
+                <input id="idRefQuesEdit" name="idRefQues" value="" hidden>
+                <input id="typeRefQuesEdit" name="typeRefQues" value="" hidden>
+                <input id="lengthAnsEdit" name="length" value="" hidden>
+                <input name="idCap" value="{{cap_id}}" hidden>
+                <input class="btn btn-primary" type="submit" value="Save"/>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+<div id="originalAnswerEdit" class="row answer" style="width: 97%; margin-bottom: 5;" hidden>
+</div>
+
+<script>
+    function addEditAnswer() {
+        let answerContent = document.getElementById('answer_edit_content');
+        let numberAnswer = answerContent.getElementsByClassName('answer').length;
+        document.getElementById('lengthAnsEdit').value = numberAnswer + 1;
+        let originalAnswer = document.getElementById('originalAnswerEdit');
+        let answer = originalAnswer.cloneNode(true);
+        answer.id = '';
+        answer.hidden = false;
+        answer.innerHTML = `
+            <div class="col-11">
+                <input style="width: 90%;" name="answer${numberAnswer}" class="form-control" type="text" placeholder="Answer...">
+            </div>
+            <div class="col-1">
+                <input style="margin-top:10" name="correct${numberAnswer}" type="checkbox" title="Is correct?">
+            </div>
+        `;
+        answerContent.appendChild(answer);
+
+    }
+    
+</script>
+
+{% endblock %}

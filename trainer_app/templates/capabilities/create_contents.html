@@ -49,7 +49,7 @@
                         </a>
                     </div>
                     <div class="col" style="text-align: center;">
-                        <div id="buttonEval" class="button" onclick="manageEvaluations()" style="word-wrap: break-word;">Evaluations</div>
+                        <div id="buttonEval" class="button" onclick="manageEvaluations()" style="word-wrap: break-word;">Evaluations view</div>
                     </div>
                 </div>
                 <div class="row">
@@ -98,7 +98,7 @@
                                 </a>
                                 <br>
                                 <br>
-                                <div id="contents_list" role="tablist" style="border-radius: 5px;height: 75%; overflow: auto; display: block;">
+                                <div id="contents_list" role="tablist" style="border-radius: 5px;height: 500; overflow: auto; display: block;">
                                     
                                 </div>
                                 <ul id="contents_ul" hidden>
@@ -112,7 +112,7 @@
                                 </ul>
                             </div>
                             <!-----------------EVALUATION PERSPECTIVE----------------->
-                            <div class="evalhide" id="contentEvList" role="tablist" style="height: 400; overflow: auto; display: block;margin-left: 10; margin-top:15; margin-bottom: 15; border-radius: 5px;">
+                            <div class="evalhide" id="contentEvList" role="tablist" style="padding-right: 15; height: 600; overflow: auto; display: block;margin-left: 20; margin-top:15; margin-bottom: 15; border-radius: 5px;">
                                 <div style="word-wrap: break-word">
                                     <a class="underline" title="Plan" style="font-size:16;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateCapability('{{cap_id}}')" data-toggle="list" role="tab">
                                         <i>{{cap_name}}</i>
@@ -128,7 +128,7 @@
                                     <div class="border-left" style="margin-left: 10;">
                                         {% for content in objective.contents %}
                                             <div style="word-wrap: break-word">
-                                                <a class="underline" title="Content" style="margin-left: 5;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateContent('{{content.pk}}')" data-toggle="list" role="tab">
+                                                <a class="underline" title="Content" style="padding-left: 5;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateContent('{{content.pk}}')" data-toggle="list" role="tab">
                                                     <i>{{content.name}}</i>
                                                 </a>
                                             </div>
@@ -186,25 +186,24 @@
                                 </div>
                             </div>
                             <!-----------------EVALUATION PERSPECTIVE----------------->
-                            <div class="evalhide" style="padding-top: 10;padding-left: 10; padding-bottom: 10;margin:10; width: 95%; text-align: center;border-style: solid;border-radius: 5px;border-color: lightgray; border-width: thin;">
-                                
-                                <div style="width: 97%;">
-                                    <input class="form-control question" type="text" placeholder="Question...">
+                            <div class="evalhide" style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
+                                <div class="row">
+                                    <div class="col-4" style="padding-right: 0%;">
+                                        <a class="btn btn-secondary" style="margin-left: 10; margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#addQuestion">
+                                            Add question
+                                        </a>
+                                    </div>
+                                    <div class="col" style=" text-align: left;">
+                                        <h1 style="font-family: Raleway; padding-left: 5%; height: 100%; margin-top: 20;" id="eval_name"></h1>
+                                        
+                                    </div>
                                 </div>
-                                <br>
-                                <div style="width: 97%; margin-bottom: 5;">
-                                    <input class="form-control answer" type="text" placeholder="Answer...">
-                                </div>
-                                <div style="width: 97%; margin-bottom: 5;">
-                                    <input class="form-control answer" type="text" placeholder="Answer...">
-                                </div>
-                                <div>
-                                    <a href="#" type="button">
-                                        <span class="fa-stack fa-lg">
-                                          <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
-                                          <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
+                                <div class="row">
+                                    <div class="col" style="height: 600;">
+                                        <div id="questionList" style="padding: 10;height: 95%; overflow: auto; display: block;">
+    
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -218,6 +217,8 @@
 <!-- The Add Modal -->
 {% include 'capabilities/new_content.html' %}
 {% include 'capabilities/new_component.html' %}
+{% include 'capabilities/new_question.html' %}
+{% include 'capabilities/edit_question.html' %}
 {% include 'capabilities/delete_content.html' %}
 
 <script type="text/javascript">
@@ -226,18 +227,18 @@
     function manageEvaluations() {
         let button = document.getElementById('buttonEval');
         let nameButton = button.innerText.toLowerCase();
-        if (nameButton == 'evaluations') {
+        if (nameButton.indexOf('evaluations') > -1) {
             setContentsComponentsVisible(false);
             setEvaluationComponentsVisible(true);
             //----------------------------
-            button.innerText = 'Contents'
+            button.innerText = 'Contents view'
             loadEvaluations();
 
         } else {
             setEvaluationComponentsVisible(false);
             setContentsComponentsVisible(true);
             //----------------------------
-            button.innerText = 'Evaluations'
+            button.innerText = 'Evaluations view'
             loadContents();
         }
     }
@@ -277,7 +278,113 @@
     }
 
     function evaluate(id, scope) {
-        //print(id + " " + scope);
+        //FOR POST
+        document.getElementById('idRefQues').value = id;
+        document.getElementById('typeRefQues').value = scope;
+        document.getElementById('idRefQuesEdit').value = id;
+        document.getElementById('typeRefQuesEdit').value = scope;
+        //--------PLACE QUESTIONS---------
+        let questionContainer = document.getElementById('questionList'),quesId, exId, exScope, question, answer, isCorrect;
+        questionContainer.innerHTML = '<br>';
+        {% for ex in exercises %}
+            exId = '{{ex.exercise.referenceId}}';
+            exScope = '{{ex.exercise.scope}}';
+            if (exId == id & exScope == scope) {
+                {% for ques in ex.questions %}
+                    question = '{{ques.question.question}}';
+                    quesId = '{{ques.question.pk}}';
+                    questionContainer.innerHTML += `
+                        <div class="row">
+                            <div class="col-11" style="text-align: center">
+                                <b>${question}</b>
+                            </div>
+                            <div class="col-1" style="text-align:center">
+                                <div class="row">
+                                    <div class="col" style="text-align=center">
+                                        <a class="fa fa-pencil fa-2x" onclick="setQuestionToEdit(${quesId})" type="button" data-toggle="modal" data-target="#editQuestion" style="text-decoration:none;cursor: pointer;" href=""></a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align=center">
+                                        <form action="{% url 'deleteQuestion' %}" method="POST">
+                                            {% csrf_token %}
+                                            <input name="idQuestion" value="${quesId}" hidden>
+                                            <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:35;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    `;
+                    {% for ans in ques.answers %}
+                        answer = '{{ans.answer}}';
+                        isCorrect = '{{ans.isCorrect}}';
+                        if (isCorrect.toLowerCase() == 'true') {
+                            questionContainer.innerHTML += `
+                                <div style="margin-top:10;color:green;word-wrap: break-word;">
+                                    ✔  ${answer}
+                                </div>
+                            `;
+                        } else {
+                            questionContainer.innerHTML += `
+                                <p style="margin-top:10;word-wrap: break-word;">
+                                    ❌  ${answer}
+                                </p>
+                            `;
+                        }
+                    {% endfor %}
+                    questionContainer.innerHTML += `
+                    <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    <br>
+                    `;
+                {% endfor %}
+            }
+        {% endfor %}
+
+    }
+
+    function setQuestionToEdit(id) {
+        document.getElementById('idQuestionToEdit').value = id;
+        let content = document.getElementById('answer_edit_content'),cont = 0, isCorrect, answer, quesId;
+        content.innerHTML = '';
+        {% for ex in exercises %}
+            {% for ques in ex.questions %}
+                quesId = '{{ques.question.pk}}';
+                if (quesId == id) {
+                    document.getElementById('questionEdit').value = '{{ques.question.question}}';
+                    {% for ans in ques.answers %}
+                        answer = '{{ans.answer}}';
+                        isCorrect = '{{ans.isCorrect}}';
+                        if (isCorrect.toLowerCase() == 'true') {
+                            content.innerHTML += `
+                                <div class="row answer" style="width: 97%; margin-bottom: 5;">
+                                    <div class="col-11">
+                                        <input style="width: 90%;" value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
+                                    </div>
+                                    <div class="col-1">
+                                        <input style="margin-top:10" name="correct${cont}" type="checkbox" title="Is correct?" checked>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            content.innerHTML += `
+                                <div class="row answer" style="width: 97%; margin-bottom: 5;">
+                                    <div class="col-11">
+                                        <input style="width: 90%;" value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
+                                    </div>
+                                    <div class="col-1">
+                                        <input style="margin-top:10" name="correct${cont}" type="checkbox" title="Is correct?">
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        cont++;
+                    {% endfor %}
+                    document.getElementById('lengthAnsEdit').value = cont;
+                }
+            {% endfor %}
+        {% endfor %}
     }
 
     function evaluateCapability(id) {
@@ -286,11 +393,12 @@
         for (const element of list) {
             if (element.title == 'Plan' & getIdByOnClick(element) == id) {
                 element.classList.add('actived')
+                document.getElementById('eval_name').innerText = element.innerText;
             } else {
                 element.classList.remove('actived')
             }
         }
-        evaluate(id, 'capability');
+        evaluate(id, 'ca');
     }
 
     function evaluateObjective(id) {
@@ -299,11 +407,12 @@
         for (const element of list) {
             if (element.title == 'Objective' & getIdByOnClick(element) == id) {
                 element.classList.add('actived')
+                document.getElementById('eval_name').innerText = element.innerText;
             } else {
                 element.classList.remove('actived')
             }
         }
-        evaluate(id, 'objective');
+        evaluate(id, 'ob');
     }
 
     function evaluateContent(id) {
@@ -312,11 +421,12 @@
         for (const element of list) {
             if (element.title == 'Content' & getIdByOnClick(element) == id) {
                 element.classList.add('actived')
+                document.getElementById('eval_name').innerText = element.innerText;
             } else {
                 element.classList.remove('actived')
             }
         }
-        evaluate(id, 'content');
+        evaluate(id, 'co');
     }
 
     function getIdByOnClick(element){
