@@ -1,0 +1,884 @@
+
+{% extends "trainer_app/templates/base_trainer.html" %}
+{% load static %}
+
+
+{% block content %}
+<style>
+    .button {
+      padding: 15px 25px;
+      font-size: 15px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      color: #fff;
+      background-color: #666;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 9px #999;
+      padding: 10px;
+    }
+    
+    .button:hover {background-color: #666}
+    
+    .button:active {
+      background-color: #666;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+    .actived {
+        color: darkslategray !important;
+        text-decoration: underline darkslategray !important;
+    }
+
+    .underline:hover {
+        color: darkslategray !important;
+    }
+
+
+</style>
+
+<div style="margin: 5%;">
+        <div class="row" style="margin-top: 30;" id="mainrow">
+            <div class="col-2" style="text-align: left;">
+                <div class="row ">
+                    <div class="col">
+                        <a class="btn btn-primary contenthide" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
+                            🡠
+                        </a>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <div id="buttonEval" class="button" onclick="manageEvaluations()" style="word-wrap: break-word;">Evaluations view</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label id="label"></label>
+                        <hr class="contenthide">
+                        <div class="contenthide">
+                            <i><u>Capability plan:</u></i>
+                        </div>
+                        <div class="contenthide" style="margin-left: 10;">
+                            <i>{{cap_name}}</i>
+                        </div>
+                        <br class="contenthide" >
+                        <br class="contenthide" >
+                        <div class="contenthide" >
+                            <i><u>Objectives:</u></i>
+                        </div>
+                        <div class="contenthide" style="border-radius: 5px; height: 30%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
+                            {% for objective in cap_obj %}
+                                <div>
+                                    <a class="underline" style="margin-left: 10; color: darkgray; text-decoration: none; word-wrap: break-word;" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
+                                        <i>{{objective.name}}</i>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <br class="contenthide">
+                        
+                    </div>
+                </div>
+            </div>
+            <input id="currentObjective" value="" hidden>
+            <input id="currentContent" value="" hidden>
+            <input id="currentEvaluation" value="" hidden>
+            <div class="col" style="height: 80%; width: 50%;">
+                <div style="height: 80%;border-style: solid;border-radius: 10px;border-color: lightgray; border-width: thin;">
+                    <div class="row" style="height: 100%;">
+                        <div id="indexCol" class="col-2 border-right">
+                            <!-----------------CONTENT PERSPECTIVE----------------->
+                            <div class="contenthide" style="padding-left: 30; text-align: center;">
+                                <br>
+                                <a href="#" type="button" data-toggle="modal" data-target="#addContent">
+                                    <span class="fa-stack fa-lg">
+                                      <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
+                                      <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                                <br>
+                                <br>
+                                <div id="contents_list" role="tablist" style="border-radius: 5px;height: 500; overflow: auto; display: block;">
+                                    
+                                </div>
+                                <ul id="contents_ul" hidden>
+                                    {% for objective in obj_cont %}
+                                        {% for content in objective.contents %}
+                                            <li >
+                                                {{objective.obj_pk}}:{{content.pk}}%{{content.name}}
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <!-----------------EVALUATION PERSPECTIVE----------------->
+                            <div class="evalhide" id="contentEvList" role="tablist" style="padding-right: 15; height: 600; overflow: auto; display: block;margin-left: 20; margin-top:15; margin-bottom: 15; border-radius: 5px;">
+                                <div style="word-wrap: break-word">
+                                    <a class="underline" title="Plan" style="font-size:16;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateCapability('{{cap_id}}')" data-toggle="list" role="tab">
+                                        <i>{{cap_name}}</i>
+                                    </a>
+                                </div>
+                                <div class="border-left">
+                                    {% for objective in obj_cont %}
+                                    <div style="word-wrap: break-word">
+                                        <a class="underline" title="Objective" style="margin-left: 5; cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateObjective('{{objective.cap_obj_pk}}')" data-toggle="list" role="tab">
+                                            <i>{{objective.name}}</i>
+                                        </a>
+                                    </div>
+                                    <div class="border-left" style="margin-left: 10;">
+                                        {% for content in objective.contents %}
+                                            <div style="word-wrap: break-word">
+                                                <a class="underline" title="Content" style="padding-left: 5;cursor:pointer;color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="evaluateContent('{{content.pk}}')" data-toggle="list" role="tab">
+                                                    <i>{{content.name}}</i>
+                                                </a>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <br>
+                                {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div id="mainCol" class="col-10" style="height: 100%; width: 50%;">
+                            <!-----------------CONTENT PERSPECTIVE----------------->
+                            <ul id="components_ul" hidden>
+                                {% for content in cont_tech %}
+                                    {% for component in content.media_comps %}
+                                    <li >
+                                        {{content.cont.pk}}:{{content.cont.name}}
+                                    </li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            <div class="contenthide" style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
+                                <div class="row">
+                                    <div class="col-2" style="padding-right: 0%;">
+                                        <div class="dropdown" style="display: inline;">
+                                            <button class="btn btn-secondary dropdown-toggle" style="margin-top: 25; width: 100%;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Add
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addText">Text</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addImage">Image</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addVideo">Video</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addDocument">Document</a>
+                                                <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addLink">Link</a>
+                                                    <a class="dropdown-item" style="cursor: pointer;" type="button" data-toggle="modal" data-target="#addGame">Game</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2" style="padding-left: 0%;">
+                                        <a class="btn btn-danger" style="margin-left: 10; margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#deleteContent">
+                                            Delete
+                                        </a>
+                                    </div>
+                                    <div class="col" style=" text-align: left;">
+                                        <h1 style="font-family: Raleway; padding-left: 10%; height: 100%; margin-top: 20;" id="content_name"></h1>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="height: 600;">
+                                        <div id="comp_list" style="position: relative; height: 90%; overflow: auto; display: block;overflow-x: hidden;">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-----------------EVALUATION PERSPECTIVE----------------->
+                            <div class="evalhide" style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
+                                <div class="row">
+                                    <div class="col-4" style="padding-right: 0%;">
+                                        <a class="btn btn-secondary" style="margin-left: 10; margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#addQuestion">
+                                            Add question
+                                        </a>
+                                    </div>
+                                    <div class="col" style=" text-align: left;">
+                                        <h1 style="font-family: Raleway; padding-left: 5%; height: 100%; margin-top: 20;" id="eval_name"></h1>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="height: 600;">
+                                        <div id="questionList" style="padding: 10;height: 95%; overflow: auto; display: block;overflow-x: hidden;">
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<!-- The Add Modal -->
+{% include 'capabilities/new_content.html' %}
+{% include 'capabilities/new_component.html' %}
+{% include 'capabilities/new_question.html' %}
+{% include 'capabilities/edit_question.html' %}
+{% include 'capabilities/delete_content.html' %}
+
+<script type="text/javascript">
+
+
+    function manageEvaluations() {
+        let button = document.getElementById('buttonEval'), listMants;
+        let nameButton = button.innerText.toLowerCase();
+        if (nameButton.indexOf('evaluations') > -1) {
+            setContentsComponentsVisible(false);
+            setEvaluationComponentsVisible(true);
+            //----------------------------
+            button.innerText = 'Contents view';
+            listMants = document.getElementsByClassName('view');
+            for (const element of listMants) {
+                element.value = 1;
+            }
+            loadEvaluations();
+            pressEvaluationItem('{{ev_pos}}')
+
+        } else {
+            setEvaluationComponentsVisible(false);
+            setContentsComponentsVisible(true);
+            //----------------------------
+            button.innerText = 'Evaluations view';
+            listMants = document.getElementsByClassName('view');
+            for (const element of listMants) {
+                element.value = 0;
+            }
+            loadContents();
+        }
+    }
+
+    function setEvaluationComponentsVisible(visible) {
+        let listEvaluations = document.getElementsByClassName('evalhide');
+        for (const element of listEvaluations) {
+            element.hidden = !visible;
+        }
+    }
+
+    function setContentsComponentsVisible(visible) {
+        let listContents = document.getElementsByClassName('contenthide');
+        for (const element of listContents) {
+            element.hidden = !visible;
+        }
+    }
+
+    function loadEvaluations() {
+        let indexCol = document.getElementById('indexCol');
+        indexCol.classList.remove('col-2');
+        indexCol.classList.add('col-3');
+
+        let mainCol = document.getElementById('mainCol')
+        mainCol.classList.remove('col-10');
+        mainCol.classList.add('col-9');
+    }
+
+    function loadContents() {
+        let indexCol = document.getElementById('indexCol');
+        indexCol.classList.remove('col-3');
+        indexCol.classList.add('col-2')
+
+        let mainCol = document.getElementById('mainCol')
+        mainCol.classList.remove('col-9');
+        mainCol.classList.add('col-10')
+    }
+
+    function evaluate(id, scope) {
+        //FOR POST
+        document.getElementById('idRefQues').value = id;
+        document.getElementById('typeRefQues').value = scope;
+        document.getElementById('idRefQuesEdit').value = id;
+        document.getElementById('typeRefQuesEdit').value = scope;
+        
+        //--------PLACE QUESTIONS---------
+        let questionContainer = document.getElementById('questionList'),quesId, exId, exScope, question, answer, isCorrect;
+        questionContainer.innerHTML = '<br>';
+        {% for ex in exercises %}
+            exId = '{{ex.exercise.referenceId}}';
+            exScope = '{{ex.exercise.scope}}';
+            if (exId == id & exScope == scope) {
+                {% for ques in ex.questions %}
+                    question = '{{ques.question.question}}';
+                    quesId = '{{ques.question.pk}}';
+                    questionContainer.innerHTML += `
+                        <div class="row">
+                            <div class="col-11" style="text-align: center">
+                                <b>${question}</b>
+                            </div>
+                            <div class="col-1" style="text-align:center">
+                                <div class="row">
+                                    <div class="col" style="text-align=center">
+                                        <a class="fa fa-pencil fa-2x" onclick="setQuestionToEdit(${quesId})" type="button" data-toggle="modal" data-target="#editQuestion" style="text-decoration:none;cursor: pointer;" href=""></a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col" style="text-align=center">
+                                        <form action="{% url 'deleteQuestion' %}" method="POST">
+                                            {% csrf_token %}
+                                            <input name="idQuestion" value="${quesId}" hidden>
+                                            <input class="view" name="view" value="0" hidden>
+                                            <input class="evMant" name="evMant" value="${getCurrentEvaluation()}" hidden>
+                                            <input name="idCap" value="{{cap_id}}" hidden>
+                                            <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:35;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    `;
+                    {% for ans in ques.answers %}
+                        answer = '{{ans.answer}}';
+                        isCorrect = '{{ans.isCorrect}}';
+                        if (isCorrect.toLowerCase() == 'true') {
+                            questionContainer.innerHTML += `
+                                <div style="margin-top:10;color:green;word-wrap: break-word;">
+                                    ✔  ${answer}
+                                </div>
+                            `;
+                        } else {
+                            questionContainer.innerHTML += `
+                                <p style="margin-top:10;word-wrap: break-word;">
+                                    ❌  ${answer}
+                                </p>
+                            `;
+                        }
+                    {% endfor %}
+                    questionContainer.innerHTML += `
+                    <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    <br>
+                    `;
+                {% endfor %}
+            }
+        {% endfor %}
+
+    }
+
+    function setQuestionToEdit(id) {
+        document.getElementById('idQuestionToEdit').value = id;
+        let content = document.getElementById('answer_edit_content'),cont = 0, isCorrect, answer, quesId;
+        content.innerHTML = '';
+        {% for ex in exercises %}
+            {% for ques in ex.questions %}
+                quesId = '{{ques.question.pk}}';
+                if (quesId == id) {
+                    document.getElementById('questionEdit').value = '{{ques.question.question}}';
+                    {% for ans in ques.answers %}
+                        answer = '{{ans.answer}}';
+                        isCorrect = '{{ans.isCorrect}}';
+                        if (isCorrect.toLowerCase() == 'true') {
+                            content.innerHTML += `
+                                <div class="row answer" style="width: 97%; margin-bottom: 5;">
+                                    <div class="col-11">
+                                        <input style="width: 90%;" value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
+                                    </div>
+                                    <div class="col-1">
+                                        <input style="margin-top:10" name="correct${cont}" type="checkbox" title="Is correct?" checked>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            content.innerHTML += `
+                                <div class="row answer" style="width: 97%; margin-bottom: 5;">
+                                    <div class="col-11">
+                                        <input style="width: 90%;" value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
+                                    </div>
+                                    <div class="col-1">
+                                        <input style="margin-top:10" name="correct${cont}" type="checkbox" title="Is correct?">
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        cont++;
+                    {% endfor %}
+                    document.getElementById('lengthAnsEdit').value = cont;
+                }
+            {% endfor %}
+        {% endfor %}
+    }
+
+    function evaluateCapability(id) {
+        let col = document.getElementById('contentEvList'), listMants, i = 0;
+        let list = col.getElementsByClassName('underline');
+        for (const element of list) {
+            if (element.title == 'Plan' & getIdByOnClick(element) == id) {
+                element.classList.add('actived')
+                document.getElementById('eval_name').innerText = element.innerText;
+                listMants = document.getElementsByClassName('evMant');
+                document.getElementById('currentEvaluation').value = i;
+                for (const element of listMants) {
+                    element.value = i;
+                }
+            } else {
+                element.classList.remove('actived')
+            }
+            i++;
+        }
+        evaluate(id, 'ca');
+    }
+
+    function evaluateObjective(id) {
+        let col = document.getElementById('contentEvList'), listMants, i = 0;
+        let list = col.getElementsByClassName('underline');
+        for (const element of list) {
+            if (element.title == 'Objective' & getIdByOnClick(element) == id) {
+                element.classList.add('actived')
+                document.getElementById('eval_name').innerText = element.innerText;
+                listMants = document.getElementsByClassName('evMant');
+                document.getElementById('currentEvaluation').value = i;
+                for (const element of listMants) {
+                    element.value = i;
+                }
+            } else {
+                element.classList.remove('actived')
+            }
+            i++;
+        }
+        evaluate(id, 'ob');
+    }
+
+    function evaluateContent(id) {
+        let col = document.getElementById('contentEvList'), listMants, element;
+        let list = col.getElementsByClassName('underline');
+        for (let i = 0; i < list.length; i++) {
+            element = list[i];
+            if (element.title == 'Content' & getIdByOnClick(element) == id) {
+                element.classList.add('actived')
+                document.getElementById('eval_name').innerText = element.innerText;
+                listMants = document.getElementsByClassName('evMant');
+                document.getElementById('currentEvaluation').value = i;
+                for (const element of listMants) {
+                    element.value = i;
+                }
+            } else {
+                element.classList.remove('actived')
+            }
+        }
+        evaluate(id, 'co');
+    }
+    
+    function pressEvaluationItem(index) {
+        let col = document.getElementById('contentEvList'), listMants, i = 0, id, scope;
+        let list = col.getElementsByClassName('underline');
+        if (index >= list.length) {
+            for (const element of list) {
+                if (i == 0) {
+                    element.classList.add('actived')
+                    document.getElementById('eval_name').innerText = element.innerText;
+                    listMants = document.getElementsByClassName('evMant');
+                    document.getElementById('currentEvaluation').value = i;
+                    for (const element of listMants) {
+                        element.value = i;
+                    }
+                    id = getIdByOnClick(element);
+                    switch (element.title.toLowerCase()) {
+                        case 'plan':
+                            scope = 'ca';
+                            break;
+                    
+                        case 'objective':
+                            scope = 'ob';
+                            break;
+                    
+                        case 'content':
+                            scope = 'co';
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                } else {
+                    element.classList.remove('actived')
+                }
+                i++;
+            }
+        } else {
+            for (const element of list) {
+                if (i == index) {
+                    element.classList.add('actived')
+                    document.getElementById('eval_name').innerText = element.innerText;
+                    listMants = document.getElementsByClassName('evMant');
+                    document.getElementById('currentEvaluation').value = i;
+                    for (const element of listMants) {
+                        element.value = i;
+                    }
+                    id = getIdByOnClick(element);
+                    switch (element.title.toLowerCase()) {
+                        case 'plan':
+                            scope = 'ca';
+                            break;
+                    
+                        case 'objective':
+                            scope = 'ob';
+                            break;
+                    
+                        case 'content':
+                            scope = 'co';
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                } else {
+                    element.classList.remove('actived')
+                }
+                i++;
+            }
+        }
+        
+        evaluate(id, scope);
+    }
+
+    function getIdByOnClick(element){
+        let click = element.onclick.toString();
+        let par = click.indexOf("('");
+        //click="function onclick(event) {pressObjective('2')}"
+        let idO = click.substring(par + 2, click.indexOf("'", par + 2));
+        return idO;
+    }
+
+    function pressIndexOfList(index, listId) {
+        let list = document.getElementById(listId);
+        if (list.getElementsByTagName("a").length > 0) {
+            let id = getIdByOnClick(list.getElementsByTagName("a")[index]);
+            if (listId == 'obj_list') {
+                pressObjective(id);
+            } else {
+                pressContent(id);
+            }
+        }
+    }
+
+    function pressObjective(id) {
+        let string_id = id + "", listMants;
+
+        //FOR POST:
+        document.getElementById("_c").value = id + "_c";
+        //-----------------------
+        let list = document.getElementById("obj_list").getElementsByTagName("a");
+        for (let i = 0; i < list.length; i++) {
+            const element = list[i];
+            element.classList.remove('actived');
+            idO = getIdByOnClick(element);
+            if (idO == string_id) {
+                document.getElementById("currentObjective").value = i;
+                listMants = document.getElementsByClassName('objMant');
+                for (const element of listMants) {
+                    element.value = i;
+                }
+                element.classList.add('actived');
+            }
+        }
+        //----------PLACE CONTENTS-------------
+        document.getElementById("comp_list").innerHTML = '<br>';
+        document.getElementById("dropdownMenuButton").classList.add('disabled');
+        let contents_li = document.getElementById("contents_ul").getElementsByTagName("li");
+        let contents_list = document.getElementById("contents_list");
+        contents_list.innerHTML = '';
+        for (let i = 0; i < contents_li.length; i++) {
+            const element = contents_li[i].innerText;
+            const obj_pk = element.substring(0, element.indexOf(':')).trim();
+            const cont_pk = element.substring(element.indexOf(':') + 1, element.indexOf('%'));
+            if (id == obj_pk) {
+                contents_list.innerHTML += `
+                    <div>
+                        <a class="underline" href="#" style="color: darkgray; text-decoration: none;display: inline;word-wrap: break-word;" onclick="pressContent('${cont_pk}')" data-toggle="list" href="#" role="tab">
+                            <i>${element.substring(element.indexOf('%') + 1)}</i>
+                            
+                        </a>
+                    </div>
+                `;    
+            //document.getElementById('label').innerText += '--' + element.substring(element.indexOf(':') + 1);
+            }
+        }  
+        pressIndexOfList(0, 'contents_list');
+    }
+
+    function print(string){
+        document.getElementById('label').innerText = string;
+    }
+
+    function getCurrentContent() {
+        return document.getElementById("currentContent").value;
+    }
+
+    function getCurrentEvaluation() {
+        return document.getElementById("currentEvaluation").value;
+    }
+
+    function getCurrentObjective() {
+        return document.getElementById("currentObjective").value;
+    }
+
+    function pressContent(id) {
+        let string_id = id + "";
+
+        //FOR POST:
+        document.getElementById("textin").value = id + "&txt";
+        document.getElementById("imagein").value = id + "&img";
+        document.getElementById("videoin").value = id + "&vid";
+        document.getElementById("documentin").value = id + "&doc";
+        document.getElementById("linkin").value = id + "&lnk";
+        document.getElementById("gamein").value = id + "&gme";
+
+        document.getElementById("idContdel").value = string_id;
+        //----------------------------------
+        let add = document.getElementById("dropdownMenuButton");
+        add.classList.remove('disabled');
+        let list = document.getElementById("contents_list").getElementsByTagName("a"), listMants;
+        for (let i = 0; i < list.length; i++) {
+            const element = list[i];
+            element.classList.remove('actived');
+            idO = getIdByOnClick(element);
+            if (idO == string_id) {
+                document.getElementById("currentContent").value = i;
+                listMants = document.getElementsByClassName('contMant');
+                for (const element of listMants) {
+                    element.value = i;
+                }
+                element.classList.add('actived')
+                //-----
+                document.getElementById("content_name").textContent = element.textContent;
+            }
+        }
+        //----------PLACE COMPONENTS-------------
+        let components_list = document.getElementById("comp_list");
+        components_list.innerHTML = '<br>';
+        let length = '{{cont_tech|length}}', contId;
+        let comps = [];
+        {% for cont in cont_tech %}
+            contId = '{{cont.cont.pk}}'
+            if (contId == id) {
+                {% for comp in cont.media_comps %}
+                    if ('{{comp.type}}' == 'img' ||
+                        '{{comp.type}}' == 'vid' ||
+                        '{{comp.type}}' == 'doc') {
+                        comps.push(['{{comp.type}}', '{{comp.value.url}}', '{{comp.pk}}', '{{comp.description}}']);
+                    } else {
+                        comps.push(['{{comp.type}}', '{{comp.value}}', '{{comp.pk}}', '{{comp.description}}']);
+                    }
+                {% endfor %}
+            }
+        {% endfor %}
+
+        for (let i = 0; i < comps.length; i++) {
+            const element = comps[i];
+            switch (element[0]) {
+                case 'txt':
+                    components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: justify; width: 50%; word-wrap: break-word">
+                                        ${element[1]}
+                                    </div>
+                                    <div class="col-1" >
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    `
+                    break;
+            
+                case 'img':
+                    components_list.innerHTML += `
+                    
+                    <form action="{% url 'deleteComponent' %}" method="POST">
+                        {% csrf_token %}
+                        <div style="position:relative; left:10%">
+                            <p class="row">
+                                <img style="border-radius: 20px;" class="img-fluid" src="${element[1]}" width="75%" height="75%">
+                                <span>
+                                    <input name="contPos" value="${getCurrentContent()}" hidden>
+                                    <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                    <input name="idCap" value="{{cap_id}}" hidden>
+                                    <input name="compId" value="${element[2]}" hidden>
+                                    <a class="fa fa-eye fa-2x" style="text-decoration:none;cursor: pointer; color: #5D6AFF; display:block; margin-left:5" href="${element[1]}" target="_blank"></a>
+                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    
+                                </span>
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-1">
+                            </div>
+                            <div class="col" style="text-align: justify;word-wrap: break-word">
+                                <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                    <i>${element[3]}</i>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                    <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    `;
+                    break;
+            
+                case 'vid':
+                    components_list.innerHTML += `
+                    <form action="{% url 'deleteComponent' %}" method="POST">
+                        {% csrf_token %}
+                        <div style="text-align:center">
+                            <video width="70%" height="70%" controls>
+                                <source src="${element[1]}" type="video/mp4">
+                            </video>
+                            <span>
+                                <input name="contPos" value="${getCurrentContent()}" hidden>
+                                <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                <input name="idCap" value="{{cap_id}}" hidden>
+                                <input name="compId" value="${element[2]}" hidden>
+                                <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                            </span>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-1">
+                            </div>
+                            <div class="col" style="text-align: justify;word-wrap: break-word">
+                                <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                    <i>${element[3]}</i>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                    <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    `
+                    break;
+        
+                case 'doc':
+                    let string = element[1];
+                    let fileName = string.substring(string.indexOf('/media/') + 7);
+                    components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: left;width: 50%; word-wrap: break-word">
+                                        <a href="${element[1]}" target="_blank">
+                                            <i class="fa fa-file fa-2x" aria-hidden="true"></i>
+                                            ${fileName}
+                                        </a>
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                    </div>
+                                    <div class="col" style="text-align: justify;word-wrap: break-word">
+                                        <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                            <i>${element[3]}</i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    `;
+                    break;
+            
+                case 'lnk':
+                    components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                            {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: left;width: 50%; word-wrap: break-word">
+                                        <a href="${element[1]}" target="_blank">
+                                            <i class="fa fa-link fa-2x" aria-hidden="true"></i>
+                                            <p style="display:inline">
+                                                ${element[1]}
+                                            </p>
+                                        </a>
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                    </div>
+                                    <div class="col" style="text-align: justify;word-wrap: break-word">
+                                        <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                            <i>${element[3]}</i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    `
+                    break;
+        
+                case 'gme':
+                components_list.innerHTML += `
+                        <p>
+                            <form action="{% url 'deleteComponent' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col" style="text-align: left;width: 50%; word-wrap: break-word">
+                                        <a href="${element[1]}" target="_blank">
+                                            <i class="fa fa-gamepad fa-2x" aria-hidden="true"></i>
+                                            <p style="display:inline">
+                                                ${element[1]}
+                                            </p>
+                                        </a>
+                                        <input name="contPos" value="${getCurrentContent()}" hidden>
+                                        <input name="objPos" value="${getCurrentObjective()}" hidden>
+                                        <input name="idCap" value="{{cap_id}}" hidden>
+                                        <input name="compId" value="${element[2]}" hidden>
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-1">
+                                    </div>
+                                    <div class="col" style="text-align: justify;word-wrap: break-word">
+                                        <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                            <i>${element[3]}</i>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </p>
+                        <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                    `
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+       
+    }
+
+</script>
+<script>
+    pressIndexOfList('{{obj_pos}}', 'obj_list');
+    pressIndexOfList('{{cont_pos}}', 'contents_list');
+    if ('{{view}}' == 0) {
+        setEvaluationComponentsVisible(false);
+    } else {
+        manageEvaluations();
+        pressEvaluationItem('{{ev_pos}}')
+    }
+</script>
+
+
+
+{% endblock %}

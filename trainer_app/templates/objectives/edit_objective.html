@@ -1,0 +1,17 @@
+
+{% extends "trainer_app/templates/base_trainer.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="container">
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table>{{objetive_to_edit.as_table}}</table>
+        <a type="button" class="btn btn-secondary" href="{% url 'objectives_trainer' %}">Close</a>
+        <input class="btn btn-primary" type="submit" value="Save" />
+    </form>
+</div>
+ 
+{% endblock %}

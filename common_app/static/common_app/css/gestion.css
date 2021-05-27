@@ -1,12 +1,11 @@
 .header {
   padding: 0px;
   text-align: left;
-  background: #1abc9c;
+  background: rgb(95, 104, 184);
   color: white;
   font-size: 30px;
   font-family: "Raleway";
 }
-
 .nav-pagination {
   position: absolute;
     bottom: 0px;
@@ -38,12 +37,6 @@
   font-size: 13;
 }
 
-
-
-
-
-
-/*--------------------------------*/
 /*body {
   font-family: "Lora";
   background-attachment: fixed;

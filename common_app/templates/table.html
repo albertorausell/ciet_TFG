@@ -1,0 +1,27 @@
+
+{% block content %}
+<!-- <th scope="row">1</th> (para poner en negrita)-->
+<div style="border-style: solid;border-color: darkgrey; border-width: thin; position: relative; height: 400px; overflow: auto; display: block;">
+
+    <table class="table table-bordered table-striped mb-0">
+      <thead>
+        <tr>
+        {% for column in table.columns %}
+          <th scope="col" style="text-align: center;">{{column}}</th>
+        {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+          {% for row in table.rows %}
+            <tr>
+                {% for attribute in row %}
+                    <td style="text-align: center;">{{attribute}}</td>
+                {% endfor %}
+            </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  
+  </div>
+
+{% endblock %}

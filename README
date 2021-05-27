@@ -3,3 +3,13 @@ contraseña = GDFS5614sd6S#Sgh
 
 superuser_username = ciet_superuser
 superuser_password = GDFS5614sd6S#Sgh
+
+-------------------------------------------------------------
+Cargar base de datos
+-------------------------------------------------------------
+python .\manage.py loaddata defaultData.json
+
+-------------------------------------------------------------
+Descargar base de datos (ejemplo)
+-------------------------------------------------------------
+python .\manage.py dumpdata auth.user --indent 2 --format json > defaultDataAu.json

@@ -1,0 +1,133 @@
+{% block content %}
+
+<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
+    {% csrf_token %}
+    <div class="modal fade" id="addQuestion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 50%;width: auto !important;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Question</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div style="width: 97%;">
+                    <input class="form-control" name="question" type="text" placeholder="Question...">
+                </div>
+                <br>
+                <div id="answer_content" style="height: 200; overflow: auto; display: block;padding-top: 10;padding-left: 10; padding-bottom: 10;margin:10; width: 95%; text-align: center;">
+                    <div class="row answer" style="width: 97%; margin-bottom: 5;">
+                        <div class="col-10">
+                            <input name="answer0" class="form-control" type="text" placeholder="Answer...">
+                        </div>
+                        <div class="col-1">
+                            <input style="margin-top:10" name="correct0" type="checkbox" title="Is correct?">
+                        </div>
+                        <div class="col-1">
+                            
+                        </div>
+                    </div>
+                    <div class="row answer" style="width: 97%; margin-bottom: 5;">
+                        <div class="col-10">
+                            <input name="answer1" class="form-control" type="text" placeholder="Answer...">
+                        </div>
+                        <div class="col-1">
+                            <input style="margin-top:10" name="correct1" type="checkbox" title="Is correct?">
+                        </div>
+                        <div class="col-1">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <a href="#" onclick="addAnswer()" type="button" title="Add answer" >
+                        <span class="fa-stack fa-lg">
+                            <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer" id="footerQuestion">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input name="action" value="addQuestion" hidden>
+                <input id="idRefQues" name="idRefQues" value="" hidden>
+                <input id="typeRefQues" name="typeRefQues" value="" hidden>
+                <input id="lengthAns" name="length" value="2" hidden>
+                <input class="contMant" name="contMant" value="0" hidden>
+                <input class="objMant" name="objMant" value="0" hidden>
+                <input class="view" name="view" value="0" hidden>
+                <input class="evMant" name="evMant" value="0" hidden>
+                <input class="btn btn-primary" type="submit" value="Add question"/>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+
+<div id="originalAnswer" class="row answer" style="width: 97%; margin-bottom: 5;" hidden>
+</div>
+
+<script>
+
+    function deleteAnswer(pos) {
+        let answerContent = document.getElementById('answer_content');
+        let numberAnswer = answerContent.getElementsByClassName('answer').length;
+        let cont = 0, inputs, remove;
+        let deleted = false;
+        for (let i = 0; i < numberAnswer; i++) {
+            let element = null;
+            if (deleted) {
+                element = answerContent.children[i-1];
+            } else {
+                element = answerContent.children[i];
+            }
+            if (i == pos) {
+                answerContent.removeChild(element)
+                deleted = true;
+            } else {
+                inputs = element.getElementsByTagName('input');
+                remove = element.getElementsByTagName('div')[2];
+                inputs[0].name = 'answer' + cont;
+                inputs[1].name = 'correct' + cont; //SOLO SE BORRA CUANDO PULSAS DOS VECES SI HAS ELIMINADO EL ANTERIOR ANTES
+                if (cont > 1) {
+                    remove.innerHTML = `
+                        <a style="color: red;" class="btn btn-link close" onclick="deleteAnswer(${cont})">✘</a>
+                    `;
+                } else {
+                    remove.innerHTML = ``;
+                }
+                cont++;
+            }
+        }
+        document.getElementById('lengthAns').value = numberAnswer - 1;
+    }
+
+    function addAnswer() {
+        let answerContent = document.getElementById('answer_content');
+        let numberAnswer = answerContent.getElementsByClassName('answer').length;
+        document.getElementById('lengthAns').value = numberAnswer + 1;
+        let originalAnswer = document.getElementById('originalAnswer');
+        let answer = originalAnswer.cloneNode(true);
+        answer.id = '';
+        answer.hidden = false;
+        answer.innerHTML = `
+            <div class="col-10">
+                <input name="answer${numberAnswer}" class="form-control" type="text" placeholder="Answer...">
+            </div>
+            <div class="col-1">
+                <input style="margin-top:10" name="correct${numberAnswer}" type="checkbox" title="Is correct?">
+            </div>
+            <div class="col-1">
+                <a style="color: red;" class="btn btn-link close" onclick="deleteAnswer(${numberAnswer})">✘</a>
+            </div>
+        `;
+        answerContent.appendChild(answer);
+
+    }
+    
+</script>
+
+{% endblock %}

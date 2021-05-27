@@ -1,266 +1,320 @@
 [
-    {
-      "model": "auth.user",
-      "pk": 1,
-      "fields": {
-        "password": "pbkdf2_sha256$216000$SyQors9UD36T$8QKyNFhNsBX5sglD1M9kX4d2jvWd9alxCVFVqoJs+1c=",
-        "last_login": "2021-04-20T16:11:20.708Z",
-        "is_superuser": true,
-        "username": "ciet_superuser",
-        "first_name": "",
-        "last_name": "",
-        "email": "ciet.help@gmail.com",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2021-04-20T16:11:18.278Z",
-        "groups": [],
-        "user_permissions": []
-      }
-    },
-    {
-      "model": "common_app.phase",
-      "pk": 1,
-      "fields": {
-        "name": "Predisaster"
-      }
-    },
-    {
-      "model": "common_app.phase",
-      "pk": 2,
-      "fields": {
-        "name": "Postdisaster"
-      }
-    },
-    {
-      "model": "common_app.phase",
-      "pk": 3,
-      "fields": {
-        "name": "Response"
-      }
-    },
-    {
-        "model": "common_app.dimension",
-        "pk": 1,
-        "fields": {
-          "name": "Educational"
-        }
-      },
-      {
-        "model": "common_app.dimension",
-        "pk": 2,
-        "fields": {
-          "name": "Social"
-        }
-      },
-      {
-        "model": "common_app.dimension",
-        "pk": 3,
-        "fields": {
-          "name": "Technique"
-        }
-      },
-      {
-        "model": "common_app.dimension",
-        "pk": 4,
-        "fields": {
-          "name": "Legal and institutional"
-        }
-      },
-      {
-        "model": "common_app.dimension",
-        "pk": 5,
-        "fields": {
-          "name": "Economic"
-        }
-      },{
-        "model": "common_app.activity",
-        "pk": 2,
-        "fields": {
-          "name": "Types of Emergencies",
-          
-          "dimension": 1,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 3,
-        "fields": {
-          "name": "Emergency plan",
-          
-          "dimension": 1,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 4,
-        "fields": {
-          "name": "Crisis detection",
-          
-          "dimension": 1,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 5,
-        "fields": {
-          "name": "Crisis alert",
-          
-          "dimension": 1,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 6,
-        "fields": {
-          "name": "Evacuation routes",
-          
-          "dimension": 1,
-          "phase": 3
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 7,
-        "fields": {
-          "name": "Signs",
-          
-          "dimension": 1,
-          "phase": 3
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 8,
-        "fields": {
-          "name": "First aid",
-          
-          "dimension": 1,
-          "phase": 3
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 9,
-        "fields": {
-          "name": "Psychological support for victims",
-          
-          "dimension": 2,
-          "phase": 2
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 10,
-        "fields": {
-          "name": "Resilience",
-          
-          "dimension": 2,
-          "phase": 2
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 11,
-        "fields": {
-          "name": "Means of Protection",
-          
-          "dimension": 3,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 12,
-        "fields": {
-          "name": "Building Structures",
-          
-          "dimension": 3,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 13,
-        "fields": {
-          "name": "Risk analysis",
-          
-          "dimension": 3,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 14,
-        "fields": {
-          "name": "Fire extinguishers",
-          
-          "dimension": 3,
-          "phase": 3
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 15,
-        "fields": {
-          "name": "Communication equipment",
-          
-          "dimension": 3,
-          "phase": 3
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 16,
-        "fields": {
-          "name": "Rescue Operations",
-          
-          "dimension": 3,
-          "phase": 3
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 17,
-        "fields": {
-          "name": "Identification of Risks",
-          
-          "dimension": 3,
-          "phase": 2
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 18,
-        "fields": {
-          "name": "Current Legal Regulations",
-          
-          "dimension": 4,
-          "phase": 1
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 19,
-        "fields": {
-          "name": "Analysis of damage costs",
-          
-          "dimension": 5,
-          "phase": 2
-        }
-      },
-      {
-        "model": "common_app.activity",
-        "pk": 20,
-        "fields": {
-          "name": "Probability of investmentin prevention",
-          
-          "dimension": 5,
-          "phase": 2
-        }
-      }
-    ]
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$216000$SyQors9UD36T$8QKyNFhNsBX5sglD1M9kX4d2jvWd9alxCVFVqoJs+1c=",
+      "last_login": "2021-04-20T16:11:20.708Z",
+      "is_superuser": true,
+      "username": "ciet_superuser",
+      "first_name": "",
+      "last_name": "",
+      "email": "ciet.help@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2021-04-20T16:11:18.278Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "common_app.phase",
+    "pk": 1,
+    "fields": {
+      "name": "Predisaster"
+    }
+  },
+  {
+    "model": "common_app.phase",
+    "pk": 2,
+    "fields": {
+      "name": "Postdisaster"
+    }
+  },
+  {
+    "model": "common_app.phase",
+    "pk": 3,
+    "fields": {
+      "name": "Response"
+    }
+  },
+  {
+    "model": "common_app.dimension",
+    "pk": 1,
+    "fields": {
+      "name": "Educational"
+    }
+  },
+  {
+    "model": "common_app.dimension",
+    "pk": 2,
+    "fields": {
+      "name": "Social"
+    }
+  },
+  {
+    "model": "common_app.dimension",
+    "pk": 3,
+    "fields": {
+      "name": "Technique"
+    }
+  },
+  {
+    "model": "common_app.dimension",
+    "pk": 4,
+    "fields": {
+      "name": "Legal and institutional"
+    }
+  },
+  {
+    "model": "common_app.dimension",
+    "pk": 5,
+    "fields": {
+      "name": "Economic"
+    }
+  },{
+    "model": "common_app.activity",
+    "pk": 2,
+    "fields": {
+      "name": "Types of Emergencies",
+      
+      "dimension": 1,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 3,
+    "fields": {
+      "name": "Emergency plan",
+      
+      "dimension": 1,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 4,
+    "fields": {
+      "name": "Crisis detection",
+      
+      "dimension": 1,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 5,
+    "fields": {
+      "name": "Crisis alert",
+      
+      "dimension": 1,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 6,
+    "fields": {
+      "name": "Evacuation routes",
+      
+      "dimension": 1,
+      "phase": 3
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 7,
+    "fields": {
+      "name": "Signs",
+      
+      "dimension": 1,
+      "phase": 3
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 8,
+    "fields": {
+      "name": "First aid",
+      
+      "dimension": 1,
+      "phase": 3
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 9,
+    "fields": {
+      "name": "Psychological support for victims",
+      
+      "dimension": 2,
+      "phase": 2
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 10,
+    "fields": {
+      "name": "Resilience",
+      
+      "dimension": 2,
+      "phase": 2
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 11,
+    "fields": {
+      "name": "Means of Protection",
+      
+      "dimension": 3,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 12,
+    "fields": {
+      "name": "Building Structures",
+      
+      "dimension": 3,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 13,
+    "fields": {
+      "name": "Risk analysis",
+      
+      "dimension": 3,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 14,
+    "fields": {
+      "name": "Fire extinguishers",
+      
+      "dimension": 3,
+      "phase": 3
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 15,
+    "fields": {
+      "name": "Communication equipment",
+      
+      "dimension": 3,
+      "phase": 3
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 16,
+    "fields": {
+      "name": "Rescue Operations",
+      
+      "dimension": 3,
+      "phase": 3
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 17,
+    "fields": {
+      "name": "Identification of Risks",
+      
+      "dimension": 3,
+      "phase": 2
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 18,
+    "fields": {
+      "name": "Current Legal Regulations",
+      
+      "dimension": 4,
+      "phase": 1
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 19,
+    "fields": {
+      "name": "Analysis of damage costs",
+      
+      "dimension": 5,
+      "phase": 2
+    }
+  },
+  {
+    "model": "common_app.activity",
+    "pk": 20,
+    "fields": {
+      "name": "Probability of investmentin prevention",
+      
+      "dimension": 5,
+      "phase": 2
+    }
+  },
+  {
+    "model": "common_app.stakeholders",
+    "pk": 1,
+    "fields": {
+      "name": "Organization",
+      "isTrainer": true,
+      "isLearner": true
+    }
+  },
+  {
+    "model": "common_app.stakeholders",
+    "pk": 2,
+    "fields": {
+      "name": "Planner",
+      "isTrainer": true,
+      "isLearner": true
+    }
+  },
+  {
+    "model": "common_app.stakeholders",
+    "pk": 3,
+    "fields": {
+      "name": "Worker",
+      "isTrainer": false,
+      "isLearner": true
+    }
+  },
+  {
+    "model": "common_app.stakeholders",
+    "pk": 4,
+    "fields": {
+      "name": "Citizen",
+      "isTrainer": false,
+      "isLearner": true
+    }
+  },
+  {
+    "model": "common_app.stakeholders",
+    "pk": 5,
+    "fields": {
+      "name": "Responder",
+      "isTrainer": true,
+      "isLearner": true
+    }
+  },
+  {
+    "model": "common_app.stakeholders",
+    "pk": 6,
+    "fields": {
+      "name": "Expert Trainer",
+      "isTrainer": true,
+      "isLearner": false
+    }
+  }
+]
     

@@ -4,11 +4,53 @@
 
 
 {% block content %}
+ 
 
-<ul>
-    {% for objective in objectives %}
-        <li>{{ objective }}</li>
-    {% endfor %}
-    </ul>
+<div class="container" style="height: 500;">
+    <div class="row" style="height: 100;">
+        <div class="col-3">
+            <button type="button" style="margin-top: 30;" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addObjective">
+                Add
+            </button>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col">
+            <div style="border-style: solid;border-color: darkgrey; border-width: thin; position: relative; height: 400px; overflow: auto; display: block;">
+                <table id="tableObj" class="table table-striped mb-0">
+                  <thead>
+                    <tr>
+                    {% for column in table.columns %}
+                      <th scope="col" style="background:white;text-align: center;">{{column}}</th>
+                    {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% for row in table.rows %}
+                        <tr>
+                            <td style="text-align: center;">
+                                {{row.name}}
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="{% url 'objective_edit' id=row.id %}" ><span class="fa fa-pencil"></span></a>
+                            </td>
+                        </tr>
+                      {% endfor %}
+                  </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-2"></div>
+    </div>
+</div>
+
+
+
+<!-- The Add Modal -->
+{% include 'objectives/new_objective.html' %}
 
 {% endblock %}
