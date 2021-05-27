@@ -1,6 +1,6 @@
 {% block content %}
 
-<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addText" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -17,8 +17,10 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input id="textin" name="action" value="text" hidden>
-            <input id="contManttext" name="contMant" value="0" hidden>
-            <input id="objManttext" name="objMant" value="0" hidden>
+            <input class="contMant" name="contMant" value="0" hidden>
+            <input class="objMant" name="objMant" value="0" hidden>
+            <input class="view" name="view" value="0" hidden>
+            <input class="evMant" name="evMant" value="0" hidden>
             <input class="btn btn-primary" type="submit" value="Add"/>
             </div>
         </div>
@@ -26,7 +28,7 @@
     </div>
 </form>
 
-<form enctype="multipart/form-data" action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form enctype="multipart/form-data" action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addImage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -49,8 +51,10 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input id="imagein" name="action" value="image" hidden>
-            <input id="contMantimage" name="contMant" value="0" hidden>
-            <input id="objMantimage" name="objMant" value="0" hidden>
+            <input class="contMant" name="contMant" value="0" hidden>
+            <input class="objMant" name="objMant" value="0" hidden>
+            <input class="view" name="view" value="0" hidden>
+            <input class="evMant" name="evMant" value="0" hidden>
             <input class="btn btn-primary" type="submit" value="Add"/>
             </div>
         </div>
@@ -58,7 +62,7 @@
     </div>
 </form>
 
-<form enctype="multipart/form-data" action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form enctype="multipart/form-data" action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addVideo" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -81,8 +85,10 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input id="videoin" name="action" value="video" hidden>
-            <input id="contMantvideo" name="contMant" value="0" hidden>
-            <input id="objMantvideo" name="objMant" value="0" hidden>
+            <input class="contMant" name="contMant" value="0" hidden>
+            <input class="objMant" name="objMant" value="0" hidden>
+            <input class="view" name="view" value="0" hidden>
+            <input class="evMant" name="evMant" value="0" hidden>
             <input class="btn btn-primary" type="submit" value="Add"/>
             </div>
         </div>
@@ -90,7 +96,7 @@
     </div>
 </form>
 
-<form enctype="multipart/form-data" action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form enctype="multipart/form-data" action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addDocument" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -113,8 +119,10 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input id="documentin" name="action" value="document" hidden>
-            <input id="contMantdocument" name="contMant" value="0" hidden>
-            <input id="objMantdocument" name="objMant" value="0" hidden>
+            <input class="contMant" name="contMant" value="0" hidden>
+            <input class="objMant" name="objMant" value="0" hidden>
+            <input class="view" name="view" value="0" hidden>
+            <input class="evMant" name="evMant" value="0" hidden>
             <input class="btn btn-primary" type="submit" value="Add"/>
             </div>
         </div>
@@ -122,7 +130,7 @@
     </div>
 </form>
 
-<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addLink" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -145,8 +153,10 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input id="linkin" name="action" value="link" hidden>
-            <input id="contMantlink" name="contMant" value="0" hidden>
-            <input id="objMantlink" name="objMant" value="0" hidden>
+            <input class="contMant" name="contMant" value="0" hidden>
+            <input class="objMant" name="objMant" value="0" hidden>
+            <input class="view" name="view" value="0" hidden>
+            <input class="evMant" name="evMant" value="0" hidden>
             <input class="btn btn-primary" type="submit" value="Add"/>
             </div>
         </div>
@@ -154,7 +164,7 @@
     </div>
 </form>
 
-<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addGame" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -177,8 +187,10 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <input id="gamein" name="action" value="game" hidden>
-            <input id="contMantgame" name="contMant" value="0" hidden>
-            <input id="objMantgame" name="objMant" value="0" hidden>
+            <input class="contMant" name="contMant" value="0" hidden>
+            <input class="objMant" name="objMant" value="0" hidden>
+            <input class="view" name="view" value="0" hidden>
+            <input class="evMant" name="evMant" value="0" hidden>
             <input class="btn btn-primary" type="submit" value="Add"/>
             </div>
         </div>

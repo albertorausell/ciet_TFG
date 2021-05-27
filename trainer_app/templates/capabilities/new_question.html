@@ -1,6 +1,6 @@
 {% block content %}
 
-<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0%}" method="POST">
+<form action="{% url 'contents' id=cap_id obj_pos=0 cont_pos=0 view=0 ev_pos=0 %}" method="POST">
     {% csrf_token %}
     <div class="modal fade" id="addQuestion" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 50%;width: auto !important;" role="document">
@@ -55,6 +55,10 @@
                 <input id="idRefQues" name="idRefQues" value="" hidden>
                 <input id="typeRefQues" name="typeRefQues" value="" hidden>
                 <input id="lengthAns" name="length" value="2" hidden>
+                <input class="contMant" name="contMant" value="0" hidden>
+                <input class="objMant" name="objMant" value="0" hidden>
+                <input class="view" name="view" value="0" hidden>
+                <input class="evMant" name="evMant" value="0" hidden>
                 <input class="btn btn-primary" type="submit" value="Add question"/>
             </div>
         </div>

@@ -2,6 +2,9 @@ from django.db import models
 
 from django.contrib.auth.models import User
 from model_utils.managers import InheritanceManager
+from django.dispatch import receiver
+import os
+import uuid
 
 
 # Create your models here.
@@ -371,3 +374,24 @@ class game_component (training_technique):
 
     value = models.TextField(default=None, blank=True, null=True)
     description = models.TextField(default=None, blank=True, null=True)
+
+
+@receiver(models.signals.post_delete, sender=image_component)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.value:
+        if os.path.isfile(instance.value.path):
+            os.remove(instance.value.path)
+
+
+@receiver(models.signals.post_delete, sender=video_component)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.value:
+        if os.path.isfile(instance.value.path):
+            os.remove(instance.value.path)
+
+
+@receiver(models.signals.post_delete, sender=document_component)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.value:
+        if os.path.isfile(instance.value.path):
+            os.remove(instance.value.path)

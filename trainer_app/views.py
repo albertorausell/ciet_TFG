@@ -63,6 +63,17 @@ def capabilities(request):
     return render(request, 'trainer_app/templates/capabilities.html', dictionary)
 
 
+def setActive(request, id):
+    cap = capability.objects.get(pk=id)
+    if cap.active == True:
+        cap.active = False
+        cap.save()
+    else:
+        cap.active = True
+        cap.save()
+    return HttpResponse(status=200)
+
+
 def cap_name(request, id_str):
     id = int(id_str)
     dictionary = create_base_dictionary()
@@ -153,7 +164,7 @@ def cap_objectives(request, id):
         if form.is_valid():
             cap.objectives.set(form.cleaned_data.get("objectives"))
             cap.save()
-            return redirect('contents', id=id, obj_pos=0, cont_pos=0)
+            return redirect('contents', id=id, obj_pos=0, cont_pos=0, view=0, ev_pos=0)
     else:
         form = CapabilityObjectives(instance=cap)
         dictionary.update({
@@ -186,7 +197,7 @@ def cap_objectives(request, id):
     return HttpResponse(status=204)
 
 
-def cap_contents(request, id, obj_pos, cont_pos):
+def cap_contents(request, id, obj_pos, cont_pos, view, ev_pos):
     dictionary = create_base_dictionary()
     cap = capability.objects.get(pk=id)
 
@@ -204,7 +215,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 cont.dimension = form.cleaned_data.get("dimension")
                 cont.capability_objective = objective[0]
                 cont.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
         if '&txt' in value:
             idCon = value[:-4]
             form = Text(request.POST)
@@ -214,7 +225,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 txt.type = 'txt'
                 txt.content = content.objects.get(pk=idCon)
                 txt.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
 
         if '&img' in value:
             idCon = value[:-4]
@@ -225,7 +236,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 img.type = 'img'
                 img.content = content.objects.get(pk=idCon)
                 img.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
 
         if '&vid' in value:
             idCon = value[:-4]
@@ -236,7 +247,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 vid.type = 'vid'
                 vid.content = content.objects.get(pk=idCon)
                 vid.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
 
         if '&doc' in value:
             idCon = value[:-4]
@@ -247,7 +258,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 doc.type = 'doc'
                 doc.content = content.objects.get(pk=idCon)
                 doc.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
 
         if '&lnk' in value:
             idCon = value[:-4]
@@ -258,7 +269,7 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 lnk.type = 'lnk'
                 lnk.content = content.objects.get(pk=idCon)
                 lnk.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
 
         if '&gme' in value:
             idCon = value[:-4]
@@ -269,10 +280,11 @@ def cap_contents(request, id, obj_pos, cont_pos):
                 gme.type = 'gme'
                 gme.content = content.objects.get(pk=idCon)
                 gme.save()
-                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']))
+                return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=0, ev_pos=0)
 
         if 'addQuestion' in value:
             addQuestionFromPost(post, cap)
+            return redirect('contents', id=id, obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=1, ev_pos=int(request.POST['evMant']))
 
     else:
         # CONTENTS
@@ -280,6 +292,8 @@ def cap_contents(request, id, obj_pos, cont_pos):
         dictionary.update({
             'obj_pos': obj_pos,
             'cont_pos': cont_pos,
+            'view': view,
+            'ev_pos': ev_pos,
             'cap_name': cap.name,
             'cap_id': cap.pk,
             'cap_obj': objs,
@@ -360,6 +374,7 @@ def editQuestionReq(request):
     deleteQuestion(request.POST['idQuestion'])
     cap = capability.objects.get(pk=request.POST['idCap'])
     addQuestionFromPost(request.POST, cap)
+    return redirect('contents', id=request.POST['idCap'], obj_pos=int(request.POST['objMant']), cont_pos=int(request.POST['contMant']), view=1, ev_pos=int(request.POST['evMant']))
 
 
 def addQuestionFromPost(post, cap):
@@ -420,6 +435,7 @@ def addQuestionFromPost(post, cap):
 
 def deleteQuestionReq(request):
     deleteQuestion(request.POST['idQuestion'])
+    return redirect('contents', id=request.POST['idCap'], obj_pos=0, cont_pos=0, view=1, ev_pos=int(request.POST['evMant']))
 
 
 def deleteQuestion(id):
@@ -432,7 +448,7 @@ def deleteQuestion(id):
 
 def deleteContentReq(request):
     deleteContent(request.POST['idCont'])
-    return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objMant'], cont_pos=request.POST['contMant'])
+    return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objMant'], cont_pos=request.POST['contMant'], view=0, ev_pos=0)
 
 
 def deleteContent(id):
@@ -445,7 +461,7 @@ def deleteContent(id):
 
 def deleteComponentReq(request):
     deleteComponent(request.POST['compId'])
-    return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objPos'], cont_pos=request.POST['contPos'])
+    return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objPos'], cont_pos=request.POST['contPos'], view=0, ev_pos=0)
 
 
 def deleteComponent(id):
@@ -524,6 +540,7 @@ def orderComps(comps):
 def create_base_dictionary():
     dictionary = {
         'nombre': 'alberto rausell',
-        'organizacion': 'Universitat Politècnica de València'
+        'organizacion': 'Universitat Politècnica de València',
+        'host': 'http://127.0.0.1:8000/'
     }
     return dictionary

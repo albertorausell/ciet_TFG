@@ -14,7 +14,7 @@
       color: #fff;
       background-color: #666;
       border: none;
-      border-radius: 15px;
+      border-radius: 10px;
       box-shadow: 0 9px #999;
       padding: 10px;
     }
@@ -83,8 +83,9 @@
             </div>
             <input id="currentObjective" value="" hidden>
             <input id="currentContent" value="" hidden>
+            <input id="currentEvaluation" value="" hidden>
             <div class="col" style="height: 80%; width: 50%;">
-                <div style="height: 80%;border-style: solid;border-radius: 25px;border-color: lightgray; border-width: thin;">
+                <div style="height: 80%;border-style: solid;border-radius: 10px;border-color: lightgray; border-width: thin;">
                     <div class="row" style="height: 100%;">
                         <div id="indexCol" class="col-2 border-right">
                             <!-----------------CONTENT PERSPECTIVE----------------->
@@ -200,7 +201,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col" style="height: 600;">
-                                        <div id="questionList" style="padding: 10;height: 95%; overflow: auto; display: block;">
+                                        <div id="questionList" style="padding: 10;height: 95%; overflow: auto; display: block;overflow-x: hidden;">
     
                                         </div>
                                     </div>
@@ -225,20 +226,29 @@
 
 
     function manageEvaluations() {
-        let button = document.getElementById('buttonEval');
+        let button = document.getElementById('buttonEval'), listMants;
         let nameButton = button.innerText.toLowerCase();
         if (nameButton.indexOf('evaluations') > -1) {
             setContentsComponentsVisible(false);
             setEvaluationComponentsVisible(true);
             //----------------------------
-            button.innerText = 'Contents view'
+            button.innerText = 'Contents view';
+            listMants = document.getElementsByClassName('view');
+            for (const element of listMants) {
+                element.value = 1;
+            }
             loadEvaluations();
+            pressEvaluationItem('{{ev_pos}}')
 
         } else {
             setEvaluationComponentsVisible(false);
             setContentsComponentsVisible(true);
             //----------------------------
-            button.innerText = 'Evaluations view'
+            button.innerText = 'Evaluations view';
+            listMants = document.getElementsByClassName('view');
+            for (const element of listMants) {
+                element.value = 0;
+            }
             loadContents();
         }
     }
@@ -283,6 +293,7 @@
         document.getElementById('typeRefQues').value = scope;
         document.getElementById('idRefQuesEdit').value = id;
         document.getElementById('typeRefQuesEdit').value = scope;
+        
         //--------PLACE QUESTIONS---------
         let questionContainer = document.getElementById('questionList'),quesId, exId, exScope, question, answer, isCorrect;
         questionContainer.innerHTML = '<br>';
@@ -309,7 +320,10 @@
                                         <form action="{% url 'deleteQuestion' %}" method="POST">
                                             {% csrf_token %}
                                             <input name="idQuestion" value="${quesId}" hidden>
-                                            <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:35;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                            <input class="view" name="view" value="0" hidden>
+                                            <input class="evMant" name="evMant" value="${getCurrentEvaluation()}" hidden>
+                                            <input name="idCap" value="{{cap_id}}" hidden>
+                                            <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:35;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                         </form>
                                     </div>
                                 </div>
@@ -388,45 +402,135 @@
     }
 
     function evaluateCapability(id) {
-        let col = document.getElementById('indexCol');
+        let col = document.getElementById('contentEvList'), listMants, i = 0;
         let list = col.getElementsByClassName('underline');
         for (const element of list) {
             if (element.title == 'Plan' & getIdByOnClick(element) == id) {
                 element.classList.add('actived')
                 document.getElementById('eval_name').innerText = element.innerText;
+                listMants = document.getElementsByClassName('evMant');
+                document.getElementById('currentEvaluation').value = i;
+                for (const element of listMants) {
+                    element.value = i;
+                }
             } else {
                 element.classList.remove('actived')
             }
+            i++;
         }
         evaluate(id, 'ca');
     }
 
     function evaluateObjective(id) {
-        let col = document.getElementById('indexCol');
+        let col = document.getElementById('contentEvList'), listMants, i = 0;
         let list = col.getElementsByClassName('underline');
         for (const element of list) {
             if (element.title == 'Objective' & getIdByOnClick(element) == id) {
                 element.classList.add('actived')
                 document.getElementById('eval_name').innerText = element.innerText;
+                listMants = document.getElementsByClassName('evMant');
+                document.getElementById('currentEvaluation').value = i;
+                for (const element of listMants) {
+                    element.value = i;
+                }
             } else {
                 element.classList.remove('actived')
             }
+            i++;
         }
         evaluate(id, 'ob');
     }
 
     function evaluateContent(id) {
-        let col = document.getElementById('indexCol');
+        let col = document.getElementById('contentEvList'), listMants, element;
         let list = col.getElementsByClassName('underline');
-        for (const element of list) {
+        for (let i = 0; i < list.length; i++) {
+            element = list[i];
             if (element.title == 'Content' & getIdByOnClick(element) == id) {
                 element.classList.add('actived')
                 document.getElementById('eval_name').innerText = element.innerText;
+                listMants = document.getElementsByClassName('evMant');
+                document.getElementById('currentEvaluation').value = i;
+                for (const element of listMants) {
+                    element.value = i;
+                }
             } else {
                 element.classList.remove('actived')
             }
         }
         evaluate(id, 'co');
+    }
+    
+    function pressEvaluationItem(index) {
+        let col = document.getElementById('contentEvList'), listMants, i = 0, id, scope;
+        let list = col.getElementsByClassName('underline');
+        if (index >= list.length) {
+            for (const element of list) {
+                if (i == 0) {
+                    element.classList.add('actived')
+                    document.getElementById('eval_name').innerText = element.innerText;
+                    listMants = document.getElementsByClassName('evMant');
+                    document.getElementById('currentEvaluation').value = i;
+                    for (const element of listMants) {
+                        element.value = i;
+                    }
+                    id = getIdByOnClick(element);
+                    switch (element.title.toLowerCase()) {
+                        case 'plan':
+                            scope = 'ca';
+                            break;
+                    
+                        case 'objective':
+                            scope = 'ob';
+                            break;
+                    
+                        case 'content':
+                            scope = 'co';
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                } else {
+                    element.classList.remove('actived')
+                }
+                i++;
+            }
+        } else {
+            for (const element of list) {
+                if (i == index) {
+                    element.classList.add('actived')
+                    document.getElementById('eval_name').innerText = element.innerText;
+                    listMants = document.getElementsByClassName('evMant');
+                    document.getElementById('currentEvaluation').value = i;
+                    for (const element of listMants) {
+                        element.value = i;
+                    }
+                    id = getIdByOnClick(element);
+                    switch (element.title.toLowerCase()) {
+                        case 'plan':
+                            scope = 'ca';
+                            break;
+                    
+                        case 'objective':
+                            scope = 'ob';
+                            break;
+                    
+                        case 'content':
+                            scope = 'co';
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                } else {
+                    element.classList.remove('actived')
+                }
+                i++;
+            }
+        }
+        
+        evaluate(id, scope);
     }
 
     function getIdByOnClick(element){
@@ -450,7 +554,7 @@
     }
 
     function pressObjective(id) {
-        let string_id = id + "";
+        let string_id = id + "", listMants;
 
         //FOR POST:
         document.getElementById("_c").value = id + "_c";
@@ -461,16 +565,11 @@
             element.classList.remove('actived');
             idO = getIdByOnClick(element);
             if (idO == string_id) {
-                document.getElementById("objManttext").value = i;
-                document.getElementById("objMantimage").value = i;
-                document.getElementById("objMantvideo").value = i;
-                document.getElementById("objMantdocument").value = i;
-                document.getElementById("objMantlink").value = i;
-                document.getElementById("objMantgame").value = i;
-                document.getElementById("currentContent").value = i;
-                document.getElementById("objMantdel").value = i;
-                document.getElementById("objMant").value = i;
                 document.getElementById("currentObjective").value = i;
+                listMants = document.getElementsByClassName('objMant');
+                for (const element of listMants) {
+                    element.value = i;
+                }
                 element.classList.add('actived');
             }
         }
@@ -507,6 +606,10 @@
         return document.getElementById("currentContent").value;
     }
 
+    function getCurrentEvaluation() {
+        return document.getElementById("currentEvaluation").value;
+    }
+
     function getCurrentObjective() {
         return document.getElementById("currentObjective").value;
     }
@@ -526,21 +629,17 @@
         //----------------------------------
         let add = document.getElementById("dropdownMenuButton");
         add.classList.remove('disabled');
-        let list = document.getElementById("contents_list").getElementsByTagName("a");
+        let list = document.getElementById("contents_list").getElementsByTagName("a"), listMants;
         for (let i = 0; i < list.length; i++) {
             const element = list[i];
             element.classList.remove('actived');
             idO = getIdByOnClick(element);
             if (idO == string_id) {
-                document.getElementById("contManttext").value = i;
-                document.getElementById("contMantimage").value = i;
-                document.getElementById("contMantvideo").value = i;
-                document.getElementById("contMantdocument").value = i;
-                document.getElementById("contMantlink").value = i;
-                document.getElementById("contMantgame").value = i;
-                document.getElementById("contMantdel").value = i;
-                document.getElementById("contMant").value = i;
                 document.getElementById("currentContent").value = i;
+                listMants = document.getElementsByClassName('contMant');
+                for (const element of listMants) {
+                    element.value = i;
+                }
                 element.classList.add('actived')
                 //-----
                 document.getElementById("content_name").textContent = element.textContent;
@@ -583,7 +682,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                             </form>
@@ -606,7 +705,7 @@
                                     <input name="idCap" value="{{cap_id}}" hidden>
                                     <input name="compId" value="${element[2]}" hidden>
                                     <a class="fa fa-eye fa-2x" style="text-decoration:none;cursor: pointer; color: #5D6AFF; display:block; margin-left:5" href="${element[1]}" target="_blank"></a>
-                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     
                                 </span>
                             </p>
@@ -638,7 +737,7 @@
                                 <input name="objPos" value="${getCurrentObjective()}" hidden>
                                 <input name="idCap" value="{{cap_id}}" hidden>
                                 <input name="compId" value="${element[2]}" hidden>
-                                <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                             </span>
                         </div>
                         <br>
@@ -673,7 +772,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -708,7 +807,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -743,7 +842,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 25px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -772,7 +871,12 @@
 <script>
     pressIndexOfList('{{obj_pos}}', 'obj_list');
     pressIndexOfList('{{cont_pos}}', 'contents_list');
-    setEvaluationComponentsVisible(false);
+    if ('{{view}}' == 0) {
+        setEvaluationComponentsVisible(false);
+    } else {
+        manageEvaluations();
+        pressEvaluationItem('{{ev_pos}}')
+    }
 </script>
 
 
