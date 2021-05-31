@@ -44,7 +44,7 @@
             <div class="col-2" style="text-align: left;">
                 <div class="row ">
                     <div class="col">
-                        <a class="btn btn-primary contenthide" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
+                        <a class="btn btn-outline-primary contenthide" style="font-size: 150%" href="{% url 'objectives' id=cap_id %}">
                             🡠
                         </a>
                     </div>
@@ -67,7 +67,7 @@
                         <div class="contenthide" >
                             <i><u>Objectives:</u></i>
                         </div>
-                        <div class="contenthide" style="border-radius: 5px; height: 30%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
+                        <div class="contenthide" style="border-radius: 5px; height: 50%; overflow: auto; margin-top: 10;" id="obj_list" role="tablist">
                             {% for objective in cap_obj %}
                                 <div>
                                     <a class="underline" style="margin-left: 10; color: darkgray; text-decoration: none; word-wrap: break-word;" data-toggle="list" href="#" role="tab" onclick="pressObjective('{{ objective.pk }}')">
@@ -91,12 +91,9 @@
                             <!-----------------CONTENT PERSPECTIVE----------------->
                             <div class="contenthide" style="padding-left: 30; text-align: center;">
                                 <br>
-                                <a href="#" type="button" data-toggle="modal" data-target="#addContent">
-                                    <span class="fa-stack fa-lg">
-                                      <i  style="color: dimgrey;" class="fa fa-circle fa-stack-2x"></i>
-                                      <i class="fa fa-plus fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
+                                <button type="button" class="btn btn-outline-secondary" style="font-size: 20;" data-toggle="modal" data-target="#addContent">
+                                    🞡
+                                </button>
                                 <br>
                                 <br>
                                 <div id="contents_list" role="tablist" style="border-radius: 5px;height: 500; overflow: auto; display: block;">
@@ -155,7 +152,7 @@
                                 <div class="row">
                                     <div class="col-2" style="padding-right: 0%;">
                                         <div class="dropdown" style="display: inline;">
-                                            <button class="btn btn-secondary dropdown-toggle" style="margin-top: 25; width: 100%;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn btn-outline-secondary dropdown-toggle" style="margin-top: 25; width: 100%;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Add
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -169,9 +166,9 @@
                                         </div>
                                     </div>
                                     <div class="col-2" style="padding-left: 0%;">
-                                        <a class="btn btn-danger" style="margin-left: 10; margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#deleteContent">
+                                        <button class="btn btn-outline-danger" style="margin-left: 10; margin-top: 25;" type="button" data-toggle="modal" data-target="#deleteContent">
                                             Delete
-                                        </a>
+                                        </button>
                                     </div>
                                     <div class="col" style=" text-align: left;">
                                         <h1 style="font-family: Raleway; padding-left: 10%; height: 100%; margin-top: 20;" id="content_name"></h1>
@@ -190,13 +187,19 @@
                             <div class="evalhide" style="position: relative; height: 100%; overflow: auto; display: block;overflow-x: hidden;">
                                 <div class="row">
                                     <div class="col-4" style="padding-right: 0%;">
-                                        <a class="btn btn-secondary" style="margin-left: 10; margin-top: 25; color: white;" type="button" data-toggle="modal" data-target="#addQuestion">
+                                        <button class="btn btn-outline-secondary" style="margin-left: 10; margin-top: 25;" type="button" data-toggle="modal" data-target="#addQuestion">
                                             Add question
-                                        </a>
+                                        </button>
                                     </div>
-                                    <div class="col" style=" text-align: left;">
-                                        <h1 style="font-family: Raleway; padding-left: 5%; height: 100%; margin-top: 20;" id="eval_name"></h1>
+                                    <div class="col-6" style=" text-align: left;">
+                                        <h1 style="word-wrap: break-word; font-family: Raleway; padding-left: 5%; height: 100%; margin-top: 20;" id="eval_name"></h1>
                                         
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="form-check" style="margin-top: 20;">
+                                            <input class="form-check-input" onclick="" type="checkbox" value="" id="leftPendingCB">
+                                            <label class="form-check-label" for="leftPendingCB">Let left pending?</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -295,12 +298,28 @@
         document.getElementById('typeRefQuesEdit').value = scope;
         
         //--------PLACE QUESTIONS---------
-        let questionContainer = document.getElementById('questionList'),quesId, exId, exScope, question, answer, isCorrect;
+        let questionContainer = document.getElementById('questionList'), isPending, host, exerciseId, quesId, exId, exScope, question, answer, isCorrect, leftPendingCB = document.getElementById("leftPendingCB");
+        leftPendingCB.checked = false;
+        leftPendingCB.disabled = true;
         questionContainer.innerHTML = '<br>';
         {% for ex in exercises %}
             exId = '{{ex.exercise.referenceId}}';
             exScope = '{{ex.exercise.scope}}';
             if (exId == id & exScope == scope) {
+                leftPendingCB.onclick = function () {
+                    host = '{{host}}';
+                    exerciseId = '{{ex.exercise.pk}}';
+                    $.ajax({
+                        type: 'GET',
+                        url: host + 'trainer/capabilities/evaluation/left-pending/' + exerciseId
+                    });
+                }
+                isPending = '{{ex.exercise.leftPending}}';
+                if (isPending.toLowerCase() == 'true') {
+                    leftPendingCB.checked = true;
+                }
+                leftPendingCB.disabled = false;
+                
                 {% for ques in ex.questions %}
                     question = '{{ques.question.question}}';
                     quesId = '{{ques.question.pk}}';

@@ -12,6 +12,8 @@ urlpatterns = [
     path('objectives/edit/<int:id>/', views.objective_edit, name='objective_edit'),
 
     path('capabilities/active/<int:id>/', views.setActive, name='set_active'),
+    path('capabilities/evaluation/left-pending/<int:id>/',
+         views.setPending, name='set_pending'),
 
     path('capabilities/name/<str:id_str>/',
          views.cap_name, name='capability_name'),

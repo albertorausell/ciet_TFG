@@ -74,6 +74,17 @@ def setActive(request, id):
     return HttpResponse(status=200)
 
 
+def setPending(request, id):
+    ex = exercise.objects.get(pk=id)
+    if ex.leftPending == True:
+        ex.leftPending = False
+        ex.save()
+    else:
+        ex.leftPending = True
+        ex.save()
+    return HttpResponse(status=200)
+
+
 def cap_name(request, id_str):
     id = int(id_str)
     dictionary = create_base_dictionary()

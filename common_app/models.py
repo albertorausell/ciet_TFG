@@ -91,7 +91,7 @@ class capability (models.Model):
 
     name = models.CharField(max_length=50, default=None, blank=True, null=True)
 
-    aproximatedHours = models.FloatField(default=None, blank=True, null=True)
+    aproximatedTime = models.FloatField(default=None, blank=True, null=True)
 
     active = models.BooleanField(default=False, blank=True, null=True)
 
