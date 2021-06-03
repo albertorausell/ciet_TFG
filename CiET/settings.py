@@ -76,6 +76,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'CiET.wsgi.application'
 
+LOGIN_URL = '/login'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

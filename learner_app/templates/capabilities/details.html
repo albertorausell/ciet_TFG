@@ -1,0 +1,60 @@
+
+{% extends "learner_app/templates/base_learner.html" %}
+{% load static %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-1">
+
+        </div>
+        <div class="col-2">
+            <br>
+            <div>
+                <u>Capability plan:</u>
+            </div>
+            <div style="padding-left: 10;">
+                <i>{{cap.name}}</i>
+            </div>
+            <br>
+            <div>
+                <u>Objectives:</u>
+            </div>
+            {% for obj in objs %}
+                <div style="padding-left: 10;">
+                    <i style="word-wrap: break-word;">{{obj.name}}</i>
+                    <i style="color: darkgray; word-wrap: break-word;">({{obj.contents_number}} contents)</i>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-8">
+            <div style="margin-top: 20; padding: 50; border-style: solid;border-radius: 10px;border-color: lightgray; border-width: thin;">
+                <div class="row">
+                    <div class="col-8">
+                        <div style="font-size: 25; text-align: left;">
+                            {{cap.name}}
+                        </div>
+                        <br>
+                        <br>
+                        <p>
+                            {{cap.description}}
+                        </p>
+                    </div>
+                    <div class="col-4">
+                        <img src="{{cap.image.url}}" width="100%" height="auto">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12" style="text-align: right;">
+                        <div class="btn btn-outline-success" style="width: 100%;">GO!</div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        <div class="col-1">
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,5 +1,4 @@
 .header {
-  padding: 0px;
   text-align: left;
   background: rgb(95, 104, 184);
   color: white;
@@ -35,6 +34,7 @@
 .profile-info {
   text-align: right;
   font-size: 13;
+  padding-top: 15;
 }
 
 /*body {
