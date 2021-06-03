@@ -6,25 +6,26 @@
 {% block content %}
 <style>
     .button {
-      padding: 15px 25px;
-      font-size: 15px;
-      text-align: center;
-      cursor: pointer;
-      outline: none;
-      color: #fff;
-      background-color: #666;
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 9px #999;
-      padding: 10px;
+        padding: 10px;
+        font-size: 15px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        font-family: Raleway;
+        outline: none;
+        color: #fff;
+        background-color: #FFA07A;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 9px #F08080;
     }
-    
-    .button:hover {background-color: #666}
-    
+
+    .button:hover {background-color: #FFA07A}/*E9967A*/
+
     .button:active {
-      background-color: #666;
-      box-shadow: 0 5px #666;
-      transform: translateY(4px);
+        background-color: #E9967A;
+        box-shadow: 0 5px #CD5C5C;
+        transform: translateY(4px);
     }
 
     .actived {
@@ -342,7 +343,7 @@
                                             <input class="view" name="view" value="0" hidden>
                                             <input class="evMant" name="evMant" value="${getCurrentEvaluation()}" hidden>
                                             <input name="idCap" value="{{cap_id}}" hidden>
-                                            <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:35;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                            <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:35;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                                         </form>
                                     </div>
                                 </div>
@@ -355,14 +356,14 @@
                         isCorrect = '{{ans.isCorrect}}';
                         if (isCorrect.toLowerCase() == 'true') {
                             questionContainer.innerHTML += `
-                                <div style="margin-top:10;color:green;word-wrap: break-word;">
-                                    ✔  ${answer}
+                                <div style="margin-top:10;word-wrap: break-word;">
+                                    <span style="color:forestgreen;font-size:20;margin-rigth:15"> <b>✓</b> </span>  ${answer}
                                 </div>
                             `;
                         } else {
                             questionContainer.innerHTML += `
                                 <p style="margin-top:10;word-wrap: break-word;">
-                                    ❌  ${answer}
+                                    <span style="color:red; font-size:20;margin-rigth:15"> <b>🞨</b> </span> ${answer}
                                 </p>
                             `;
                         }
@@ -379,7 +380,7 @@
 
     function setQuestionToEdit(id) {
         document.getElementById('idQuestionToEdit').value = id;
-        let content = document.getElementById('answer_edit_content'),cont = 0, isCorrect, answer, quesId;
+        let content = document.getElementById('answer_edit_content'),cont = 0,crossText, isCorrect, answer, quesId;
         content.innerHTML = '';
         {% for ex in exercises %}
             {% for ques in ex.questions %}
@@ -389,25 +390,35 @@
                     {% for ans in ques.answers %}
                         answer = '{{ans.answer}}';
                         isCorrect = '{{ans.isCorrect}}';
+                        crossText = `<a style="color: red;" class="btn btn-link close" onclick="deleteEditAnswer(${cont})">🞫</a>`;
+                        if (cont == 0 || cont == 1) {
+                            crossText = '';
+                        }
                         if (isCorrect.toLowerCase() == 'true') {
                             content.innerHTML += `
                                 <div class="row answer" style="width: 97%; margin-bottom: 5;">
-                                    <div class="col-11">
-                                        <input style="width: 90%;" value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
+                                    <div class="col-10">
+                                        <input value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
                                     </div>
                                     <div class="col-1">
                                         <input style="margin-top:10" name="correct${cont}" type="checkbox" title="Is correct?" checked>
+                                    </div>
+                                    <div class="col-1">
+                                        ${crossText}
                                     </div>
                                 </div>
                             `;
                         } else {
                             content.innerHTML += `
                                 <div class="row answer" style="width: 97%; margin-bottom: 5;">
-                                    <div class="col-11">
-                                        <input style="width: 90%;" value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
+                                    <div class="col-10">
+                                        <input value="${answer}" name="answer${cont}" class="form-control" type="text" placeholder="Answer...">
                                     </div>
                                     <div class="col-1">
                                         <input style="margin-top:10" name="correct${cont}" type="checkbox" title="Is correct?">
+                                    </div>
+                                    <div class="col-1">
+                                        ${crossText}
                                     </div>
                                 </div>
                             `;
@@ -701,7 +712,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                                     </div>
                                 </div>
                             </form>
@@ -723,8 +734,8 @@
                                     <input name="objPos" value="${getCurrentObjective()}" hidden>
                                     <input name="idCap" value="{{cap_id}}" hidden>
                                     <input name="compId" value="${element[2]}" hidden>
-                                    <a class="fa fa-eye fa-2x" style="text-decoration:none;cursor: pointer; color: #5D6AFF; display:block; margin-left:5" href="${element[1]}" target="_blank"></a>
-                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                    <a class="fa fa-eye fa-2x" style="text-decoration:none;cursor: pointer; color: #5D6AFF; display:block; margin-left:15" href="${element[1]}" target="_blank"></a>
+                                    <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                                     
                                 </span>
                             </p>
@@ -756,7 +767,7 @@
                                 <input name="objPos" value="${getCurrentObjective()}" hidden>
                                 <input name="idCap" value="{{cap_id}}" hidden>
                                 <input name="compId" value="${element[2]}" hidden>
-                                <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                             </span>
                         </div>
                         <br>
@@ -791,7 +802,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -826,7 +837,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -861,7 +872,7 @@
                                         <input name="objPos" value="${getCurrentObjective()}" hidden>
                                         <input name="idCap" value="{{cap_id}}" hidden>
                                         <input name="compId" value="${element[2]}" hidden>
-                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="✘">
+                                        <input class="btn btn-link close" type="submit" style="font-weight: bold;font-size:30;border-radius: 10px; color: red; width: 60; text-decoration: none;" name="delete" value="🞫">
                                     </div>
                                 </div>
                                 <div class="row">

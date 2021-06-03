@@ -47,6 +47,40 @@
 </div>
 
 <script>
+    function deleteEditAnswer(pos) {
+        let answerContent = document.getElementById('answer_edit_content');
+        let numberAnswer = answerContent.getElementsByClassName('answer').length;
+        let cont = 0, inputs, remove;
+        let deleted = false;
+        for (let i = 0; i < numberAnswer; i++) {
+            let element = null;
+            if (deleted) {
+                element = answerContent.children[i-1];
+            } else {
+                element = answerContent.children[i];
+            }
+            if (i == pos) {
+                answerContent.removeChild(element)
+                deleted = true;
+            } else {
+                inputs = element.getElementsByTagName('input');
+                remove = element.getElementsByTagName('div')[2];
+                inputs[0].name = 'answer' + cont;
+                inputs[1].name = 'correct' + cont; //SOLO SE BORRA CUANDO PULSAS DOS VECES SI HAS ELIMINADO EL ANTERIOR ANTES
+                if (cont > 1) {
+                    remove.innerHTML = `
+                        <a style="color: red;" class="btn btn-link close" onclick="deleteEditAnswer(${cont})">🞫</a>
+                    `;
+                } else {
+                    remove.innerHTML = ``;
+                }
+                cont++;
+            }
+        }
+        document.getElementById('lengthAnsEdit').value = numberAnswer - 1;
+    }
+
+
     function addEditAnswer() {
         let answerContent = document.getElementById('answer_edit_content');
         let numberAnswer = answerContent.getElementsByClassName('answer').length;
@@ -56,11 +90,14 @@
         answer.id = '';
         answer.hidden = false;
         answer.innerHTML = `
-            <div class="col-11">
-                <input style="width: 90%;" name="answer${numberAnswer}" class="form-control" type="text" placeholder="Answer...">
+            <div class="col-10">
+                <input name="answer${numberAnswer}" class="form-control" type="text" placeholder="Answer...">
             </div>
             <div class="col-1">
                 <input style="margin-top:10" name="correct${numberAnswer}" type="checkbox" title="Is correct?">
+            </div>
+            <div class="col-1">
+                <a style="color: red;" class="btn btn-link close" onclick="deleteEditAnswer(${numberAnswer})">🞫</a>
             </div>
         `;
         answerContent.appendChild(answer);

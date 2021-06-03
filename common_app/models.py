@@ -4,17 +4,9 @@ from django.contrib.auth.models import User
 from model_utils.managers import InheritanceManager
 from django.dispatch import receiver
 import os
-import uuid
 
 
 # Create your models here.
-
-
-class user (User):
-
-    rol = models.ForeignKey('stakeholders', on_delete=models.CASCADE)
-
-    imagen = models.ImageField(upload_to='img/users')
 
 
 class trainer_profile (models.Model):
@@ -23,7 +15,18 @@ class trainer_profile (models.Model):
 
     updated = models.DateTimeField(auto_now_add=True)
 
-    user = models.OneToOneField('user', on_delete=models.CASCADE)
+    rol = models.ForeignKey(
+        'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    image = models.ImageField(
+        upload_to='img/users', default='static/unknown_profile.png', blank=True, null=True)
+
+    organizations = models.ManyToManyField('organization', default=None)
+
+    actual_organization_pos = models.IntegerField(
+        default=0, blank=True, null=True)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class Meta:
 
@@ -38,15 +41,17 @@ class learner_profile (models.Model):
 
     updated = models.DateTimeField(auto_now_add=True)
 
-    user = models.OneToOneField('user', on_delete=models.CASCADE)
+    rol = models.ForeignKey(
+        'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    image = models.ImageField(
+        upload_to='img/users', default='static/unknown_profile.png', blank=True, null=True)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     organization = models.ForeignKey('organization', on_delete=models.CASCADE)
 
-    points = models.IntegerField()
-
-    def __str__(self):
-
-        return self.user
+    points = models.IntegerField(default=0, blank=True, null=True)
 
     class Meta:
 

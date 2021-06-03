@@ -2,43 +2,76 @@
 {% load static %}
 
 {% block sidebar %}
-<div class="row header">
-    <div class="col-2">
-      <h1 class="logo">CiET</h1>
+<div class="header">
+    <div class="row" style="width: 100%;">
+        <div class="col-1">
+            <h1 class="logo">CiET</h1>
+        </div>
+        <div class="col-7">
+            <ul style="margin-left: 30%;" class="nav nav-tabs nav-pagination" id="myTab" role="tablist">
+                <li class="nav-item ">
+                    <a class="nav-link {% if request.path == '/trainer/capabilities/' %}active{% endif %} itemnav" href="{% url 'capabilities_trainer' %}" >Capability Plans</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link {% if request.path == '/trainer/objectives/' %}active{% endif %} itemnav" href="{% url 'objectives_trainer' %}" >Objectives</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link {% if request.path == '/trainer/statistics/' %}active{% endif %} itemnav" href="{% url 'statistics_trainer' %}" >Statistics</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link {% if request.path == '/trainer/profile/' %}active{% endif %} itemnav" href="{% url 'capabilities_trainer' %}" >Profile</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-4">
+            <div class="row">
+                <div class="col-8" style="margin-top: 10;text-align: right;">
+                    <a class="profile-info" style="display: block;">{{name}}</a>
+                    <a class="profile-info"><i>{{org}}</i></a>
+                </div>
+                <div class="col-4" style="text-align: left;">
+                    <div class="dropdown">
+                        <div class="btn" style="background: rgb(95, 104, 184);" href="#" id="dropdownMenuLink" data-toggle="dropdown">
+                            <img class="profile-img" src="{{trainer.image.url}}" width="75" height="75">
+                        </div>
+                        <div style="margin-right: 50%;" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a style="cursor: pointer;" class="dropdown-item" data-toggle="modal" data-target="#chooseOrganizationModal">Change organization</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+        </div>
     </div>
-    <div class="col">
-      <ul class="nav nav-tabs nav-pagination" id="myTab" role="tablist">
-        <li class="nav-item ">
-          <a class="nav-link {% if request.path == '/trainer/capabilities/' %}active{% endif %} itemnav" href="{% url 'capabilities_trainer' %}" >Capability Plans</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link {% if request.path == '/trainer/objectives/' %}active{% endif %} itemnav" href="{% url 'objectives_trainer' %}" >Objectives</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link {% if request.path == '/trainer/statistics/' %}active{% endif %} itemnav" href="{% url 'statistics_trainer' %}" >Statistics</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link {% if request.path == '/trainer/profile/' %}active{% endif %} itemnav" href="{% url 'capabilities_trainer' %}" >Profile</a>
-        </li>
-      </ul>
+</div>
+
+<div class="modal fade" id="chooseOrganizationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <div class="list-group" id="list-tab" role="tablist">
+                        {% for organ in orgs %}
+                            {% if forloop.counter0 == trainer.actual_organization_pos %}
+                                <a href="{% url 'changeOrg' pos=forloop.counter0 %}" class="list-group-item active">{{organ}}</a>
+                            {% else %}
+                                <a href="{% url 'changeOrg' pos=forloop.counter0 %}" class="list-group-item">{{organ}}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-    <div class="col">
-      <div class="container row" style="margin-top: 5;">
-        <label class="profile-info col" style="padding-top: 15;"> {{nombre}}<br><i>{{organizacion}}</i></label>
-        <img class="profile-img" src="{% static 'common_app/img/unknown_profile.png' %}" width="75" height="75" >
-      </div>
-    </div>
-  </div>
+</div>
+
 {% endblock %}
-
-
-
-{% block content %}
-
-{% endblock %}
-
-
-
-
-
-

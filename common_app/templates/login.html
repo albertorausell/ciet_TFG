@@ -1,0 +1,63 @@
+
+{% extends "common_app/templates/base.html" %}
+{% load static %}
+
+{% block sidebar %}
+
+<style>
+    
+    .vertical-center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+</style>
+
+<div style="background: whitesmoke;">
+    <div class="container-fluid" >
+        <div class="row" style="height: 100%;">
+            <div class="col-3">
+
+            </div>
+            <div class="col-3">
+
+            </div>
+            <div class="col-6" style="height: 100%;">
+                <div class="container vertical-center" style="padding: 20; width: 75%; background: white;border-style: solid; border-width: thin; border-color: lightgray;">
+                    <form action="{% url 'login' %}" method="POST">
+                        <div style="text-align: center;color: darkgray; font-family: Raleway;">
+                            <span class="fa fa-lock"></span>
+                            <b>Log in</b>
+                            <hr>
+                        </div>
+                        <br>
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="text" class="form-control" name="username" id="InputUsername1" placeholder="Enter username">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" name="password" id="InputPassword1" placeholder="Password">
+                            </div>
+                            {% if error %}
+                                <div class="form-text text-muted" style="color: red !important;">
+                                    {{error}}
+                                </div>
+                            {% endif %}
+                        <br>
+                        <hr>
+                        <div style="text-align: right;">
+                            <input type="submit" class="btn btn-outline-primary" value="Enter"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

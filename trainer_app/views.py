@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from common_app.models import exercise, question, answer, training_technique, objective, capability, capability_objective, content
+from common_app.models import exercise, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
 from .forms import Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
 # Create your views here.
 
 # ctrl+shift+p > Preferences: Configure Language Specific Settings > Python
@@ -18,10 +19,20 @@ from django.http import HttpResponse
 # https://stackoverflow.com/questions/45135263/class-has-no-objects-member
 
 
-def capabilities(request):
-    dictionary = create_base_dictionary()
+def is_trainer(user):
+    try:
+        return trainer_profile.objects.filter(user=user.pk)[0].rol.isTrainer
+    except:
+        return False
 
-    cap = capability.objects.all().order_by('name')
+
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
+def capabilities(request):
+    dictionary = create_base_dictionary(request)
+
+    cap = capability.objects.filter(
+        trainer=dictionary['trainer'].pk, organization=dictionary['org'].pk).order_by('name')
 
     cap_name = []
     cap_obj = []
@@ -63,6 +74,17 @@ def capabilities(request):
     return render(request, 'trainer_app/templates/capabilities.html', dictionary)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
+def changeOrganization(request, pos):
+    trainer = trainer_profile.objects.get(user=request.user.pk)
+    trainer.actual_organization_pos = pos
+    trainer.save()
+    return redirect('capabilities_trainer')
+
+
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def setActive(request, id):
     cap = capability.objects.get(pk=id)
     if cap.active == True:
@@ -74,6 +96,8 @@ def setActive(request, id):
     return HttpResponse(status=200)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def setPending(request, id):
     ex = exercise.objects.get(pk=id)
     if ex.leftPending == True:
@@ -85,9 +109,11 @@ def setPending(request, id):
     return HttpResponse(status=200)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def cap_name(request, id_str):
     id = int(id_str)
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
 
     if request.method == 'POST':
         form = CapabilityName(request.POST)
@@ -99,6 +125,8 @@ def cap_name(request, id_str):
     else:
         if id == -1:
             cap = capability()
+            cap.trainer = dictionary['trainer']
+            cap.organization = dictionary['org']
             cap.save()
             form = CapabilityName()
             dictionary.update({
@@ -118,8 +146,10 @@ def cap_name(request, id_str):
     return HttpResponse(status=204)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def cap_desc(request, id):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
     cap = capability.objects.get(pk=id)
 
     if request.method == 'POST':
@@ -146,8 +176,10 @@ def cap_desc(request, id):
     return HttpResponse(status=204)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def cap_learners(request, id):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
     cap = capability.objects.get(pk=id)
 
     if request.method == 'POST':
@@ -166,8 +198,10 @@ def cap_learners(request, id):
     return HttpResponse(status=204)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def cap_objectives(request, id):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
     cap = capability.objects.get(pk=id)
 
     if request.method == 'POST':
@@ -208,8 +242,10 @@ def cap_objectives(request, id):
     return HttpResponse(status=204)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def cap_contents(request, id, obj_pos, cont_pos, view, ev_pos):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
     cap = capability.objects.get(pk=id)
 
     if request.method == 'POST':
@@ -381,6 +417,8 @@ def getOrder(idCon):
     return max + 1
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def editQuestionReq(request):
     deleteQuestion(request.POST['idQuestion'])
     cap = capability.objects.get(pk=request.POST['idCap'])
@@ -444,6 +482,8 @@ def addQuestionFromPost(post, cap):
             i += 1
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def deleteQuestionReq(request):
     deleteQuestion(request.POST['idQuestion'])
     return redirect('contents', id=request.POST['idCap'], obj_pos=0, cont_pos=0, view=1, ev_pos=int(request.POST['evMant']))
@@ -457,6 +497,8 @@ def deleteQuestion(id):
     question_to_delete.delete()
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def deleteContentReq(request):
     deleteContent(request.POST['idCont'])
     return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objMant'], cont_pos=request.POST['contMant'], view=0, ev_pos=0)
@@ -470,6 +512,8 @@ def deleteContent(id):
     cont_to_delete.delete()
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def deleteComponentReq(request):
     deleteComponent(request.POST['compId'])
     return redirect('contents', id=request.POST['idCap'], obj_pos=request.POST['objPos'], cont_pos=request.POST['contPos'], view=0, ev_pos=0)
@@ -483,8 +527,10 @@ def deleteComponent(id):
     comp_to_delete.delete()
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def objectives(request):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
 
     objectivesRows = objective.objects.all().order_by('name')
     dictionary.update({
@@ -505,13 +551,17 @@ def objectives(request):
     return render(request, 'objectives.html', dictionary)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def statistics(request):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
     return render(request, 'statistics.html', dictionary)
 
 
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def objective_edit(request, id):
-    dictionary = create_base_dictionary()
+    dictionary = create_base_dictionary(request)
 
     objective_to_edit = objective.objects.get(pk=id)
     objective_form = ObjectiveForm(instance=objective_to_edit)
@@ -548,10 +598,20 @@ def orderComps(comps):
     return res
 
 
-def create_base_dictionary():
+def create_base_dictionary(request):
+    user = request.user
+    name_to_display = user.first_name + ' ' + user.last_name
+    if name_to_display == ' ':
+        name_to_display = user.username
+
+    trainer = trainer_profile.objects.get(user=user.pk)
+    organizations = trainer.organizations.all().order_by('pk')
+
     dictionary = {
-        'nombre': 'alberto rausell',
-        'organizacion': 'Universitat Politècnica de València',
+        'name': name_to_display,
+        'trainer': trainer,
+        'org': organizations[trainer.actual_organization_pos],
+        'orgs': organizations,
         'host': 'http://127.0.0.1:8000/'
     }
     return dictionary

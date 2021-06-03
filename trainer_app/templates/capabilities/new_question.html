@@ -91,7 +91,7 @@
                 inputs[1].name = 'correct' + cont; //SOLO SE BORRA CUANDO PULSAS DOS VECES SI HAS ELIMINADO EL ANTERIOR ANTES
                 if (cont > 1) {
                     remove.innerHTML = `
-                        <a style="color: red;" class="btn btn-link close" onclick="deleteAnswer(${cont})">✘</a>
+                        <a style="color: red;" class="btn btn-link close" onclick="deleteAnswer(${cont})">🞫</a>
                     `;
                 } else {
                     remove.innerHTML = ``;
@@ -118,7 +118,7 @@
                 <input style="margin-top:10" name="correct${numberAnswer}" type="checkbox" title="Is correct?">
             </div>
             <div class="col-1">
-                <a style="color: red;" class="btn btn-link close" onclick="deleteAnswer(${numberAnswer})">✘</a>
+                <a style="color: red;" class="btn btn-link close" onclick="deleteAnswer(${numberAnswer})">🞫</a>
             </div>
         `;
         answerContent.appendChild(answer);
