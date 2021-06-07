@@ -574,7 +574,14 @@
     function pressIndexOfList(index, listId) {
         let list = document.getElementById(listId);
         if (list.getElementsByTagName("a").length > 0) {
-            let id = getIdByOnClick(list.getElementsByTagName("a")[index]);
+            let subitems = list.getElementsByTagName("a");
+            let listLength = subitems.length;
+            let id = null;
+            if (index > listLength - 1) {
+                id = getIdByOnClick(subitems[listLength - 1]);
+            } else {
+                id = getIdByOnClick(subitems[index]);
+            }
             if (listId == 'obj_list') {
                 pressObjective(id);
             } else {
