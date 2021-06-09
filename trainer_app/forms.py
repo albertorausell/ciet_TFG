@@ -16,7 +16,10 @@ class CapabilityName(Form):
 
 
 class CapabilityDesc(Form):
-    cap_desc = CharField(widget=Textarea, required=True, label=False)
+    cap_desc = CharField(widget=Textarea(attrs={
+        'style': 'width: 100%;',
+        'placeholder': 'Here the description...'
+    }), required=True, label=False)
     cap_image = ImageField(required=True, label=False)
 
 

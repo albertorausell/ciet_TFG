@@ -11,9 +11,9 @@ import os
 
 class trainer_profile (models.Model):
 
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    updated = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     rol = models.ForeignKey(
         'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
@@ -37,9 +37,9 @@ class trainer_profile (models.Model):
 
 class learner_profile (models.Model):
 
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    updated = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     rol = models.ForeignKey(
         'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
@@ -62,6 +62,12 @@ class learner_profile (models.Model):
 
 class stakeholders (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=50)
 
     isTrainer = models.BooleanField()
@@ -81,6 +87,12 @@ class stakeholders (models.Model):
 
 class organization (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=50, default="null")
 
     created = models.DateTimeField(auto_now_add=True)
@@ -93,6 +105,12 @@ class organization (models.Model):
 
 
 class capability (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     name = models.CharField(max_length=50, default=None, blank=True, null=True)
 
@@ -132,6 +150,12 @@ class capability (models.Model):
 
 class objective (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=30)
 
     activities = models.ManyToManyField('activity')
@@ -143,6 +167,12 @@ class objective (models.Model):
 
 class dimension (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -152,6 +182,12 @@ class dimension (models.Model):
 
 class phase (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -160,6 +196,12 @@ class phase (models.Model):
 
 
 class activity (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     name = models.CharField(max_length=50)
 
@@ -180,6 +222,12 @@ class activity (models.Model):
 
 class content (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=20, default=None, blank=True, null=True)
 
     order = models.IntegerField(default=None, blank=True, null=True)
@@ -197,6 +245,12 @@ class content (models.Model):
 
 
 class training_technique (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     TEXT = 'txt'
 
@@ -237,18 +291,31 @@ class training_technique (models.Model):
 
 class evaluation (models.Model):
 
-    pending = models.BooleanField()
+    created_at = models.DateTimeField(
+        auto_now_add=True)
 
-    mark = models.FloatField()
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
-    exercise = models.ForeignKey('exercise', on_delete=models.CASCADE)
+    pending = models.BooleanField(default=True, blank=True, null=True)
+
+    mark = models.FloatField(default=0, blank=True, null=True)
+
+    exercise = models.ForeignKey(
+        'exercise', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     learner_profile = models.ForeignKey(
 
-        'learner_profile', on_delete=models.CASCADE)
+        'learner_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
 
 class exercise (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     CONTENT = 'co'
 
@@ -284,6 +351,12 @@ class exercise (models.Model):
 
 class question (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     order = models.IntegerField(default=None, blank=True, null=True)
 
     question = models.TextField(default=None, blank=True, null=True)
@@ -298,6 +371,12 @@ class question (models.Model):
 
 class answer (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     answer = models.TextField(default=None, blank=True, null=True)
 
     isCorrect = models.BooleanField(default=False, blank=True, null=True)
@@ -311,6 +390,12 @@ class answer (models.Model):
 
 
 class capability_objective (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     order = models.IntegerField(default=0)
 
@@ -329,15 +414,20 @@ class capability_objective (models.Model):
 
 class capability_learner (models.Model):
 
-    last_content_done = models.OneToOneField(
+    created_at = models.DateTimeField(
+        auto_now_add=True)
 
-        'content', on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
-    capability = models.ForeignKey('capability', on_delete=models.CASCADE)
+    last_content_done = models.IntegerField(default=0, blank=True, null=True)
+
+    capability = models.ForeignKey(
+        'capability', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     learner_profile = models.ForeignKey(
 
-        'learner_profile', on_delete=models.CASCADE)
+        'learner_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     class Meta:
 

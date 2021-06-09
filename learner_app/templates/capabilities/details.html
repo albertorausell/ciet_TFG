@@ -5,7 +5,7 @@
 
 
 {% block content %}
-    <div class="row">
+    <div class="row" style="width: 100%;">
         <div class="col-1">
 
         </div>
@@ -48,7 +48,7 @@
                 <br>
                 <div class="row">
                     <div class="col-12" style="text-align: right;">
-                        <div class="btn btn-outline-success" style="width: 100%;">GO!</div>
+                        <a class="btn btn-outline-success" href="{% url 'capability_show' id=cap.pk %}" style="width: 100%;">GO!</a>
                     </div>
                 </div>
             </div>    
