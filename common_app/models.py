@@ -422,6 +422,8 @@ class capability_learner (models.Model):
 
     last_content_done = models.IntegerField(default=0, blank=True, null=True)
 
+    pending = models.BooleanField(default=True, blank=True, null=True)
+
     capability = models.ForeignKey(
         'capability', on_delete=models.CASCADE, default=None, blank=True, null=True)
 

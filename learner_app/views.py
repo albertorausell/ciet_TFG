@@ -1,4 +1,5 @@
 import math
+from trainer_app.views import cap_learners
 from CiET.variables import Variables
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render, HttpResponse
@@ -23,14 +24,23 @@ def capabilities(request):
     check_caps = capability.objects.filter(
         active=True, organization=dictionary['org'])
     pending_caps = []
+    finished_caps = []
 
     for cap in check_caps:
-        if dictionary['learner'].rol in cap.stakeholders.all():
-            pending_caps.append(cap)
+        cap_learner = capability_learner.objects.filter(
+            capability=cap.pk, learner_profile=dictionary['learner'])
+        if len(cap_learner) > 0:
+            if cap_learner[0].pending:
+                pending_caps.append(cap)
+            else:
+                finished_caps.append(cap)
+        else:
+            if dictionary['learner'].rol in cap.stakeholders.all():
+                pending_caps.append(cap)
 
     # TO-DO: check if cap is pending in order to show it
 
-    details_caps = []
+    details_pending_caps = []
     for cap in pending_caps:
         objectives = capability_objective.objects.filter(capability=cap.pk)
         objective_number = len(objectives)
@@ -39,13 +49,28 @@ def capabilities(request):
             contents = content.objects.filter(
                 capability_objective=objective.pk)
             contents_number += len(contents)
-        details_caps.append({
+        details_pending_caps.append({
+            'details': cap,
+            'contents_number': contents_number,
+            'objective_number': objective_number
+        })
+    details_finished_caps = []
+    for cap in finished_caps:
+        objectives = capability_objective.objects.filter(capability=cap.pk)
+        objective_number = len(objectives)
+        contents_number = 0
+        for objective in objectives:
+            contents = content.objects.filter(
+                capability_objective=objective.pk)
+            contents_number += len(contents)
+        details_finished_caps.append({
             'details': cap,
             'contents_number': contents_number,
             'objective_number': objective_number
         })
     dictionary.update({
-        'pending_caps': details_caps,
+        'pending_caps': details_pending_caps,
+        'finished_caps': details_finished_caps,
     })
 
     return render(request, 'learner_app/templates/capabilities.html', dictionary)
@@ -295,7 +320,7 @@ def capability_show(request, id):
                 cap_learner.last_content_done += 1
                 cap_learner.save()
             else:
-                finishCap(cap.pk)
+                finish_plan(cap_learner.pk)
                 return redirect('capabilities_learner')
             # ------------------------------------------------------
 
@@ -356,7 +381,7 @@ def capability_show(request, id):
             # ---------------
 
             # TO-DO: mark cap as not pending if all evaluations are passed
-            finishCap(cap.pk)
+            finish_plan(cap_learner.pk)
             return redirect('capabilities_learner')
 
     # last content logic
@@ -380,8 +405,10 @@ def capability_show(request, id):
     return render(request, 'learner_app/templates/capabilities/show_content.html', dictionary)
 
 
-def finishCap(id):
-    return
+def finish_plan(id):
+    cap_learner = capability_learner.objects.get(pk=id)
+    cap_learner.pending = False
+    cap_learner.save()
 
 
 def truncate(number, digits) -> float:
