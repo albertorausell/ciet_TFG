@@ -1,6 +1,6 @@
 
 {% block content %}
-
+{% load static %}
 <div class="modal fade" style="background: rosybrown;" id="resultsModalFail" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -35,6 +35,12 @@
             <div class="modal-body">
                 <div style="color: green; font-family: Raleway; font-size: 100; text-align: center;">
                     {{mark}}
+                </div>
+                <hr style="width: 50%;">
+                <div style="color: #FF6F00; font-family: Raleway; font-size: 50; text-align: center;">
+                    +{{points}} <span>
+                        <img src="{% static 'common_app/img/CiET_medal.png' %}" width="15%" height="auto">
+                    </span>
                 </div>
                 <br>
                     <div style="text-align: center;">Congratulations! You can continue.</div>

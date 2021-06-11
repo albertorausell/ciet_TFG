@@ -183,7 +183,8 @@ def capability_show(request, id):
                 if len(cont_evaluation) == 0 and len(unlessOneQuestion) > 0:
                     questions = getExerciseDetails(cont_exercise[0].pk)
                     dictionary.update({
-                        'exercise': questions
+                        'exercise': questions,
+                        'typeEx': 'co',
                     })
                     return render(request, 'learner_app/templates/capabilities/show_exercise.html', dictionary)
             # ---------------
@@ -200,7 +201,8 @@ def capability_show(request, id):
                     if len(obj_evaluation) == 0 and len(unlessOneQuestion) > 0:
                         questions = getExerciseDetails(obj_exercise[0].pk)
                         dictionary.update({
-                            'exercise': questions
+                            'exercise': questions,
+                            'typeEx': 'ob',
                         })
                         return render(request, 'learner_app/templates/capabilities/show_exercise.html', dictionary)
             # ---------------
@@ -217,7 +219,8 @@ def capability_show(request, id):
                     if len(cap_evaluation) == 0 and len(unlessOneQuestion) > 0:
                         questions = getExerciseDetails(cap_exercise[0].pk)
                         dictionary.update({
-                            'exercise': questions
+                            'exercise': questions,
+                            'typeEx': 'ca',
                         })
                         return render(request, 'learner_app/templates/capabilities/show_exercise.html', dictionary)
             # ---------------
@@ -245,15 +248,20 @@ def capability_show(request, id):
 
             mark = (corrects / (incorrects + corrects)) * 10
             if mark >= 5:
+                learn_prof = dictionary['learner']
                 ev = evaluation()
                 ev.pending = False
                 ev.mark = mark
                 ev.exercise = exrc
-                ev.learner_profile = dictionary['learner']
+                ev.learner_profile = learn_prof
                 ev.save()
+                points = manage_points(learn_prof, truncate(
+                    mark, 1), request.POST['typeEx'])
+
                 dictionary.update({
                     'showMark': True,
-                    'mark': truncate(mark, 2)
+                    'mark': truncate(mark, 2),
+                    'points': int(points)
                 })
             else:
                 ev = evaluation()
@@ -287,6 +295,7 @@ def capability_show(request, id):
                             })
                         dictionary.update({
                             'exercise': questions,
+                            'typeEx': 'ob',
                             'showMark': True,
                             'mark': truncate(mark, 2)
                         })
@@ -310,6 +319,7 @@ def capability_show(request, id):
                             })
                         dictionary.update({
                             'exercise': questions,
+                            'typeEx': 'ca',
                             'showMark': True,
                             'mark': truncate(mark, 2)
                         })
@@ -339,6 +349,7 @@ def capability_show(request, id):
                     questions = getExerciseDetails(cont_exercise[0].pk)
                     dictionary.update({
                         'exercise': questions,
+                        'typeEx': 'co',
                         'finished': 'yes',
                     })
                     return render(request, 'learner_app/templates/capabilities/show_exercise.html', dictionary)
@@ -357,6 +368,7 @@ def capability_show(request, id):
                         questions = getExerciseDetails(obj_exercise[0].pk)
                         dictionary.update({
                             'exercise': questions,
+                            'typeEx': 'ob',
                             'finished': 'yes',
                         })
                         return render(request, 'learner_app/templates/capabilities/show_exercise.html', dictionary)
@@ -375,6 +387,7 @@ def capability_show(request, id):
                         questions = getExerciseDetails(cap_exercise[0].pk)
                         dictionary.update({
                             'exercise': questions,
+                            'typeEx': 'ca',
                             'finished': 'yes',
                         })
                         return render(request, 'learner_app/templates/capabilities/show_exercise.html', dictionary)
@@ -403,6 +416,22 @@ def capability_show(request, id):
     # ------------------
 
     return render(request, 'learner_app/templates/capabilities/show_content.html', dictionary)
+
+
+def manage_points(learner_profile, mark, typeEx):
+    points = learner_profile.points
+    points_to_add = 0
+    if typeEx == 'co':
+        points_to_add = (mark * 10) + int(mark)
+    elif typeEx == 'ob':
+        points_to_add = (mark * 20) + int(mark)
+    else:
+        points_to_add = (mark * 50) + int(mark)
+
+    points += points_to_add
+    learner_profile.points = points
+    learner_profile.save()
+    return points_to_add
 
 
 def finish_plan(id):
