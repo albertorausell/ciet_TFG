@@ -469,6 +469,7 @@ def getExerciseDetails(id):
     return {
         'name': name,
         'questions': res,
+        'id': id
     }
 
 
@@ -518,9 +519,69 @@ def orderComps(comps):
 @login_required(redirect_field_name=None)
 @user_passes_test(is_learner, login_url='/trainer/capabilities', redirect_field_name=None)
 def evaluations(request):
-
     dictionary = create_base_dictionary(request)
+    learner = dictionary['learner']
+    evals = evaluation.objects.filter(learner_profile=learner, pending=False)
+    res = []
+    for ev_1 in evals:
+        cap = ev_1.exercise.capability
+        added = False
+        for ev_2 in res:
+            if ev_2['cap'].name == cap.name:
+                ev_2['evaluations'].append({
+                    'ev': ev_1,
+                    'ex': ev_1.exercise
+                })
+                added = True
+        if not added:
+            res.append({
+                'cap': cap,
+                'evaluations': [{
+                    'ev': ev_1,
+                    'ex': ev_1.exercise
+                }]
+            })
+    dictionary.update({
+        'evals': res
+    })
+
     return render(request, 'evaluations.html', dictionary)
+
+
+@login_required(redirect_field_name=None)
+@user_passes_test(is_learner, login_url='/trainer/capabilities', redirect_field_name=None)
+def increase_mark(request, id):
+    dictionary = create_base_dictionary(request)
+    if request.method == "POST":
+        exrc = exercise.objects.get(pk=request.POST['exercise'])
+        questions = getExerciseDetails(exrc.pk)
+        corrects = 0
+        incorrects = 0
+        for ques in questions['questions']:
+            for ans in ques['answers']:
+                string = str(ans.pk) + '-answer'
+                isCorrect = ans.isCorrect
+                # correction
+                checked = string in request.POST
+                if isCorrect == checked:
+                    corrects += 1
+                else:
+                    incorrects += 1
+
+        mark = (corrects / (incorrects + corrects)) * 10
+        ev = evaluation.objects.get(
+            learner_profile=dictionary['learner'].pk, exercise=id, pending=False)
+        past_mark = ev.mark
+        if mark > past_mark:
+            ev.mark = mark
+            ev.save()
+        return redirect('evaluations_learner')
+
+    exer = getExerciseDetails(id)
+    dictionary.update({
+        'exercise': exer
+    })
+    return render(request, 'learner_app/templates/evaluations/increase_mark.html', dictionary)
 
 
 @login_required(redirect_field_name=None)
