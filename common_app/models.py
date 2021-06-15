@@ -19,7 +19,7 @@ class trainer_profile (models.Model):
         'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     image = models.ImageField(
-        upload_to='img/users', default='static/unknown_profile.png', blank=True, null=True)
+        upload_to='users/profile_image', default='static/unknown_profile.png', blank=True, null=True)
 
     organizations = models.ManyToManyField('organization', default=None)
 
@@ -45,7 +45,7 @@ class learner_profile (models.Model):
         'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     image = models.ImageField(
-        upload_to='img/users', default='static/unknown_profile.png', blank=True, null=True)
+        upload_to='users/profile_image', default='static/unknown_profile.png', blank=True, null=True)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -93,11 +93,7 @@ class organization (models.Model):
     updated_at = models.DateTimeField(
         auto_now=True)
 
-    name = models.CharField(max_length=50, default="null")
-
-    created = models.DateTimeField(auto_now_add=True)
-
-    updated = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=50)
 
     def __str__(self):
 
@@ -121,7 +117,7 @@ class capability (models.Model):
     description = models.TextField(default=None, blank=True, null=True)
 
     image = models.ImageField(
-        default=None, blank=True, null=True, upload_to='trainer_app/img/capabilities')
+        default=None, blank=True, null=True, upload_to='capabilities')
 
     stakeholders = models.ManyToManyField(
         'stakeholders', default=None)
@@ -445,19 +441,22 @@ class text_component (training_technique):
 
 class image_component (training_technique):
 
-    value = models.ImageField(default=None, blank=True, null=True)
+    value = models.ImageField(default=None, blank=True,
+                              null=True, upload_to='contents/img')
     description = models.TextField(default=None, blank=True, null=True)
 
 
 class video_component (training_technique):
 
-    value = models.FileField(default=None, blank=True, null=True)
+    value = models.FileField(default=None, blank=True,
+                             null=True, upload_to='contents/video')
     description = models.TextField(default=None, blank=True, null=True)
 
 
 class document_component (training_technique):
 
-    value = models.FileField(default=None, blank=True, null=True)
+    value = models.FileField(default=None, blank=True,
+                             null=True, upload_to='contents/doc')
     description = models.TextField(default=None, blank=True, null=True)
 
 
