@@ -434,6 +434,26 @@ class capability_learner (models.Model):
         verbose_name_plural = 'capability_learner'
 
 
+class excel (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
+    document = models.FileField(default=None, blank=True,
+                                null=True, upload_to='excel')
+
+    trainer = models.ForeignKey(
+
+        'trainer_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    organization = models.ForeignKey(
+
+        'organization', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+
 class text_component (training_technique):
 
     value = models.TextField(default=None, blank=True, null=True)

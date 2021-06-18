@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from common_app.models import exercise, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
-from .forms import Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
+from .forms import Excel_form, Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
+from openpyxl import load_workbook
 # Create your views here.
 
 # ctrl+shift+p > Preferences: Configure Language Specific Settings > Python
@@ -541,7 +542,11 @@ def objectives(request):
     })
 
     objective_form = ObjectiveForm()
-    dictionary.update({'objectivesForm': objective_form})
+    excel_form = Excel_form()
+    dictionary.update({
+        'objectivesForm': objective_form,
+        'excel_form': excel_form
+    })
 
     if request.method == 'POST':
         form = ObjectiveForm(request.POST)
@@ -549,6 +554,29 @@ def objectives(request):
             form.save()
 
     return render(request, 'objectives.html', dictionary)
+
+
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
+def import_objectives(request):
+    if request.method == 'POST':
+        form = Excel_form(request.POST, request.FILES)
+        if form.is_valid():
+            doc = form.save(commit=True)
+            path = doc.document.path
+            wb = load_workbook(filename=path)
+            print(wb.worksheets[1]['D1'].value)
+            print(wb.worksheets[1]['D2'].value)
+            print(wb.worksheets[1]['D3'].value)
+            print(wb.worksheets[1]['D4'].value)
+            print(wb.worksheets[1]['D5'].value)
+            print(wb.worksheets[1]['D6'].value)
+            print(wb.worksheets[1]['D7'].value)
+            print(wb.worksheets[1]['D8'].value)
+            print(wb.worksheets[1]['D9'].value)
+            print(wb.worksheets[1]['D10'].value)
+
+    return redirect('objectives_trainer')
 
 
 @login_required(redirect_field_name=None)

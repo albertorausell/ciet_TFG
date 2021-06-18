@@ -47,4 +47,6 @@ urlpatterns = [
 
     path('change-organization/<int:pos>/',
          views.changeOrganization, name='changeOrg'),
+
+    path('objectives/import', views.import_objectives, name='import_objectives'),
 ]

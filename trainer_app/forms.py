@@ -1,6 +1,6 @@
 from django.db.models.base import Model
 from django.forms import FileInput, ChoiceField, CheckboxInput, CheckboxSelectMultiple, TextInput, Form, ImageField, Textarea, ModelForm, CharField, ModelMultipleChoiceField, CheckboxSelectMultiple
-from common_app.models import text_component, image_component, video_component, document_component, link_component, game_component, training_technique, objective, activity, capability, stakeholders, content, dimension
+from common_app.models import excel, text_component, image_component, video_component, document_component, link_component, game_component, training_technique, objective, activity, capability, stakeholders, content, dimension
 
 
 class ObjectiveForm(ModelForm):
@@ -58,6 +58,17 @@ class Contents(ModelForm):
     class Meta:
         model = content
         fields = ['name', 'dimension']
+
+
+class Excel_form(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document'].required = True
+        self.fields['document'].widget = FileInput(attrs={'accept': '.xlsx'})
+
+    class Meta:
+        model = excel
+        fields = ['document']
 
 
 class Text(ModelForm):
