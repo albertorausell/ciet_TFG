@@ -219,7 +219,8 @@ def cap_objectives(request, id):
 
         obj_act = []
         obj_ph = []
-        objectives = objective.objects.all()
+        objectives = objective.objects.filter(
+            organization=dictionary['org'].pk)
         for ob in objectives:
             act_chain = ''
             ph_chain = ''
@@ -533,7 +534,8 @@ def deleteComponent(id):
 def objectives(request):
     dictionary = create_base_dictionary(request)
 
-    objectivesRows = objective.objects.all().order_by('name')
+    objectivesRows = objective.objects.filter(
+        organization=dictionary['org'].pk).order_by('name')
     dictionary.update({
         'table': {
             'columns': ['Objective', 'Actions'],

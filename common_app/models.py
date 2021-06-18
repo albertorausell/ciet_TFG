@@ -154,6 +154,10 @@ class objective (models.Model):
 
     name = models.CharField(max_length=30)
 
+    organization = models.ForeignKey(
+
+        'organization', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
     activities = models.ManyToManyField('activity')
 
     def __str__(self):
