@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from common_app.models import exercise, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
+from common_app.models import activity, exercise, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
 from .forms import Excel_form, Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
@@ -561,22 +561,39 @@ def objectives(request):
 @login_required(redirect_field_name=None)
 @user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def import_objectives(request):
+    dictionary = create_base_dictionary(request)
     if request.method == 'POST':
         form = Excel_form(request.POST, request.FILES)
         if form.is_valid():
             doc = form.save(commit=True)
             path = doc.document.path
             wb = load_workbook(filename=path)
-            print(wb.worksheets[1]['D1'].value)
-            print(wb.worksheets[1]['D2'].value)
-            print(wb.worksheets[1]['D3'].value)
-            print(wb.worksheets[1]['D4'].value)
-            print(wb.worksheets[1]['D5'].value)
-            print(wb.worksheets[1]['D6'].value)
-            print(wb.worksheets[1]['D7'].value)
-            print(wb.worksheets[1]['D8'].value)
-            print(wb.worksheets[1]['D9'].value)
-            print(wb.worksheets[1]['D10'].value)
+            worksheet = wb.worksheets[1]
+            objs = objective.objects.filter(organization=dictionary['org'])
+            objs = list(map(lambda x: x.name, objs))
+            acts_list = list(activity.objects.all())
+            acts_name_list = list(
+                map(lambda x: x.name.lower().strip(), acts_list))
+            i = 4  # when title "TRAINING CONTENT" is reached
+            while i <= worksheet.max_row:
+                cell = worksheet['D' + str(i)].value
+                if cell not in objs and cell != None:
+                    acts = worksheet['F' + str(i)].value.lower().strip()
+                    acts = acts.split('/')
+                    acts_to_add = []
+                    for act in acts:
+                        if act not in acts_name_list:
+                            doc.delete()
+                            return HttpResponse('Activity "' + worksheet['F' + str(i)].value + '" in cell "F' + str(i) + '" not found. Go back and try again.')
+                        acts_to_add.append(
+                            acts_list[acts_name_list.index(act)])
+                    new_objective = objective(
+                        name=cell, organization=dictionary['org'])
+                    new_objective.save()
+                    new_objective.activities.set(acts_to_add)
+                    new_objective.save()
+                    objs.append(cell)
+                i += 1
 
     return redirect('objectives_trainer')
 

@@ -1,9 +1,103 @@
 
 {% extends "learner_app/templates/base_learner.html" %}
 {% load static %}
-
-
-
 {% block content %}
-<h1>hola</h1>
+<style>
+    .vertical-center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+    
+    .horizontal-center {
+        margin: 0;
+        position: absolute;
+        left: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+    .center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+</style>
+<div class="row" style="width: 100%; height: 100%;">
+    <div class="col" style="height: 100%; padding-right: 0;">
+        <div class="row" style="height: 20%;">
+            <div class="col" style="color: #595959; height: 50; padding-right: 0;">
+                <div class="row" style="margin: 50; height: 100%; background-color: #E2F0D9; border-style: solid;border-radius: 10px;border-color: #E2F0D9;">
+                    <div class="col-5">
+                        <div class="vertical-center" style="padding-left: 50%; display: inline;">
+                            <span style="font-size: 25;">Your position:</span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="vertical-center" style="display: inline;">
+                            <span style="font-size: 35;">{{learner_position}}</span>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="vertical-center" style="padding-left: 50%; display: inline; text-align: right !important;font-size: 35;">
+                            {{learner.points}}
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="vertical-center" style="display: inline;">
+                            <img src="{% static 'common_app/img/CiET_medal.png' %}" height="100" width="auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 50;">
+            <div class="col-5" style="text-align: center;">
+                <div class="row">
+                    <div class="col">
+                        <img style="display: block;" src="{% static 'common_app/img/podium.png' %}" width="100%" height="auto" >
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-1">
+
+                    </div>
+                    <div class="col-10" style="text-align: center;">
+                        <br>
+                        <div style="text-align: center;">
+                            <img style="display: inline; margin-right: 20; border-radius: 50%" src="{{classification.0.image.url}}" width="20%" height="auto">
+                            <a style="font-size: 30;">{{classification.0.user}}</a>
+                        </div>
+                        {% if classification|length > 1 %}
+                        <br>
+                        <div style="text-align: center;">
+                            <img style="display: inline; margin-right: 20; border-radius: 50%" src="{{classification.1.image.url}}" width="15%" height="auto">
+                            <a style="font-size: 25;">{{classification.1.user}}</a>
+                        </div>
+                        {% endif %}
+                        {% if classification|length > 2 %}
+                        <br>
+                        <div style="text-align: center;">
+                            <img style="display: inline; margin-right: 20; border-radius: 50%" src="{{classification.2.image.url}}" width="10%" height="auto">
+                            <a style="font-size: 20;">{{classification.2.user}}</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-1">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-7">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}

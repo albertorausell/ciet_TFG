@@ -3,7 +3,7 @@ from trainer_app.views import cap_learners
 from CiET.variables import Variables
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render, HttpResponse
-from common_app.models import capability_learner, evaluation, exercise, learner_profile, organization, question, answer, training_technique, objective, capability, capability_objective, content
+from common_app.models import capability_learner, evaluation, exercise, learner_profile, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
 content_model = content
 
 # Create your views here.
@@ -587,8 +587,20 @@ def increase_mark(request, id):
 @login_required(redirect_field_name=None)
 @user_passes_test(is_learner, login_url='/trainer/capabilities', redirect_field_name=None)
 def ranking(request):
-
     dictionary = dictionary = create_base_dictionary(request)
+    organization_learners = learner_profile.objects.filter(
+        organization=dictionary['org']).order_by('-points')
+    position = 0
+    i = 1
+    for learner in organization_learners:
+        if learner.pk == dictionary['learner'].pk:
+            position = i
+            break
+        i += 1
+    dictionary.update({
+        'learner_position': position,
+        'classification': organization_learners
+    })
     return render(request, 'ranking.html', dictionary)
 
 

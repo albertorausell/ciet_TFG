@@ -152,13 +152,13 @@ class objective (models.Model):
     updated_at = models.DateTimeField(
         auto_now=True)
 
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=100)
 
     organization = models.ForeignKey(
 
         'organization', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
-    activities = models.ManyToManyField('activity')
+    activities = models.ManyToManyField('activity', default=None)
 
     def __str__(self):
 
@@ -205,9 +205,11 @@ class activity (models.Model):
 
     name = models.CharField(max_length=50)
 
-    dimension = models.ForeignKey('dimension', on_delete=models.CASCADE)
+    dimension = models.ForeignKey(
+        'dimension', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
-    phase = models.ForeignKey('phase', on_delete=models.CASCADE)
+    phase = models.ForeignKey(
+        'phase', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 
