@@ -8,6 +8,15 @@ import os
 
 # Create your models here.
 
+def get_name(self):
+    name = self.username
+    if len(self.last_name) > 0:
+        name = self.first_name + ' ' + self.last_name
+    return name
+
+
+User.add_to_class("__str__", get_name)
+
 
 class trainer_profile (models.Model):
 
