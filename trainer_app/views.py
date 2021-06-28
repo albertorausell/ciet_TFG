@@ -656,7 +656,7 @@ def statistics(request):
                         item['rols'][key] = rols[key]
             else:
                 objectives.append({
-                    'objective': SafeString(obj),
+                    'objective': obj.name,  # safestring¿?
                     'rols': rols
                 })
                 objs_names.append(obj.name)

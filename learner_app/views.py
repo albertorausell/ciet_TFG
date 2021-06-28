@@ -255,7 +255,7 @@ def capability_show(request, id):
                 ev.exercise = exrc
                 ev.learner_profile = learn_prof
                 ev.save()
-                points = manage_points(learn_prof, truncate(
+                points = increase_points(learn_prof, truncate(
                     mark, 1), request.POST['typeEx'])
 
                 dictionary.update({
@@ -418,7 +418,7 @@ def capability_show(request, id):
     return render(request, 'learner_app/templates/capabilities/show_content.html', dictionary)
 
 
-def manage_points(learner_profile, mark, typeEx):
+def increase_points(learner_profile, mark, typeEx):
     points = learner_profile.points
     points_to_add = 0
     if typeEx == 'co':
@@ -432,6 +432,22 @@ def manage_points(learner_profile, mark, typeEx):
     learner_profile.points = points
     learner_profile.save()
     return points_to_add
+
+
+def decrease_points(learner_profile, mark, typeEx):
+    points = learner_profile.points
+    points_to_sub = 0
+    if typeEx == 'co':
+        points_to_sub = (mark * 10) + int(mark)
+    elif typeEx == 'ob':
+        points_to_sub = (mark * 20) + int(mark)
+    else:
+        points_to_sub = (mark * 50) + int(mark)
+
+    points -= points_to_sub
+    learner_profile.points = points
+    learner_profile.save()
+    return points_to_sub
 
 
 def finish_plan(id):
@@ -468,6 +484,7 @@ def getExerciseDetails(id):
         })
     return {
         'name': name,
+        'scope': exer.scope,
         'questions': res,
         'id': id
     }
@@ -575,6 +592,10 @@ def increase_mark(request, id):
         if mark > past_mark:
             ev.mark = mark
             ev.save()
+            decrease_points(dictionary['learner'], truncate(
+                past_mark, 1), request.POST['typeEx'])
+            increase_points(dictionary['learner'], truncate(
+                mark, 1), request.POST['typeEx'])
         return redirect('evaluations_learner')
 
     exer = getExerciseDetails(id)
