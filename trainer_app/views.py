@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from common_app.models import activity, exercise, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
+from common_app.models import activity, capability_learner, exercise, learner_profile, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
 from .forms import Excel_form, Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
 from django.http import HttpResponse
+from django.utils.safestring import SafeString
 from django.contrib.auth.decorators import login_required, user_passes_test
 from openpyxl import load_workbook
 # Create your views here.
@@ -602,6 +603,77 @@ def import_objectives(request):
 @user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def statistics(request):
     dictionary = create_base_dictionary(request)
+    # first chart
+    caps = capability.objects.filter(organization=dictionary['org'])
+    objectives = []
+    objs_names = []
+    for cap in caps:
+        cap_learns_reached = capability_learner.objects.filter(
+            capability=cap.pk, pending=False)
+        cap_learns_reached = list(
+            map(lambda x: x.learner_profile, cap_learns_reached))
+        stks = cap.stakeholders.all()
+        cap_learns_total = []
+        for stk in stks:
+            cap_learns = learner_profile.objects.filter(
+                organization=dictionary['org'], rol=stk.pk)
+            cap_learns_total = list(set(cap_learns_total) | set(cap_learns))
+
+        rols = {}
+        for cap_learn in cap_learns_total:
+            if cap_learn in cap_learns_reached:
+                if cap_learn.rol.name in rols:
+                    rols[cap_learn.rol.name] = {
+                        'reached': rols[cap_learn.rol.name]['reached'] + 1,
+                        'total': rols[cap_learn.rol.name]['total'] + 1
+                    }
+                else:
+                    rols[cap_learn.rol.name] = {
+                        'reached': 1,
+                        'total': 1
+                    }
+            else:
+                if cap_learn.rol.name in rols:
+                    rols[cap_learn.rol.name] = {
+                        'reached': rols[cap_learn.rol.name]['reached'],
+                        'total': rols[cap_learn.rol.name]['total'] + 1
+                    }
+                else:
+                    rols[cap_learn.rol.name] = {
+                        'reached': 0,
+                        'total': 1
+                    }
+        objs = cap.objectives.all()
+        for obj in objs:
+            if obj.name in objs_names:
+                item = objectives[objs_names.index(obj.name)]
+                keys = rols.keys()
+                for key in keys:
+                    if key in item['rols']:
+                        item['rols'][key]['reached'] += rols[key]['reached']
+                        item['rols'][key]['total'] += rols[key]['total']
+                    else:
+                        item['rols'][key] = rols[key]
+            else:
+                objectives.append({
+                    'objective': SafeString(obj),
+                    'rols': rols
+                })
+                objs_names.append(obj.name)
+
+    for obj in objectives:
+        obj['rols_keys'] = list(obj['rols'].keys())
+        obj['rols_keys_length'] = len(obj['rols'].keys())
+    set_labels = []
+    for obj in objectives:
+        for key in obj['rols_keys']:
+            if key not in set_labels:
+                set_labels.append(key)
+    dictionary.update({
+        'chart1_sets': set_labels,
+        'first_chart': objectives
+    })
+    # ---------------------------------------------
     return render(request, 'statistics.html', dictionary)
 
 

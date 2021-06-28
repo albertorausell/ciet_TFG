@@ -5,5 +5,176 @@
 
 
 {% block content %}
-<h1>hola</h1>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="row" style="width: 100%;">
+    <div class="col-1">
+        <label id="test"></label>
+    </div>
+    <div class="col-10">
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+    <div class="col-1">
+
+    </div>
+</div>
+<script>
+    function print(string){
+        document.getElementById('test').innerText = string;
+    }
+</script>
+
+<script>
+    let aux = "{{first_chart|escapejs}}";
+    aux = aux.replaceAll("'", '"');
+    let json = JSON.parse(aux);
+
+    //DATASETS NAMES
+    let datasetsName = [], labels = [];
+    {% for set in chart1_sets %}
+        datasetsName.push('{{set}}');
+    {% endfor %}
+
+    //LABELS
+    for (const item of json) {
+        labels.push(item.objective);
+    }
+
+    //COLORS
+    let backgroundColor = [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)'
+    ];
+    let borderColor = [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)'
+    ];
+
+    for (let i = 0; i < datasetsName.length; i++) {
+        const element = datasetsName[i];
+        
+    }
+
+    //DATASETS
+    let label, stakeholder, reached, total, information, datasets = [];
+    for (let i = 0; i < datasetsName.length; i++) {
+        const dataset = datasetsName[i];
+        reached = 0, total = 0, information = [];
+        label = dataset;
+        for (const objective of json) {
+            //labels.push(objective.objective);
+            stakeholder = objective.rols[dataset];
+            if (stakeholder) {
+                reached = stakeholder.reached;
+                total = stakeholder.total;
+                information.push((reached / total));
+            } else {
+                information.push(0);
+            }
+        }
+        //--------------------------
+        datasets.push({
+            label: label,
+            data: information,
+            backgroundColor: [
+                backgroundColor[i]
+            ],
+            borderColor: [
+                borderColor[i]
+            ],
+            borderWidth: 1
+        });
+    }
+    //----------------
+    const data = {
+      labels: labels,
+      datasets: datasets
+    };
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            indexAxis: 'y',
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        },
+    };
+    var myChart = new Chart(
+        document.getElementById('myChart'),
+        config
+    );
+  /**
+   * backgorund
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+    borderColor
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+  */
+</script>
 {% endblock %}
+
+
+<script>
+    /*
+    
+    //----LABELS------
+    let labels = [];
+    {% for obj in first_chart %}
+    labels.push('{{obj.objective.name}}');
+    {% endfor %}
+    //----------------
+    //-DATASETS NAMES-
+    let setsLabels = new Set();
+    {% for obj in first_chart %}
+        {% for rol in obj.rols_keys %}
+        setsLabels.add('{{rol}}');
+        {% endfor %}
+    {% endfor %}
+    setsLabels = Array.from(setsLabels);
+    //----------------
+    //----DATASETS----
+    
+    let datasets = [];
+    for (const label of setsLabels) {
+        let dataset = {}, reached, total, data = [], json, jsonString;
+        {% for obj in first_chart %}
+            {% for set in chart1_sets %}
+            reached = `{{first_chart.1.rols}}`;
+            reached = reached.replaceAll('&#x27;','').toString();
+            //`{{obj.rols.set.reached}}`
+            total = `{{obj.rols.set.total}}`;
+            if (reached && reached.length > 0) {
+                reached = parseInt(reached, 10)
+                total = parseInt(total, 10)
+                data[setsLabels.indexOf('{{set}}')] = (reached / total) * 100;
+            } else {
+                data.push(undefined);
+            }
+            {% endfor %}
+        {% endfor %}
+        data = data.slice(0, setsLabels.length);
+        for (let i = 0; i < data.length; i++) {
+            const element = data[i];
+            if (element == undefined) {
+                data[i] = 0;
+            }
+        }
+        */
+</script>
