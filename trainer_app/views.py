@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from common_app.models import activity, capability_learner, exercise, learner_profile, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
+from common_app.models import activity, capability_learner, evaluation, exercise, learner_profile, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
 from .forms import Excel_form, Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
+import math
 from django.http import HttpResponse
 from django.utils.safestring import SafeString
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -674,7 +675,67 @@ def statistics(request):
         'first_chart': objectives
     })
     # ---------------------------------------------
+    # second chart
+    data_exercises = {}
+    org_exercises = []
+    for cap in caps:
+        exs = list(exercise.objects.filter(capability=cap.pk))
+        org_exercises = org_exercises + exs
+
+    caps_with_exercises = []
+    org_learners = learner_profile.objects.filter(
+        organization=dictionary['org'])
+    for learner in org_learners:
+        for ex in org_exercises:
+            first_ev = evaluation.objects.filter(
+                exercise=ex.pk, learner_profile=learner.pk).order_by('created_at')
+            last_ev = evaluation.objects.filter(
+                exercise=ex.pk, learner_profile=learner.pk).order_by('-created_at')
+            if len(first_ev) > 0:
+                if ex.pk in data_exercises:
+                    data_exercises[ex.pk]['first_sum'] += first_ev[0].mark
+                    data_exercises[ex.pk]['last_sum'] += last_ev[0].mark
+                    data_exercises[ex.pk]['num'] += 1
+                else:
+                    data_exercises[ex.pk] = {
+                        'first_sum': first_ev[0].mark,
+                        'last_sum': last_ev[0].mark,
+                        'num': 1,
+                        'cap': ex.capability
+                    }
+                    if ex.capability not in caps_with_exercises:
+                        caps_with_exercises.append(ex.capability)
+    res = []
+    for cap in caps_with_exercises:
+        first_average = 0
+        last_average = 0
+        total_num = 0
+        for data in data_exercises:
+            if data_exercises[data]['cap'] == cap:
+                first_average += data_exercises[data]['first_sum']
+                last_average += data_exercises[data]['last_sum']
+                total_num += data_exercises[data]['num']
+        res.append({
+            'capability_name': cap.name,
+            'first_average': truncate(first_average / total_num, 2),
+            'last_average': (truncate(last_average / total_num, 2)) - (truncate(first_average / total_num, 2)),
+        })
+    dictionary.update({
+        'second_chart': res
+    })
+
+    # classification
+    organization_learners = learner_profile.objects.filter(
+        organization=dictionary['org']).order_by('-points')
+    dictionary.update({
+        'classification': organization_learners
+    })
     return render(request, 'statistics.html', dictionary)
+
+
+def truncate(number, digits) -> float:
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
 
 
 @login_required(redirect_field_name=None)

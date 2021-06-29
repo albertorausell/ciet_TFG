@@ -5,182 +5,274 @@
 
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<div class="row" style="width: 100%;">
-    <div class="col-1">
-        <label id="test"></label>
-    </div>
-    <div class="col-10">
-        <div>
-            <canvas id="chart1"></canvas>
-        </div>
-        <div>
-            <canvas id="chart2"></canvas>
-        </div>
-    </div>
-    <div class="col-1">
+<style>
+    .box-shadow {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; 
+        margin: 10px;
+        border-radius: 10px; 
+    }
+    #myTable {
+        border-collapse: collapse; /* Collapse borders */
+        width: 100%; /* Full-width */
+        border: 1px solid #ddd; /* Add a grey border */
+        font-size: 18px; /* Increase font-size */
+    }
 
+    #myTable th, #myTable td {
+        text-align: left; /* Left-align text */
+        padding: 12px; /* Add padding */
+    }
+
+    #myTable tr {
+        /* Add a bottom border to all table rows */
+        border-bottom: 1px solid #ddd;
+    }
+
+    #myTable tr.header, #myTable tr:hover {
+        /* Add a grey background color to the table header and on hover */
+        background-color: #f1f1f1;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="row" style="width: 100%; margin-left: 20;margin-top: 20;margin-bottom: 20;">
+    <div class="col-7">
+        <div class="row">
+            <div class="col box-shadow">
+                <canvas id="chart1"></canvas>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col box-shadow">
+                <canvas id="chart2"></canvas>
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+    <div class="col-4 box-shadow" style="padding: 30;">
+        <div class="row" style="width: 100%;border-width: thin;border-radius: 5px; border-style: solid; border-color: lightgray;">
+            <div style="width: 20%;">
+                <select class="form-control" style="border-bottom: none;border-top: none;border-left: none;" id="controlselect">
+                    <option>Name</option>
+                    <option>Rol</option>
+                    <option>Points</option>
+                </select>
+            </div>
+            <div style="width: 80%;">
+                <input style="height: 40;margin-left: 0;border: none; padding-left: 10px; width: 100%;" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..">
+            </div>
+        </div>
+        <br />
+        <div class="row" style="width: 100%;">
+            <div style="border-style: solid;border-color: lightgray; border-width: thin; width: 100%;">
+                <table class="table table-striped mb-0" id="myTable">
+                    <tr>
+                        <th></th>
+                        <th style="text-align: center;">Name</th>
+                        <th style="text-align: center;">Rol</th>
+                        <th style="text-align: center;">Points</th>
+                    </tr>
+                    {% for learner in classification %}
+                    <tr>
+                        <td>
+                            <img style="display: inline; margin-right: 20; border-radius: 50%; width: 50; height:50; object-fit:cover;" src="{{learner.image.url}}">
+                        </td>
+                        <td style="text-align: center;">{{learner.user}}</td>
+                        <td style="text-align: center;">{{learner.rol}}</td>
+                        <td style="text-align: center;">{{learner.points}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue, select, filterCol;
+      input = document.getElementById("myInput");
+      select = document.getElementById("controlselect")
+      filterCol = select.selectedIndex + 1;
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+    
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[filterCol];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+</script>
 <script>
     function print(string){
         document.getElementById('test').innerText = string;
     }
 </script>
 
-<script id="chart1">
-    let aux = "{{first_chart|escapejs}}";
-    aux = aux.replaceAll("'", '"');
-    let json = JSON.parse(aux);
+<script>
+    function showChart1() {
+        let aux = "{{first_chart|escapejs}}";
+        aux = aux.replaceAll("'", '"');
+        let json = JSON.parse(aux);
 
-    //DATASETS NAMES
-    let datasetsName = [], labels = [];
-    {% for set in chart1_sets %}
-        datasetsName.push('{{set}}');
-    {% endfor %}
+        //DATASETS NAMES
+        let datasetsName = [], labels = [];
+        {% for set in chart1_sets %}
+            datasetsName.push('{{set}}');
+        {% endfor %}
 
-    //LABELS
-    for (const item of json) {
-        labels.push(item.objective);
-    }
-
-    //COLORS
-    let backgroundColor = [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-        'rgba(255, 205, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(54, 162, 235, 0.2)'
-    ];
-    let borderColor = [
-        'rgb(255, 99, 132)',
-        'rgb(255, 159, 64)',
-        'rgb(255, 205, 86)',
-        'rgb(75, 192, 192)',
-        'rgb(54, 162, 235)'
-    ];
-
-    for (let i = 0; i < datasetsName.length; i++) {
-        const element = datasetsName[i];
-        
-    }
-
-    //DATASETS
-    let label, stakeholder, reached, total, information, datasets = [];
-    for (let i = 0; i < datasetsName.length; i++) {
-        const dataset = datasetsName[i];
-        reached = 0, total = 0, information = [];
-        label = dataset;
-        for (const objective of json) {
-            //labels.push(objective.objective);
-            stakeholder = objective.rols[dataset];
-            if (stakeholder) {
-                reached = stakeholder.reached;
-                total = stakeholder.total;
-                information.push((reached / total));
-            } else {
-                information.push(0);
-            }
+        //LABELS
+        for (const item of json) {
+            labels.push(item.objective);
         }
-        //--------------------------
-        datasets.push({
-            label: label,
-            data: information,
-            backgroundColor: [
-                backgroundColor[i]
-            ],
-            borderColor: [
-                borderColor[i]
-            ],
-            borderWidth: 1
-        });
-    }
-    //----------------
-    const data = {
-      labels: labels,
-      datasets: datasets
-    };
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            indexAxis: 'y',
-            scales: {
-                y: {
-                    beginAtZero: true
+
+        //COLORS
+        let backgroundColor = [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)'
+        ];
+        let borderColor = [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)'
+        ];
+
+        for (let i = 0; i < datasetsName.length; i++) {
+            const element = datasetsName[i];
+            
+        }
+
+        //DATASETS
+        let label, stakeholder, reached, total, information, datasets = [];
+        for (let i = 0; i < datasetsName.length; i++) {
+            const dataset = datasetsName[i];
+            reached = 0, total = 0, information = [];
+            label = dataset;
+            for (const objective of json) {
+                //labels.push(objective.objective);
+                stakeholder = objective.rols[dataset];
+                if (stakeholder) {
+                    reached = stakeholder.reached;
+                    total = stakeholder.total;
+                    information.push((reached / total));
+                } else {
+                    information.push(0);
                 }
             }
-        },
-    };
-    var myChart = new Chart(
-        document.getElementById('chart1'),
-        config
-    );
-  /**
-   * backgorund
-      'rgba(255, 99, 132, 0.2)',
-      'rgba(255, 159, 64, 0.2)',
-      'rgba(255, 205, 86, 0.2)',
-      'rgba(75, 192, 192, 0.2)',
-      'rgba(54, 162, 235, 0.2)',
-    borderColor
-      'rgb(255, 99, 132)',
-      'rgb(255, 159, 64)',
-      'rgb(255, 205, 86)',
-      'rgb(75, 192, 192)',
-      'rgb(54, 162, 235)',
-  */
+            //--------------------------
+            datasets.push({
+                label: label,
+                data: information,
+                backgroundColor: [
+                    backgroundColor[i]
+                ],
+                borderColor: [
+                    borderColor[i]
+                ],
+                borderWidth: 1
+            });
+        }
+        //----------------
+        const data = {
+        labels: labels,
+        datasets: datasets
+        };
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Capability plans completed by stakeholders'
+                    },
+                },
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            },
+        };
+        var myChart = new Chart(
+            document.getElementById('chart1'),
+            config
+        );
+    }
+    function showChart2() {
+        
+        let aux = "{{second_chart|escapejs}}";
+        aux = aux.replaceAll("'", '"');
+        let json = JSON.parse(aux);
+        let labels = [];
+        let data_first = [];
+        let data_last = [];
+        for (const cap of json) {
+            labels.push(cap.capability_name);
+            data_first.push(cap.first_average);
+            data_last.push(cap.last_average);
+        }
+        let datasets = [{
+            label: 'First Evaluation',
+            backgroundColor: 'rgb(12, 163, 151)',
+            borderColor: 'rgb(12, 163, 151)',
+            data: data_first
+        }, {
+            label: 'Last Evaluation',
+            backgroundColor: 'rgb(36, 82, 136)',
+            borderColor: 'rgb(36, 82, 136)',
+            data: data_last
+        }];
+        let data = {
+            labels: labels,
+            datasets: datasets
+        };
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                indexAxis: 'y',
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Initial evaluation marks compared with finals'
+                    },
+                },
+                responsive: true,
+                scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true
+                }
+                }
+            }
+        };
+        var myChart = new Chart(
+            document.getElementById('chart2'),
+            config
+        );
+    }
 </script>
-<script id="chart2">
-
-</script>
-{% endblock %}
-
 
 <script>
-    /*
-    
-    //----LABELS------
-    let labels = [];
-    {% for obj in first_chart %}
-    labels.push('{{obj.objective.name}}');
-    {% endfor %}
-    //----------------
-    //-DATASETS NAMES-
-    let setsLabels = new Set();
-    {% for obj in first_chart %}
-        {% for rol in obj.rols_keys %}
-        setsLabels.add('{{rol}}');
-        {% endfor %}
-    {% endfor %}
-    setsLabels = Array.from(setsLabels);
-    //----------------
-    //----DATASETS----
-    
-    let datasets = [];
-    for (const label of setsLabels) {
-        let dataset = {}, reached, total, data = [], json, jsonString;
-        {% for obj in first_chart %}
-            {% for set in chart1_sets %}
-            reached = `{{first_chart.1.rols}}`;
-            reached = reached.replaceAll('&#x27;','').toString();
-            //`{{obj.rols.set.reached}}`
-            total = `{{obj.rols.set.total}}`;
-            if (reached && reached.length > 0) {
-                reached = parseInt(reached, 10)
-                total = parseInt(total, 10)
-                data[setsLabels.indexOf('{{set}}')] = (reached / total) * 100;
-            } else {
-                data.push(undefined);
-            }
-            {% endfor %}
-        {% endfor %}
-        data = data.slice(0, setsLabels.length);
-        for (let i = 0; i < data.length; i++) {
-            const element = data[i];
-            if (element == undefined) {
-                data[i] = 0;
-            }
-        }
-        */
+    showChart1();
+    showChart2();
 </script>
+{% endblock %}

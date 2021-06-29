@@ -609,7 +609,7 @@ def increase_mark(request, id):
 @login_required(redirect_field_name=None)
 @user_passes_test(is_learner, login_url='/trainer/capabilities', redirect_field_name=None)
 def ranking(request):
-    dictionary = dictionary = create_base_dictionary(request)
+    dictionary = create_base_dictionary(request)
     organization_learners = learner_profile.objects.filter(
         organization=dictionary['org']).order_by('-points')
     position = 0
