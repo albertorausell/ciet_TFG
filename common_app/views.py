@@ -1,6 +1,8 @@
 from common_app.models import learner_profile, trainer_profile
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -13,10 +15,14 @@ def login_req(request):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
+            if user.is_superuser:
+                return HttpResponseRedirect(reverse('admin:index'))
             learner = learner_profile.objects.filter(user=user.pk)
             trainer = trainer_profile.objects.filter(user=user.pk)
             if len(learner) > 0 and len(trainer) > 0:
-                return redirect('')
+                dictionary.update({
+                    'error': 'The user is learner and trainer, we have not implemented this feature yet'
+                })
             elif len(learner) > 0:
                 return redirect('capabilities_learner')
             elif len(trainer) > 0:

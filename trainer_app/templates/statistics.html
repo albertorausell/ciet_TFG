@@ -12,7 +12,10 @@
     </div>
     <div class="col-10">
         <div>
-            <canvas id="myChart"></canvas>
+            <canvas id="chart1"></canvas>
+        </div>
+        <div>
+            <canvas id="chart2"></canvas>
         </div>
     </div>
     <div class="col-1">
@@ -25,7 +28,7 @@
     }
 </script>
 
-<script>
+<script id="chart1">
     let aux = "{{first_chart|escapejs}}";
     aux = aux.replaceAll("'", '"');
     let json = JSON.parse(aux);
@@ -110,7 +113,7 @@
         },
     };
     var myChart = new Chart(
-        document.getElementById('myChart'),
+        document.getElementById('chart1'),
         config
     );
   /**
@@ -127,6 +130,9 @@
       'rgb(75, 192, 192)',
       'rgb(54, 162, 235)',
   */
+</script>
+<script id="chart2">
+
 </script>
 {% endblock %}
 

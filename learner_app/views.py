@@ -558,6 +558,7 @@ def evaluations(request):
                     'ex': ev_1.exercise
                 }]
             })
+
     dictionary.update({
         'evals': res
     })
