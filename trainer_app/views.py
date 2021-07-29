@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
-from common_app.models import exercise, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
-from .forms import Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
+from common_app.models import activity, capability_learner, evaluation, exercise, learner_profile, organization, question, answer, trainer_profile, training_technique, objective, capability, capability_objective, content
+from .forms import Excel_form, Text, Image, Video, Document, Link, Game, Contents, ObjectiveForm, CapabilityName, CapabilityDesc, CapabilityLearners, CapabilityObjectives
 import json
+import math
 from django.http import HttpResponse
+from django.utils.safestring import SafeString
 from django.contrib.auth.decorators import login_required, user_passes_test
+from openpyxl import load_workbook
 # Create your views here.
 
 # ctrl+shift+p > Preferences: Configure Language Specific Settings > Python
@@ -218,7 +221,8 @@ def cap_objectives(request, id):
 
         obj_act = []
         obj_ph = []
-        objectives = objective.objects.all()
+        objectives = objective.objects.filter(
+            organization=dictionary['org'].pk)
         for ob in objectives:
             act_chain = ''
             ph_chain = ''
@@ -532,7 +536,8 @@ def deleteComponent(id):
 def objectives(request):
     dictionary = create_base_dictionary(request)
 
-    objectivesRows = objective.objects.all().order_by('name')
+    objectivesRows = objective.objects.filter(
+        organization=dictionary['org'].pk).order_by('name')
     dictionary.update({
         'table': {
             'columns': ['Objective', 'Actions'],
@@ -541,7 +546,11 @@ def objectives(request):
     })
 
     objective_form = ObjectiveForm()
-    dictionary.update({'objectivesForm': objective_form})
+    excel_form = Excel_form()
+    dictionary.update({
+        'objectivesForm': objective_form,
+        'excel_form': excel_form
+    })
 
     if request.method == 'POST':
         form = ObjectiveForm(request.POST)
@@ -553,9 +562,180 @@ def objectives(request):
 
 @login_required(redirect_field_name=None)
 @user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
+def import_objectives(request):
+    dictionary = create_base_dictionary(request)
+    if request.method == 'POST':
+        form = Excel_form(request.POST, request.FILES)
+        if form.is_valid():
+            doc = form.save(commit=True)
+            path = doc.document.path
+            wb = load_workbook(filename=path)
+            worksheet = wb.worksheets[1]
+            objs = objective.objects.filter(organization=dictionary['org'])
+            objs = list(map(lambda x: x.name, objs))
+            acts_list = list(activity.objects.all())
+            acts_name_list = list(
+                map(lambda x: x.name.lower().strip(), acts_list))
+            i = 4  # when title "TRAINING CONTENT" is reached
+            while i <= worksheet.max_row:
+                cell = worksheet['D' + str(i)].value
+                if cell not in objs and cell != None:
+                    acts = worksheet['F' + str(i)].value.lower().strip()
+                    acts = acts.split('/')
+                    acts_to_add = []
+                    for act in acts:
+                        if act not in acts_name_list:
+                            doc.delete()
+                            return HttpResponse('Activity "' + worksheet['F' + str(i)].value + '" in cell "F' + str(i) + '" not found. Go back and try again.')
+                        acts_to_add.append(
+                            acts_list[acts_name_list.index(act)])
+                    new_objective = objective(
+                        name=cell, organization=dictionary['org'])
+                    new_objective.save()
+                    new_objective.activities.set(acts_to_add)
+                    new_objective.save()
+                    objs.append(cell)
+                i += 1
+
+    return redirect('objectives_trainer')
+
+
+@login_required(redirect_field_name=None)
+@user_passes_test(is_trainer, login_url='/learner/capabilities', redirect_field_name=None)
 def statistics(request):
     dictionary = create_base_dictionary(request)
+    # first chart
+    caps = capability.objects.filter(organization=dictionary['org'])
+    objectives = []
+    objs_names = []
+    for cap in caps:
+        cap_learns_reached = capability_learner.objects.filter(
+            capability=cap.pk, pending=False)
+        cap_learns_reached = list(
+            map(lambda x: x.learner_profile, cap_learns_reached))
+        stks = cap.stakeholders.all()
+        cap_learns_total = []
+        for stk in stks:
+            cap_learns = learner_profile.objects.filter(
+                organization=dictionary['org'], rol=stk.pk)
+            cap_learns_total = list(set(cap_learns_total) | set(cap_learns))
+
+        rols = {}
+        for cap_learn in cap_learns_total:
+            if cap_learn in cap_learns_reached:
+                if cap_learn.rol.name in rols:
+                    rols[cap_learn.rol.name] = {
+                        'reached': rols[cap_learn.rol.name]['reached'] + 1,
+                        'total': rols[cap_learn.rol.name]['total'] + 1
+                    }
+                else:
+                    rols[cap_learn.rol.name] = {
+                        'reached': 1,
+                        'total': 1
+                    }
+            else:
+                if cap_learn.rol.name in rols:
+                    rols[cap_learn.rol.name] = {
+                        'reached': rols[cap_learn.rol.name]['reached'],
+                        'total': rols[cap_learn.rol.name]['total'] + 1
+                    }
+                else:
+                    rols[cap_learn.rol.name] = {
+                        'reached': 0,
+                        'total': 1
+                    }
+        objs = cap.objectives.all()
+        for obj in objs:
+            if obj.name in objs_names:
+                item = objectives[objs_names.index(obj.name)]
+                keys = rols.keys()
+                for key in keys:
+                    if key in item['rols']:
+                        item['rols'][key]['reached'] += rols[key]['reached']
+                        item['rols'][key]['total'] += rols[key]['total']
+                    else:
+                        item['rols'][key] = rols[key]
+            else:
+                objectives.append({
+                    'objective': obj.name,  # safestring¿?
+                    'rols': rols
+                })
+                objs_names.append(obj.name)
+
+    for obj in objectives:
+        obj['rols_keys'] = list(obj['rols'].keys())
+        obj['rols_keys_length'] = len(obj['rols'].keys())
+    set_labels = []
+    for obj in objectives:
+        for key in obj['rols_keys']:
+            if key not in set_labels:
+                set_labels.append(key)
+    dictionary.update({
+        'chart1_sets': set_labels,
+        'first_chart': objectives
+    })
+    # ---------------------------------------------
+    # second chart
+    data_exercises = {}
+    org_exercises = []
+    for cap in caps:
+        exs = list(exercise.objects.filter(capability=cap.pk))
+        org_exercises = org_exercises + exs
+
+    caps_with_exercises = []
+    org_learners = learner_profile.objects.filter(
+        organization=dictionary['org'])
+    for learner in org_learners:
+        for ex in org_exercises:
+            first_ev = evaluation.objects.filter(
+                exercise=ex.pk, learner_profile=learner.pk).order_by('created_at')
+            last_ev = evaluation.objects.filter(
+                exercise=ex.pk, learner_profile=learner.pk).order_by('-created_at')
+            if len(first_ev) > 0:
+                if ex.pk in data_exercises:
+                    data_exercises[ex.pk]['first_sum'] += first_ev[0].mark
+                    data_exercises[ex.pk]['last_sum'] += last_ev[0].mark
+                    data_exercises[ex.pk]['num'] += 1
+                else:
+                    data_exercises[ex.pk] = {
+                        'first_sum': first_ev[0].mark,
+                        'last_sum': last_ev[0].mark,
+                        'num': 1,
+                        'cap': ex.capability
+                    }
+                    if ex.capability not in caps_with_exercises:
+                        caps_with_exercises.append(ex.capability)
+    res = []
+    for cap in caps_with_exercises:
+        first_average = 0
+        last_average = 0
+        total_num = 0
+        for data in data_exercises:
+            if data_exercises[data]['cap'] == cap:
+                first_average += data_exercises[data]['first_sum']
+                last_average += data_exercises[data]['last_sum']
+                total_num += data_exercises[data]['num']
+        res.append({
+            'capability_name': cap.name,
+            'first_average': truncate(first_average / total_num, 2),
+            'last_average': (truncate(last_average / total_num, 2)) - (truncate(first_average / total_num, 2)),
+        })
+    dictionary.update({
+        'second_chart': res
+    })
+
+    # classification
+    organization_learners = learner_profile.objects.filter(
+        organization=dictionary['org']).order_by('-points')
+    dictionary.update({
+        'classification': organization_learners
+    })
     return render(request, 'statistics.html', dictionary)
+
+
+def truncate(number, digits) -> float:
+    stepper = 10.0 ** digits
+    return math.trunc(stepper * number) / stepper
 
 
 @login_required(redirect_field_name=None)

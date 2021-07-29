@@ -1,9 +1,190 @@
 
 {% extends "learner_app/templates/base_learner.html" %}
 {% load static %}
-
-
-
 {% block content %}
-<h1>hola</h1>
+
+<style>
+    .vertical-center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+    
+    .horizontal-center {
+        margin: 0;
+        position: absolute;
+        left: 50%;
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
+    .center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+    #myTable {
+    border-collapse: collapse; /* Collapse borders */
+    width: 100%; /* Full-width */
+    border: 1px solid #ddd; /* Add a grey border */
+    font-size: 18px; /* Increase font-size */
+    }
+
+    #myTable th, #myTable td {
+    text-align: left; /* Left-align text */
+    padding: 12px; /* Add padding */
+    }
+
+    #myTable tr {
+    /* Add a bottom border to all table rows */
+    border-bottom: 1px solid #ddd;
+    }
+
+    #myTable tr.header, #myTable tr:hover {
+    /* Add a grey background color to the table header and on hover */
+    background-color: #f1f1f1;
+    }
+</style>
+<div class="row" style="width: 100%; height: 100%;">
+    <div class="col" style="height: 100%; padding-right: 0;">
+        <div class="row" style="height: 20%;">
+            <div class="col" style="color: #595959; height: 50; padding-right: 0;">
+                <div class="row" style="margin: 50; height: 100%; background-color: #E2F0D9; border-style: solid;border-radius: 10px;border-color: #E2F0D9;">
+                    <div class="col-5">
+                        <div class="vertical-center" style="padding-left: 50%; display: inline;">
+                            <span style="font-size: 25;">Your position:</span>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="vertical-center" style="display: inline;">
+                            <span style="font-size: 35;">{{learner_position}}</span>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="vertical-center" style="padding-left: 50%; display: inline; text-align: right !important;font-size: 35;">
+                            {{learner.points}}
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="vertical-center" style="display: inline;">
+                            <img src="{% static 'common_app/img/CiET_medal.png' %}" height="100" width="auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin: 50;">
+            <div class="col-5" style="text-align: center;">
+                <div class="row">
+                    <div class="col">
+                        <img style="display: block;" src="{% static 'common_app/img/podium.png' %}" width="100%" height="auto" >
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-1">
+
+                    </div>
+                    <div class="col-10" style="text-align: center;">
+                        <br>
+                        <div style="text-align: center;">
+                            <img style="display: inline; margin-right: 20; border-radius: 50%" src="{{classification.0.image.url}}" width="20%" height="auto">
+                            <a style="font-size: 30;">{{classification.0.user}}</a>
+                        </div>
+                        {% if classification|length > 1 %}
+                        <br>
+                        <div style="text-align: center;">
+                            <img style="display: inline; margin-right: 20; border-radius: 50%" src="{{classification.1.image.url}}" width="15%" height="auto">
+                            <a style="font-size: 25;">{{classification.1.user}}</a>
+                        </div>
+                        {% endif %}
+                        {% if classification|length > 2 %}
+                        <br>
+                        <div style="text-align: center;">
+                            <img style="display: inline; margin-right: 20; border-radius: 50%" src="{{classification.2.image.url}}" width="10%" height="auto">
+                            <a style="font-size: 20;">{{classification.2.user}}</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-1">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-1">
+
+            </div>
+            <div class="col-6">
+                <div class="row" style="border-width: thin;border-radius: 5px; border-style: solid; border-color: lightgray;">
+                    <div style="width: 20%;">
+                        <select class="form-control" style="border-bottom: none;border-top: none;border-left: none;" id="controlselect">
+                            <option>Name</option>
+                            <option>Rol</option>
+                            <option>Points</option>
+                        </select>
+                    </div>
+                    <div style="width: 80%;">
+                        <input style="height: 40;margin-left: 0;border: none; padding-left: 10px; width: 100%;" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..">
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div style="border-style: solid;border-color: lightgray; border-width: thin; width: 100%;">
+                        <table class="table table-striped mb-0" id="myTable">
+                            <tr>
+                                <th></th>
+                                <th style="text-align: center;">Name</th>
+                                <th style="text-align: center;">Rol</th>
+                                <th style="text-align: center;">Points</th>
+                            </tr>
+                            {% for learner in classification %}
+                            {% if forloop.counter == learner_position %}
+                            <tr style="background-color: #2ECC71;">
+                            {% else %}
+                            <tr>
+                            {% endif %}
+                                <td>
+                                    <img style="display: inline; margin-right: 20; border-radius: 50%; width: 50; height:50; object-fit:cover;" src="{{learner.image.url}}">
+                                </td>
+                                <td style="text-align: center;">{{learner.user}}</td>
+                                <td style="text-align: center;">{{learner.rol}}</td>
+                                <td style="text-align: center;">{{learner.points}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue, select, filterCol;
+      input = document.getElementById("myInput");
+      select = document.getElementById("controlselect")
+      filterCol = select.selectedIndex + 1;
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+    
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[filterCol];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+</script>
+<br><br><br><br>
 {% endblock %}

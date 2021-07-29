@@ -8,18 +8,27 @@ import os
 
 # Create your models here.
 
+def get_name(self):
+    name = self.username
+    if len(self.last_name) > 0:
+        name = self.first_name + ' ' + self.last_name
+    return name
+
+
+User.add_to_class("__str__", get_name)
+
 
 class trainer_profile (models.Model):
 
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    updated = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     rol = models.ForeignKey(
         'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     image = models.ImageField(
-        upload_to='img/users', default='static/unknown_profile.png', blank=True, null=True)
+        upload_to='users/profile_image', default='static/unknown_profile.png', blank=True, null=True)
 
     organizations = models.ManyToManyField('organization', default=None)
 
@@ -37,15 +46,15 @@ class trainer_profile (models.Model):
 
 class learner_profile (models.Model):
 
-    created = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    updated = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     rol = models.ForeignKey(
         'stakeholders', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     image = models.ImageField(
-        upload_to='img/users', default='static/unknown_profile.png', blank=True, null=True)
+        upload_to='users/profile_image', default='static/unknown_profile.png', blank=True, null=True)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -61,6 +70,12 @@ class learner_profile (models.Model):
 
 
 class stakeholders (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     name = models.CharField(max_length=50)
 
@@ -81,11 +96,13 @@ class stakeholders (models.Model):
 
 class organization (models.Model):
 
-    name = models.CharField(max_length=50, default="null")
+    created_at = models.DateTimeField(
+        auto_now_add=True)
 
-    created = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
-    updated = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=50)
 
     def __str__(self):
 
@@ -93,6 +110,12 @@ class organization (models.Model):
 
 
 class capability (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     name = models.CharField(max_length=50, default=None, blank=True, null=True)
 
@@ -103,7 +126,7 @@ class capability (models.Model):
     description = models.TextField(default=None, blank=True, null=True)
 
     image = models.ImageField(
-        default=None, blank=True, null=True, upload_to='trainer_app/img/capabilities')
+        default=None, blank=True, null=True, upload_to='capabilities')
 
     stakeholders = models.ManyToManyField(
         'stakeholders', default=None)
@@ -132,9 +155,19 @@ class capability (models.Model):
 
 class objective (models.Model):
 
-    name = models.CharField(max_length=30)
+    created_at = models.DateTimeField(
+        auto_now_add=True)
 
-    activities = models.ManyToManyField('activity')
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
+    name = models.CharField(max_length=100)
+
+    organization = models.ForeignKey(
+
+        'organization', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    activities = models.ManyToManyField('activity', default=None)
 
     def __str__(self):
 
@@ -142,6 +175,12 @@ class objective (models.Model):
 
 
 class dimension (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     name = models.CharField(max_length=50)
 
@@ -152,6 +191,12 @@ class dimension (models.Model):
 
 class phase (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -161,11 +206,19 @@ class phase (models.Model):
 
 class activity (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     name = models.CharField(max_length=50)
 
-    dimension = models.ForeignKey('dimension', on_delete=models.CASCADE)
+    dimension = models.ForeignKey(
+        'dimension', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
-    phase = models.ForeignKey('phase', on_delete=models.CASCADE)
+    phase = models.ForeignKey(
+        'phase', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     def __str__(self):
 
@@ -179,6 +232,12 @@ class activity (models.Model):
 
 
 class content (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     name = models.CharField(max_length=20, default=None, blank=True, null=True)
 
@@ -197,6 +256,12 @@ class content (models.Model):
 
 
 class training_technique (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     TEXT = 'txt'
 
@@ -237,18 +302,31 @@ class training_technique (models.Model):
 
 class evaluation (models.Model):
 
-    pending = models.BooleanField()
+    created_at = models.DateTimeField(
+        auto_now_add=True)
 
-    mark = models.FloatField()
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
-    exercise = models.ForeignKey('exercise', on_delete=models.CASCADE)
+    pending = models.BooleanField(default=True, blank=True, null=True)
+
+    mark = models.FloatField(default=0, blank=True, null=True)
+
+    exercise = models.ForeignKey(
+        'exercise', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     learner_profile = models.ForeignKey(
 
-        'learner_profile', on_delete=models.CASCADE)
+        'learner_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
 
 class exercise (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     CONTENT = 'co'
 
@@ -284,6 +362,12 @@ class exercise (models.Model):
 
 class question (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     order = models.IntegerField(default=None, blank=True, null=True)
 
     question = models.TextField(default=None, blank=True, null=True)
@@ -298,6 +382,12 @@ class question (models.Model):
 
 class answer (models.Model):
 
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
     answer = models.TextField(default=None, blank=True, null=True)
 
     isCorrect = models.BooleanField(default=False, blank=True, null=True)
@@ -311,6 +401,12 @@ class answer (models.Model):
 
 
 class capability_objective (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
     order = models.IntegerField(default=0)
 
@@ -329,21 +425,48 @@ class capability_objective (models.Model):
 
 class capability_learner (models.Model):
 
-    last_content_done = models.OneToOneField(
+    created_at = models.DateTimeField(
+        auto_now_add=True)
 
-        'content', on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(
+        auto_now=True)
 
-    capability = models.ForeignKey('capability', on_delete=models.CASCADE)
+    last_content_done = models.IntegerField(default=0, blank=True, null=True)
+
+    pending = models.BooleanField(default=True, blank=True, null=True)
+
+    capability = models.ForeignKey(
+        'capability', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     learner_profile = models.ForeignKey(
 
-        'learner_profile', on_delete=models.CASCADE)
+        'learner_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     class Meta:
 
         verbose_name = 'capability_learner'
 
         verbose_name_plural = 'capability_learner'
+
+
+class excel (models.Model):
+
+    created_at = models.DateTimeField(
+        auto_now_add=True)
+
+    updated_at = models.DateTimeField(
+        auto_now=True)
+
+    document = models.FileField(default=None, blank=True,
+                                null=True, upload_to='excel')
+
+    trainer = models.ForeignKey(
+
+        'trainer_profile', on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    organization = models.ForeignKey(
+
+        'organization', on_delete=models.CASCADE, default=None, blank=True, null=True)
 
 
 class text_component (training_technique):
@@ -353,19 +476,22 @@ class text_component (training_technique):
 
 class image_component (training_technique):
 
-    value = models.ImageField(default=None, blank=True, null=True)
+    value = models.ImageField(default=None, blank=True,
+                              null=True, upload_to='contents/img')
     description = models.TextField(default=None, blank=True, null=True)
 
 
 class video_component (training_technique):
 
-    value = models.FileField(default=None, blank=True, null=True)
+    value = models.FileField(default=None, blank=True,
+                             null=True, upload_to='contents/video')
     description = models.TextField(default=None, blank=True, null=True)
 
 
 class document_component (training_technique):
 
-    value = models.FileField(default=None, blank=True, null=True)
+    value = models.FileField(default=None, blank=True,
+                             null=True, upload_to='contents/doc')
     description = models.TextField(default=None, blank=True, null=True)
 
 

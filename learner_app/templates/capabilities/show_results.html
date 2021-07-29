@@ -1,0 +1,68 @@
+
+{% block content %}
+{% load static %}
+<div class="modal fade" style="background: rosybrown;" id="resultsModalFail" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Fail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="color: red; font-family: Raleway; font-size: 100; text-align: center;">
+                    {{mark}}
+                </div>
+                <br>
+                <div>Sorry, read again contents and try again!💪</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" style="background: #7DCEA0;" id="resultsModalPass" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Pass</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="color: green; font-family: Raleway; font-size: 100; text-align: center;">
+                    {{mark}}
+                </div>
+                <hr style="width: 50%;">
+                <div style="color: #FF6F00; font-family: Raleway; font-size: 50; text-align: center;">
+                    +{{points}} <span>
+                        <img src="{% static 'common_app/img/CiET_medal.png' %}" width="15%" height="auto">
+                    </span>
+                </div>
+                <br>
+                    <div style="text-align: center;">Congratulations! You can continue.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    if ('{{showMark}}' == 'True') {
+        if (parseInt('{{mark}}') < 5) {
+            $(document).ready(function(){
+                $("#resultsModalFail").modal("show");
+            });
+        } else {
+            $(document).ready(function(){
+                $("#resultsModalPass").modal("show");
+            });
+        }
+    }
+</script>
+
+{% endblock %}

@@ -574,7 +574,14 @@
     function pressIndexOfList(index, listId) {
         let list = document.getElementById(listId);
         if (list.getElementsByTagName("a").length > 0) {
-            let id = getIdByOnClick(list.getElementsByTagName("a")[index]);
+            let subitems = list.getElementsByTagName("a");
+            let listLength = subitems.length;
+            let id = null;
+            if (index > listLength - 1) {
+                id = getIdByOnClick(subitems[listLength - 1]);
+            } else {
+                id = getIdByOnClick(subitems[index]);
+            }
             if (listId == 'obj_list') {
                 pressObjective(id);
             } else {
@@ -681,15 +688,15 @@
         let length = '{{cont_tech|length}}', contId;
         let comps = [];
         {% for cont in cont_tech %}
-            contId = '{{cont.cont.pk}}'
+            contId = '{{cont.cont.pk}}';
             if (contId == id) {
                 {% for comp in cont.media_comps %}
                     if ('{{comp.type}}' == 'img' ||
                         '{{comp.type}}' == 'vid' ||
                         '{{comp.type}}' == 'doc') {
-                        comps.push(['{{comp.type}}', '{{comp.value.url}}', '{{comp.pk}}', '{{comp.description}}']);
+                        comps.push(['{{comp.type}}', `{{comp.value.url}}`, '{{comp.pk}}', `{{comp.description}}`]);
                     } else {
-                        comps.push(['{{comp.type}}', '{{comp.value}}', '{{comp.pk}}', '{{comp.description}}']);
+                        comps.push(['{{comp.type}}', `{{comp.value}}`, '{{comp.pk}}', `{{comp.description}}`]);
                     }
                 {% endfor %}
             }

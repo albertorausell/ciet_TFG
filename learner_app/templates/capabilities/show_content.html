@@ -1,11 +1,377 @@
 
 {% extends "learner_app/templates/base_learner.html" %}
 {% load static %}
-
-
-
 {% block content %}
 
+<style>
+    .actived {
+        color: darkslategray !important;
+        text-decoration: underline darkslategray !important;
+    }
 
+    .underline:hover {
+        color: darkslategray !important;
+    }
+    .underline {
+        cursor: pointer; 
+    }
+
+    [aria-expanded="true"] .fa:before {  
+      content: "\f139";
+    }
+
+    [aria-expanded="false"] .fa:before {
+      content: "\f13a";
+    }
+</style>
+
+<div class="row" style="width: 100%; height: 95%; padding: 20;">
+    <div class="col-2">
+        <label id="label"></label>
+        <div>
+            <i><u>Capability plan:</u></i>
+        </div>
+        <div style="margin-left: 10;">
+            <i>{{cap.name}}</i>
+        </div>
+        <br>
+        <br>
+        <div>
+            <i><u>Objectives:</u></i> 
+        </div>
+        <div style="height: 50%; overflow: auto; display: block;">
+            {% for objective in obj_cont %}
+            <a class="underline" id="toggle-{{objective.cap_obj_pk}}" href="#collapse-{{objective.cap_obj_pk}}" style="display: block; margin-left: 10; color: darkgray; text-decoration: none; word-wrap: break-word;" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <i>{{objective.name}}</i>
+                <i class="fa" aria-hidden="true"></i>
+            </a>
+            <div class="collapse" id="collapse-{{objective.cap_obj_pk}}">
+                {% for content in objective.contents %}
+                    <a class="underline content" onclick="pressContent('{{content.object.pk}}','{{content.pos}}')" style="display: block; padding-left: 30; color: darkgray; text-decoration: none; word-wrap: break-word;">
+                        <i>{{content.object.name}}</i>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        </div>
+        <div style="text-align: right;position: absolute; top: 80%;">
+            <button class="btn btn-outline-primary" id="previousContentButton" style="font-size: 150%" onclick="previousContent()">
+                🡠
+            </button>
+        </div>
+    </div>
+    <div class="col-9" style="height: 100%;">
+        <div style="padding-left: 20;padding-bottom: 15;padding-top: 15; height: 90%;border-style: solid;border-radius: 10px;border-color: lightgray; border-width: thin;">
+            <div id="comp_list" style="height: 100%; overflow: auto; display: block;overflow-x: hidden;">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div id="divNextButton" style="position: absolute; top: 80%;">
+        </div>
+        <input id="previousId" value="" hidden>
+        <input id="previousPos" value="0" hidden>
+        <input id="actualPos" value="" hidden>
+        <input id="nextId" value="" hidden>
+        <input id="nextPos" value="" hidden>
+    </div>
+</div>
+
+<script>
+    function previousContent() {
+        pressContent(parseInt(document.getElementById('previousId').value, 10),
+            parseInt(document.getElementById('previousPos').value, 10));
+    }
+
+    function nextContent() {
+        pressContent(parseInt(document.getElementById('nextId').value, 10),
+            parseInt(document.getElementById('nextPos').value, 10));
+    }
+
+    function print(string){
+        document.getElementById('label').innerText = string;
+    }
+
+    function pressContent(id, pos) {
+        let contPos = '{{current_content_pos}}';
+        if (parseInt(pos, 10) <= parseInt(contPos, 10)) {
+            placeComponents(id, pos)
+        } else {
+            alert("You have to complete the previous contents!")
+        }
+    }
+
+    function getIdAndPosByOnClick(onck) {
+        //function onclick(event) {pressContent('11','0')}
+        fstmark = onck.indexOf("('");
+        comma = onck.indexOf(",");
+        idContent = onck.substring(fstmark + 2, comma - 1);
+        posContent = onck.substring(comma + 2, onck.indexOf(")", comma) - 1);
+        return [idContent, posContent];
+    }
+
+    function placeComponents(id, contPos){
+        let contentsName = document.getElementsByClassName('content');
+        let parent, currentPos = '{{current_content_pos}}', isEnd = false, idContent, posContent, element, prev, onck, fstmark, comma;
+        if (contPos == currentPos) {
+            document.getElementById('divNextButton').innerHTML = `
+                <input class="btn btn-outline-primary disabled" type="submit" value="🡢" id="nextContentButton" style="font-size: 150%">
+            `;
+        } else {
+            document.getElementById('divNextButton').innerHTML = `
+                <button class="btn btn-outline-primary " id="nextContentButton" style="font-size: 150%" onclick="nextContent()">
+                    🡢
+                </button>
+            `;
+        }
+        for (let i = 0; i < contentsName.length; i++) {
+            if (i > currentPos) {
+                contentsName[i].classList.remove('underline');
+                contentsName[i].style.cursor = "not-allowed";
+            } else {
+                element = contentsName[i];
+                element.classList.remove('actived');
+            }
+            if (i == contPos) {
+                element = contentsName[i];
+                element.classList.add('actived');
+                document.getElementById('actualPos').value = contPos;
+                parent = document.getElementById('toggle-' + element.parentElement.id.substring(element.parentElement.id.indexOf('-') + 1));
+                parent.ariaExpanded = true;
+                element.parentElement.classList.add('show');
+                //----
+                if (i > 0) {
+                    prev = getIdAndPosByOnClick(contentsName[i - 1].onclick.toString())
+                    document.getElementById('previousId').value = prev[0];
+                    document.getElementById('previousPos').value = prev[1];
+                    document.getElementById('previousContentButton').classList.remove('disabled');
+                } else {
+                    document.getElementById('previousContentButton').classList.add('disabled');
+                }
+                if (i < contentsName.length - 1) {
+                    prev = getIdAndPosByOnClick(contentsName[i + 1].onclick.toString())
+                    document.getElementById('nextId').value = prev[0];
+                    document.getElementById('nextPos').value = prev[1];
+                } else {
+                    document.getElementById('divNextButton').innerHTML = `
+                        <form action="{% url 'capability_show' id=cap.pk %}" method="POST">
+                            {% csrf_token %}
+                            <input name="from" value="finish" hidden>
+                            <input class="btn btn-outline-danger" type="submit" value="Finish" id="nextContentButton">
+                        </form>
+                    `;
+                    isEnd = true;
+                }
+            }
+        }
+        
+        //---
+        let components_list = document.getElementById("comp_list");
+        let length = '{{cont_tech|length}}', contId, contName;
+        let comps = [];
+        {% for cont in cont_tech %}
+            contId = '{{cont.cont.pk}}';
+            if (contId == id) {
+                contName = '{{cont.cont.name}}';
+                components_list.innerHTML = `<div style="text-align: center"><h1 style="font-family: Raleway; font-size:40">${contName}</h1></div><br>`;
+                {% for comp in cont.media_comps %}
+                    if ('{{comp.type}}' == 'img' ||
+                        '{{comp.type}}' == 'vid' ||
+                        '{{comp.type}}' == 'doc') {
+                        comps.push(['{{comp.type}}', `{{comp.value.url}}`, '{{comp.pk}}', `{{comp.description}}`]);
+                    } else {
+                        comps.push(['{{comp.type}}', `{{comp.value}}`, '{{comp.pk}}', `{{comp.description}}`]);
+                    }
+                {% endfor %}
+            }
+        {% endfor %}
+
+        for (let i = 0; i < comps.length; i++) {
+            const element = comps[i];
+            switch (element[0]) {
+                case 'txt':
+                    components_list.innerHTML += `
+                        <p>
+                            <div class="row">
+                                <div class="col" style="padding-right: 40;text-align: justify; width: 50%; word-wrap: break-word">
+                                    ${element[1]}
+                                </div>
+                            </div>
+                        </p>
+                        <br>
+                    `
+                    break;
+            
+                case 'img':
+                    components_list.innerHTML += `
+                    
+                        <div style="position:relative; left:10%">
+                            <p class="row">
+                                <img style="border-radius: 20px;" class="img-fluid" src="${element[1]}" width="75%" height="75%">
+                                <span>
+                                    <a class="fa fa-eye fa-2x" style="text-decoration:none;cursor: pointer; color: #5D6AFF; display:block; margin-left:15" href="${element[1]}" target="_blank"></a>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-1">
+                            </div>
+                            <div class="col" style="text-align: justify;word-wrap: break-word">
+                                <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                    <i>${element[3]}</i>
+                                </p>
+                            </div>
+                        </div>
+                        <br>
+                    `;
+                    break;
+            
+                case 'vid':
+                    components_list.innerHTML += `
+                        <div style="text-align:center">
+                            <video width="70%" height="70%" controls>
+                                <source src="${element[1]}" type="video/mp4">
+                            </video>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-1">
+                            </div>
+                            <div class="col" style="text-align: justify;word-wrap: break-word">
+                                <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                    <i>${element[3]}</i>
+                                </p>
+                            </div>
+                        </div>
+                        <br>
+                    `
+                    break;
+        
+                case 'doc':
+                    let string = element[1];
+                    let fileName = string.substring(string.indexOf('/media/') + 7);
+                    components_list.innerHTML += `
+                        <p>
+                            <div class="row">
+                                <div class="col" style="padding-right: 40;text-align: left;width: 50%; word-wrap: break-word">
+                                    <a href="${element[1]}" target="_blank">
+                                        <i class="fa fa-file fa-2x" aria-hidden="true"></i>
+                                        ${fileName}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1">
+                                </div>
+                                <div class="col" style="text-align: justify;word-wrap: break-word">
+                                    <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                        <i>${element[3]}</i>
+                                    </p>
+                                </div>
+                            </div>
+                        </p>
+                        <br>
+                    `;
+                    break;
+            
+                case 'lnk':
+                    components_list.innerHTML += `
+                        <p>
+                            <div class="row">
+                                <div class="col" style="padding-right: 40;text-align: left;width: 50%; word-wrap: break-word">
+                                    <a href="${element[1]}" target="_blank">
+                                        <i class="fa fa-link fa-2x" aria-hidden="true"></i>
+                                        <p style="display:inline">
+                                            ${element[1]}
+                                        </p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1">
+                                </div>
+                                <div class="col" style="text-align: justify;word-wrap: break-word">
+                                    <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                        <i>${element[3]}</i>
+                                    </p>
+                                </div>
+                            </div>
+                        </p>
+                        <br>
+                    `
+                    break;
+        
+                case 'gme':
+                    components_list.innerHTML += `
+                        <p>
+                            <div class="row">
+                                <div class="col" style="padding-right: 40;text-align: left;width: 50%; word-wrap: break-word">
+                                    <a href="${element[1]}" target="_blank">
+                                        <i class="fa fa-gamepad fa-2x" aria-hidden="true"></i>
+                                        <p style="display:inline">
+                                            ${element[1]}
+                                        </p>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-1">
+                                </div>
+                                <div class="col" style="text-align: justify;word-wrap: break-word">
+                                    <p class="border-left" style="color: #808080; padding-left:10;padding-right:100;">
+                                        <i>${element[3]}</i>
+                                    </p>
+                                </div>
+                            </div>
+                        </p>
+                        <br>
+                    `;
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+        if (!isEnd) {
+            manageActiveNextButton();
+        }
+    }
+    function manageActiveNextButton() {
+            let components_list = document.getElementById("comp_list");
+            let vs = components_list.scrollHeight > components_list.clientHeight;
+            if (vs) {
+                components_list.onscroll = function () {
+                    if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                        let currentPos = '{{current_content_pos}}', actualPos = document.getElementById('actualPos').value;
+                        if (currentPos == actualPos) {
+                            document.getElementById('divNextButton').innerHTML = `
+                                <form action="{% url 'capability_show' id=cap.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <input name="from" value="content" hidden>
+                                    <input class="btn btn-outline-primary" type="submit" value="🡢" id="nextContentButton" style="font-size: 150%">
+                                </form>
+                            `;
+                        }
+                    }
+             }
+            } else {
+                let currentPos = '{{current_content_pos}}', actualPos = document.getElementById('actualPos').value;
+                if (currentPos == actualPos) {
+                    document.getElementById('divNextButton').innerHTML = `
+                        <form action="{% url 'capability_show' id=cap.pk %}" method="POST">
+                            {% csrf_token %}
+                            <input name="from" value="content" hidden>
+                            <input class="btn btn-outline-primary" type="submit" value="🡢" id="nextContentButton" style="font-size: 150%">
+                        </form>
+                    `;
+                }
+            }
+        
+    }
+    pressContent('{{current_content}}','{{current_content_pos}}');
+    
+</script>
+{% include 'capabilities/show_results.html' %}
 
 {% endblock %}

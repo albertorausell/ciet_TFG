@@ -8,9 +8,12 @@
 
 <div class="container" style="height: 500;">
     <div class="row" style="height: 100;">
-        <div class="col-3">
-            <button type="button" style="margin-top: 30;" class="btn btn-primary btn-block" data-toggle="modal" data-target="#addObjective">
+        <div class="col-6">
+            <button type="button" style="width: 40%; margin-top: 30;" class="btn btn-primary" data-toggle="modal" data-target="#addObjective">
                 Add
+            </button>
+            <button type="button" style="margin-top: 30;" class="btn btn-outline-primary" data-toggle="modal" data-target="#importObjectives">
+                Import objectives
             </button>
         </div>
         <div class="col">
@@ -52,5 +55,6 @@
 
 <!-- The Add Modal -->
 {% include 'objectives/new_objective.html' %}
+{% include 'objectives/import_objectives.html' %}
 
 {% endblock %}

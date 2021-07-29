@@ -1,0 +1,52 @@
+{% extends "learner_app/templates/base_learner.html" %}
+{% load static %}
+{% block content %}
+
+<form action="{% url 'capability_show' id=cap.pk %}" method="POST">
+    {% csrf_token %}
+    <div class="row" style="width: 100%;">
+        <div class="col-2">
+
+        </div>
+        <div class="col-8" style="width: 100%;">
+            <div style=" background: whitesmoke;margin-top: 40; padding-top: 40;padding-left: 40;padding-right: 40; border-radius: 10px; border-style: solid; border-color: lightgray; border-width: thin;">
+                <div style="text-align: center; font-family: Raleway; font-size: 25;">
+                    {{exercise.name}}
+                </div>
+                <br><br><br>
+                {% for question in exercise.questions %}
+                <p style="text-align: justify;">
+                    <b>{{forloop.counter}}. {{question.question.question}}</b>
+                </p>
+                <br>
+                {% for answer in question.answers %}
+                <div style="word-wrap: break-word; width: 100%; padding-left: 20;">
+                    <span><input type="checkbox" name="{{answer.pk}}-answer"></span>
+                    {{forloop.counter}}. {{answer.answer}}
+                </div>
+                <br>
+                {% endfor %}
+                <br>
+                <hr style="width:25%;margin-top: 25px;margin-bottom: 25px;border-radius: 7px 7px 7px 7px; background: lightgray;height: 5px;">
+                <br>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="col-2">
+
+        </div>
+    </div>
+    <br><br>
+    <div class="row" style="width: 100%;">
+        <div class="col-12" style="text-align: center;">
+            <input name="from" value="exercise" hidden>
+            <input name="typeEx" value="{{typeEx}}" hidden>
+            <input name="finished" value="{{finished}}" hidden>
+            <input name="exercise" value="{{exercise.questions.0.question.exercise.pk}}" hidden>
+            <input class="btn btn-outline-primary" style="width: 66%;" type="submit">
+        </div>
+    </div>
+</form>
+<br><br>
+{% include 'capabilities/show_results.html' %}
+{% endblock %}

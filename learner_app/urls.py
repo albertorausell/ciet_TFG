@@ -10,4 +10,10 @@ urlpatterns = [
 
     path('capabilities/<int:id>/', views.capability_details,
          name='capability_details'),
+
+    path('capabilities/<int:id>/show', views.capability_show,
+         name='capability_show'),
+
+    path('evaluations/increase_mark/<int:id>', views.increase_mark,
+         name='increase_mark'),
 ]

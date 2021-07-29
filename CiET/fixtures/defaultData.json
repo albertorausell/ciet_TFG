@@ -21,6 +21,8 @@
     "model": "common_app.phase",
     "pk": 1,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Predisaster"
     }
   },
@@ -28,6 +30,8 @@
     "model": "common_app.phase",
     "pk": 2,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Postdisaster"
     }
   },
@@ -35,6 +39,8 @@
     "model": "common_app.phase",
     "pk": 3,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Response"
     }
   },
@@ -42,6 +48,8 @@
     "model": "common_app.dimension",
     "pk": 1,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Educational"
     }
   },
@@ -49,6 +57,8 @@
     "model": "common_app.dimension",
     "pk": 2,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Social"
     }
   },
@@ -56,6 +66,8 @@
     "model": "common_app.dimension",
     "pk": 3,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Technique"
     }
   },
@@ -63,6 +75,8 @@
     "model": "common_app.dimension",
     "pk": 4,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Legal and institutional"
     }
   },
@@ -70,14 +84,19 @@
     "model": "common_app.dimension",
     "pk": 5,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Economic"
     }
-  },{
+  },
+  {
     "model": "common_app.activity",
     "pk": 2,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Types of Emergencies",
-      
+
       "dimension": 1,
       "phase": 1
     }
@@ -86,8 +105,10 @@
     "model": "common_app.activity",
     "pk": 3,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Emergency plan",
-      
+
       "dimension": 1,
       "phase": 1
     }
@@ -96,8 +117,10 @@
     "model": "common_app.activity",
     "pk": 4,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Crisis detection",
-      
+
       "dimension": 1,
       "phase": 1
     }
@@ -106,8 +129,10 @@
     "model": "common_app.activity",
     "pk": 5,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Crisis alert",
-      
+
       "dimension": 1,
       "phase": 1
     }
@@ -116,8 +141,10 @@
     "model": "common_app.activity",
     "pk": 6,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Evacuation routes",
-      
+
       "dimension": 1,
       "phase": 3
     }
@@ -126,8 +153,10 @@
     "model": "common_app.activity",
     "pk": 7,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Signs",
-      
+
       "dimension": 1,
       "phase": 3
     }
@@ -136,8 +165,10 @@
     "model": "common_app.activity",
     "pk": 8,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "First aid",
-      
+
       "dimension": 1,
       "phase": 3
     }
@@ -146,8 +177,10 @@
     "model": "common_app.activity",
     "pk": 9,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Psychological support for victims",
-      
+
       "dimension": 2,
       "phase": 2
     }
@@ -156,8 +189,10 @@
     "model": "common_app.activity",
     "pk": 10,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Resilience",
-      
+
       "dimension": 2,
       "phase": 2
     }
@@ -166,8 +201,10 @@
     "model": "common_app.activity",
     "pk": 11,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Means of Protection",
-      
+
       "dimension": 3,
       "phase": 1
     }
@@ -176,8 +213,10 @@
     "model": "common_app.activity",
     "pk": 12,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Building Structures",
-      
+
       "dimension": 3,
       "phase": 1
     }
@@ -186,8 +225,10 @@
     "model": "common_app.activity",
     "pk": 13,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Risk analysis",
-      
+
       "dimension": 3,
       "phase": 1
     }
@@ -196,8 +237,10 @@
     "model": "common_app.activity",
     "pk": 14,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Fire extinguishers",
-      
+
       "dimension": 3,
       "phase": 3
     }
@@ -206,8 +249,10 @@
     "model": "common_app.activity",
     "pk": 15,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Communication equipment",
-      
+
       "dimension": 3,
       "phase": 3
     }
@@ -216,8 +261,10 @@
     "model": "common_app.activity",
     "pk": 16,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Rescue Operations",
-      
+
       "dimension": 3,
       "phase": 3
     }
@@ -226,8 +273,10 @@
     "model": "common_app.activity",
     "pk": 17,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Identification of Risks",
-      
+
       "dimension": 3,
       "phase": 2
     }
@@ -236,8 +285,10 @@
     "model": "common_app.activity",
     "pk": 18,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Current Legal Regulations",
-      
+
       "dimension": 4,
       "phase": 1
     }
@@ -246,8 +297,10 @@
     "model": "common_app.activity",
     "pk": 19,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Analysis of damage costs",
-      
+
       "dimension": 5,
       "phase": 2
     }
@@ -256,8 +309,10 @@
     "model": "common_app.activity",
     "pk": 20,
     "fields": {
-      "name": "Probability of investmentin prevention",
-      
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
+      "name": "Profitability of investmentin prevention",
+
       "dimension": 5,
       "phase": 2
     }
@@ -266,6 +321,8 @@
     "model": "common_app.stakeholders",
     "pk": 1,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Organization",
       "isTrainer": true,
       "isLearner": true
@@ -275,6 +332,8 @@
     "model": "common_app.stakeholders",
     "pk": 2,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Planner",
       "isTrainer": true,
       "isLearner": true
@@ -284,6 +343,8 @@
     "model": "common_app.stakeholders",
     "pk": 3,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Worker",
       "isTrainer": false,
       "isLearner": true
@@ -293,6 +354,8 @@
     "model": "common_app.stakeholders",
     "pk": 4,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Citizen",
       "isTrainer": false,
       "isLearner": true
@@ -302,6 +365,8 @@
     "model": "common_app.stakeholders",
     "pk": 5,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Responder",
       "isTrainer": true,
       "isLearner": true
@@ -311,10 +376,11 @@
     "model": "common_app.stakeholders",
     "pk": 6,
     "fields": {
+      "created_at": "2021-06-01T17:23:28.183Z",
+      "updated_at": "2021-06-07T16:35:47.356Z",
       "name": "Expert Trainer",
       "isTrainer": true,
       "isLearner": false
     }
   }
 ]
-    
