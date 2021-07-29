@@ -179,9 +179,9 @@
                     if ('{{comp.type}}' == 'img' ||
                         '{{comp.type}}' == 'vid' ||
                         '{{comp.type}}' == 'doc') {
-                        comps.push(['{{comp.type}}', '{{comp.value.url}}', '{{comp.pk}}', '{{comp.description}}']);
+                        comps.push(['{{comp.type}}', `{{comp.value.url}}`, '{{comp.pk}}', `{{comp.description}}`]);
                     } else {
-                        comps.push(['{{comp.type}}', '{{comp.value}}', '{{comp.pk}}', '{{comp.description}}']);
+                        comps.push(['{{comp.type}}', `{{comp.value}}`, '{{comp.pk}}', `{{comp.description}}`]);
                     }
                 {% endfor %}
             }
